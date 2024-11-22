@@ -1,6 +1,13 @@
 {
-  "Feedback": "Feedback",
-  "Imprint": "Impressum",
-  "Privacy Policy": "Datenschutz",
-  "Terms and Conditions": "AGB"
+	"Feedback": "Feedback",
+	"Feedback could not be sent": "Feedback konnte nicht gesendet werden",
+	"Feedback is being sent": "Feedback wird gesendet...",
+	"General evaluation": "Allgemeine Bewertung",
+	"Imprint": "Impressum",
+	"Privacy Policy": "Datenschutz",
+	"Terms and Conditions": "AGB",
+	"Pass on your impressions, suggestions etc. to us...": "Geben Sie Ihre Eindrücke, Anregungen etc. an uns weiter...",
+	"Thanks!": "Vielen Dank!",
+	"We have received your feedback": "Wir haben Ihr Feedback erhalten",
+	"Your feedback to us": "Ihr Feedback an uns"
 }
