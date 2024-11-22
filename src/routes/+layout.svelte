@@ -102,6 +102,19 @@
 		});
 	};
 
+	/**
+	 * Redirect to IONOS GPT demo landing page by *deliberately avoiding*
+	 * push state API (goto()) to force session creation on that page by
+	 * the backend.
+	 */
+	const redirectToLandingPage = () => {
+		if ($page.route.id === '/start') {
+			// Don't force redirect if we're already there
+			return;
+		}
+		window.location = '/start';
+	}
+
 	onMount(async () => {
 		theme.set(localStorage.theme);
 
@@ -115,6 +128,14 @@
 		};
 
 		window.addEventListener('resize', onResize);
+
+		if ($page.route.id === "/start") {
+			initI18n();
+			await setLanguage();
+			document.getElementById('splash-screen')?.remove();
+			loaded = true;
+			return;
+		}
 
 		let backendConfig = null;
 		try {
@@ -154,11 +175,7 @@
 						await goto('/auth');
 					}
 				} else {
-					// Don't redirect if we're already on the auth page
-					// Needed because we pass in tokens from OAuth logins via URL fragments
-					if ($page.url.pathname !== '/auth') {
-						await goto('/auth');
-					}
+					redirectToLandingPage();
 				}
 			}
 		} else {
