@@ -2,6 +2,7 @@
 	import Star from '$lib/components/icons/Star.svelte';
 	import { Dialog } from 'bits-ui';
 	import { getContext } from 'svelte';
+	import { postFeedback } from '$lib/IONOS/components/feedback';
 
 	const i18n = getContext('i18n');
 
@@ -27,7 +28,7 @@
 	let response: Promise<any>;
 
 	const sendFeedback = () => {
-		throw new Error('Not implemented');
+		response = postFeedback(feedbackText, rating);
 	};
 </script>
 
