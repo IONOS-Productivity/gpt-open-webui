@@ -52,6 +52,8 @@
 
 	let version;
 
+	const showUpdateInfoToast = false;
+
 	onMount(async () => {
 		if ($user === undefined) {
 			await goto('/auth');
@@ -207,7 +209,7 @@
 <SettingsModal bind:show={$showSettings} />
 <ChangelogModal bind:show={$showChangelog} />
 
-{#if false}
+{#if showUpdateInfoToast}
 {#if version && compareVersion(version.latest, version.current) && ($settings?.showUpdateToast ?? true)}
 	<div class=" absolute bottom-8 right-8 z-50" in:fade={{ duration: 100 }}>
 		<UpdateInfoToast

@@ -40,6 +40,9 @@
 
 	let showShareChatModal = false;
 	let showDownloadChatModal = false;
+
+	const showUserMenu = false;
+	const showControlsButton = false;
 </script>
 
 <ShareChatModal bind:show={showShareChatModal} chatId={$chatId} />
@@ -117,6 +120,7 @@
 					</Menu>
 				{/if}
 
+				{#if showControlsButton}
 				{#if !$mobile}
 					<Tooltip content={$i18n.t('Controls')}>
 						<button
@@ -131,6 +135,7 @@
 							</div>
 						</button>
 					</Tooltip>
+				{/if}
 				{/if}
 
 				<Tooltip content={$i18n.t('New Chat')}>
@@ -150,6 +155,7 @@
 					</button>
 				</Tooltip>
 
+				{#if showUserMenu}
 				{#if $user !== undefined}
 					<UserMenu
 						className="max-w-[200px]"
@@ -174,6 +180,7 @@
 							</div>
 						</button>
 					</UserMenu>
+				{/if}
 				{/if}
 			</div>
 		</div>

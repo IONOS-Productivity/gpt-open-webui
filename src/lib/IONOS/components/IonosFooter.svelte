@@ -1,11 +1,16 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
-
+	import {
+		showSidebar,
+	} from '$lib/stores';
 	const currentYear = new Date().getFullYear();
 	const i18n = getContext('i18n');
 </script>
 
-<footer>
+<footer class="{$showSidebar
+			? 'md:max-w-[calc(100%-260px)]'
+			: ''}">
+
 	<div class="footer-right">
 		<span id="powered_by">{$i18n.t('powered by IONOS Model Hub', { ns: 'ionos' })}</span>
 	</div>
@@ -37,6 +42,7 @@
 		padding: 0 24px;
 		position: fixed;
 		bottom: 0;
+		right: 0;
 		width: 100%;
 	}
 

@@ -38,6 +38,8 @@
 
 	let models = [];
 
+	const showModelIconAndName = false;
+
 	const selectSuggestionPrompt = async (p) => {
 		let text = p;
 
@@ -103,6 +105,7 @@
 		class="w-full text-3xl text-gray-800 dark:text-gray-100 font-medium text-center flex items-center gap-4 font-primary"
 	>
 		<div class="w-full flex flex-col justify-center items-center">
+			{#if showModelIconAndName}
 			<div class="flex flex-row justify-center gap-3 sm:gap-3.5 w-fit px-5">
 				<div class="flex flex-shrink-0 justify-center">
 					<div class="flex -space-x-4 mb-0.5" in:fade={{ duration: 100 }}>
@@ -142,6 +145,7 @@
 					{/if}
 				</div>
 			</div>
+			{/if}
 
 			<div class="flex mt-1 mb-2">
 				<div in:fade={{ duration: 100, delay: 50 }}>
