@@ -134,7 +134,14 @@
 			await setLanguage();
 			document.getElementById('splash-screen')?.remove();
 			loaded = true;
-			return;
+
+			if (!localStorage.token) {
+				// No existing session was found - stay on the GPT demo page
+				return;
+			}
+
+			// If a token was found, try to validate it with the usual
+			// application start flow below
 		}
 
 		let backendConfig = null;
@@ -158,10 +165,7 @@
 			if ($config) {
 				if (localStorage.token) {
 					// Get Session User Info
-					const sessionUser = await getSessionUser(localStorage.token).catch((error) => {
-						toast.error(error);
-						return null;
-					});
+					const sessionUser = await getSessionUser(localStorage.token).catch((error) => null);
 
 					if (sessionUser) {
 						setupSocket();
@@ -170,9 +174,10 @@
 						await user.set(sessionUser);
 						await config.set(await getBackendConfig());
 					} else {
-						// Redirect Invalid Session User to /auth Page
+						// Redirect Invalid Session User to landing page
 						localStorage.removeItem('token');
-						await goto('/auth');
+
+						redirectToLandingPage();
 					}
 				} else {
 					redirectToLandingPage();
