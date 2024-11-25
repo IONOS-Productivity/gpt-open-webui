@@ -41,6 +41,21 @@
 	let loaded = false;
 	const BREAKPOINT = 768;
 
+	const setLanguage = async () => {
+		if (localStorage.locale) {
+			return;
+		}
+
+		const languages = await getLanguages();
+		const browserLanguages = navigator.languages
+			? navigator.languages
+			: [navigator.language || navigator.userLanguage];
+		const lang = backendConfig.default_locale
+			? backendConfig.default_locale
+			: bestMatchingLanguage(languages, browserLanguages, 'en-US');
+		$i18n.changeLanguage(lang);
+	};
+
 	const setupSocket = () => {
 		const _socket = io(`${WEBUI_BASE_URL}` || undefined, {
 			reconnection: true,
@@ -112,16 +127,7 @@
 		// so `/error` can show something that's not `undefined`.
 
 		initI18n();
-		if (!localStorage.locale) {
-			const languages = await getLanguages();
-			const browserLanguages = navigator.languages
-				? navigator.languages
-				: [navigator.language || navigator.userLanguage];
-			const lang = backendConfig.default_locale
-				? backendConfig.default_locale
-				: bestMatchingLanguage(languages, browserLanguages, 'en-US');
-			$i18n.changeLanguage(lang);
-		}
+		await setLanguage();
 
 		if (backendConfig) {
 			// Save Backend Status to Store
