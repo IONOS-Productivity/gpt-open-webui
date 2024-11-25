@@ -1,4 +1,6 @@
 <script>
+	import { PUBLIC_DEV_SIGNIN_SIGNON } from '$env/static/public';
+
 	import { io } from 'socket.io-client';
 	import { spring } from 'svelte/motion';
 
@@ -35,6 +37,8 @@
 	import { bestMatchingLanguage } from '$lib/utils';
 	import IonosFooter from '$lib/IONOS/components/IonosFooter.svelte';
 	import IonosHeader from '$lib/IONOS/components/IonosHeader.svelte';
+
+	const signonAndSigninEnabled = PUBLIC_DEV_SIGNIN_SIGNON.toLowerCase() === "true";
 
 	setContext('i18n', i18n);
 
@@ -180,7 +184,9 @@
 						redirectToLandingPage();
 					}
 				} else {
-					redirectToLandingPage();
+					if ($page.route.id !== '/auth' || !signonAndSigninEnabled) {
+						redirectToLandingPage();
+					}
 				}
 			}
 		} else {
