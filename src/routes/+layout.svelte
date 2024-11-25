@@ -135,8 +135,6 @@
 			await WEBUI_NAME.set(backendConfig.name);
 
 			if ($config) {
-				setupSocket();
-
 				if (localStorage.token) {
 					// Get Session User Info
 					const sessionUser = await getSessionUser(localStorage.token).catch((error) => {
@@ -145,6 +143,8 @@
 					});
 
 					if (sessionUser) {
+						setupSocket();
+
 						// Save Session User to Store
 						await user.set(sessionUser);
 						await config.set(await getBackendConfig());
