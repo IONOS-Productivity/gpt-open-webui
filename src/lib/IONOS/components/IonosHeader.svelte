@@ -50,7 +50,7 @@
 			<Dialog.Trigger class="px-4 py-2 exos-button exos-button--secondary exos-button--ellipsized">
 				{$i18n.t('Feedback', { ns: 'ionos' })}
 			</Dialog.Trigger>
-			<IonosFeedback dialogOpen={$feedbackDialog.open} />
+			<IonosFeedback dialogOpen={$feedbackDialog.open} noRating={$feedbackDialog.rating !== -1} />
 		</Dialog.Root>
 	</div>
 </header>
