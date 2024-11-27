@@ -43,10 +43,34 @@ function submit(promptToStart: string, modelNameForStart: string) {
 	window.location = `/auth`;
 }
 
+function typePrompt(text, onDone: null) {
+	let chars = text.split('');
+
+	prompt = '';
+
+	const animate = () => {
+		if (chars.length === 0) {
+			if (typeof onDone === "function") {
+				onDone();
+			}
+
+			return;
+		} else {
+			requestAnimationFrame(animate);
+		}
+
+		const char = chars[0];
+		chars = chars.slice(1);
+
+		prompt += char;
+	}
+
+	requestAnimationFrame(animate);
+}
+
 function selectSuggestion({ detail: { prompt: selectedPrompt, model: selectedModel } }) {
-	prompt = selectedPrompt;
 	model = selectedModel;
-	promptTextarea.focus();
+	typePrompt(selectedPrompt, () => promptTextarea.focus());
 }
 </script>
 
