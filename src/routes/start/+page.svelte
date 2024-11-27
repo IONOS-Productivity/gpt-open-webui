@@ -19,16 +19,12 @@ import { getContext } from 'svelte';
 import { config } from '$lib/stores';
 
 import Greeting from '$lib/components/chat/Greeting.svelte';
-import Suggestions from '$lib/components/chat/Suggestions.svelte';
+import Suggestions from '$lib/IONOS/components/Suggestions.svelte';
 import PaperPlane from '$lib/components/icons/PaperPlane.svelte';
 import Textarea from '$lib/components/common/Textarea.svelte';
 import Trailer from '$lib/IONOS/components/Trailer.svelte';
 
 const i18n = getContext('i18n');
-
-// TODO hardcoded during early development, has to be provided by a
-// suggested prompts + model config
-const model = 'meta-llama/Meta-Llama-3.1-8B-Instruct';
 
 let prompt = '';
 
@@ -61,10 +57,9 @@ function submit(promptToStart: string, modelNameForStart: string) {
 		</button>
 	</form>
 
-	<div class="mx-5">
+	<div class="w-3/5 py-5">
 		<Suggestions
-			suggestionPrompts={$config?.default_prompt_suggestions ?? []}
-			on:select={(e) => submit(e.detail, model)}
+			on:select={({ detail: { prompt, model } }) => submit(prompt, model)}
 		/>
 	</div>
 
