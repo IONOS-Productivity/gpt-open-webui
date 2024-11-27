@@ -1,6 +1,4 @@
 <script>
-	import { PUBLIC_DEV_SIGNIN_SIGNON } from '$env/static/public';
-
 	import { io } from 'socket.io-client';
 	import { spring } from 'svelte/motion';
 
