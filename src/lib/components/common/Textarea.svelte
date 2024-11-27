@@ -24,6 +24,10 @@
 		setTimeout(adjustHeight, 0);
 	}
 
+	export function focus() {
+		textareaElement.focus();
+	}
+
 	const adjustHeight = () => {
 		if (textareaElement) {
 			textareaElement.style.height = '';
