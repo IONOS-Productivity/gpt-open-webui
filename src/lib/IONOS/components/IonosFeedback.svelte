@@ -9,6 +9,8 @@
 	export let dialogOpen = false;
 
 	let rating = 0;
+	export let noRating = false;
+
 	let feedbackText = '';
 	let feedbackSent = false;
 	let hoveredRating: number | undefined;
@@ -47,6 +49,7 @@
 					rows="8"
 				></textarea>
 
+				{#if noRating}
 				<div class="star-rating">
 					<p>{$i18n.t('General evaluation', { ns: 'ionos' })}</p>
 					{#each Array(5) as _, index}
@@ -63,6 +66,7 @@
 						</button>
 					{/each}
 				</div>
+				{/if}
 			</div>
 
 			<div class="exos-sheet__footer exos-sheet__footer--align-right">

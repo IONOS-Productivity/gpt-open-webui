@@ -9,7 +9,7 @@
 
 	const dispatch = createEventDispatcher();
 
-	import { config, models, settings, user } from '$lib/stores';
+	import { config, models, settings, user, feedbackDialog } from '$lib/stores';
 	import { synthesizeOpenAISpeech } from '$lib/apis/audio';
 	import { imageGenerations } from '$lib/apis/images';
 	import {
@@ -136,6 +136,8 @@
 	let generatingImage = false;
 
 	let showRateComment = false;
+
+	const useAlternativeFeedbackDialog = true;
 
 	const copyToClipboard = async (text) => {
 		const res = await _copyToClipboard(text);
@@ -343,6 +345,15 @@
 	const feedbackHandler = async (rating: number | null = null, details: object | null = null) => {
 		feedbackLoading = true;
 		console.log('Feedback', rating, details);
+
+		if (useAlternativeFeedbackDialog) {
+			feedbackLoading = false;
+			feedbackDialog.set({
+				open: true,
+				rating,
+			});
+			return;
+		}
 
 		const updatedMessage = {
 			...message,

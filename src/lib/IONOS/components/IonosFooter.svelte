@@ -63,6 +63,7 @@
 
 	#powered_by {
 		color: var(--powered-by-text-color);
+		font-weight: bold;
 	}
 
 	.footer-left {

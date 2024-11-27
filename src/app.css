@@ -61,7 +61,7 @@ math {
 }
 
 .font-primary {
-	font-family: 'Archivo', sans-serif;
+	font-family: var(--default-font-regular, 'OpenSansSemibold', arial, sans-serif);
 }
 
 iframe {
