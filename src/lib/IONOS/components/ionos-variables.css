@@ -1,5 +1,9 @@
 :root,
 [data-exos-theme='ionos'] {
+	--default-font-regular: "OpenSansRegular",arial,arial narrow,sans-serif;
+	--default-font-bold: "OpenSansSemibold",arial,sans-serif;
+	--corporate-font-regular: "OverpassRegular",arial,arial narrow,sans-serif;
+	--corporate-font-bold: "OverpassSemibold",arial,sans-serif;
 	--default-text-size: 14px;
 	--default-text-line-height: 20px;
 	--large-text-size: 16px;
