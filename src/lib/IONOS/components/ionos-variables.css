@@ -357,5 +357,5 @@
 	--ion-background-color: #f9f9f9;
 	--ion-brand-color: var(--palette-corporate-6);
 	--ion-text-color: var(--primary-text-color);
-	--powered-by-text-color: var(--primary-text-color);
+	--powered-by-text-color: var(--palette-corporate-6);
 }
