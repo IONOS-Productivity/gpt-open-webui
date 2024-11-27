@@ -26,7 +26,13 @@ import Trailer from '$lib/IONOS/components/Trailer.svelte';
 
 const i18n = getContext('i18n');
 
+// If the user did not pick a default model
+const defaultModel = 'meta-llama/Meta-Llama-3.1-8B-Instruct';
+
 let prompt = '';
+let model = defaultModel;
+
+let promptTextarea;
 
 function submit(promptToStart: string, modelNameForStart: string) {
 	// Pass prompt and model securely via sessionStorage and start chat by
@@ -36,10 +42,24 @@ function submit(promptToStart: string, modelNameForStart: string) {
 
 	window.location = `/auth`;
 }
+
+function selectSuggestion({ detail: { prompt: selectedPrompt, model: selectedModel } }) {
+	prompt = selectedPrompt;
+	model = selectedModel;
+	promptTextarea.focus();
+}
 </script>
 
 <div class="overflow-auto w-full h-full flex flex-col items-center">
 	<Greeting />
+
+	<div class="w-3/5 py-5">
+		<Suggestions
+			on:select={selectSuggestion}
+		/>
+	</div>
+
+	<p>{$i18n.t('Using {{model}}', { ns: "ionos", model })}</p>
 
 	<form
 		on:submit|preventDefault={(e) => submit(prompt, model)}
@@ -47,21 +67,18 @@ function submit(promptToStart: string, modelNameForStart: string) {
 		>
 
 		<Textarea
+			bind:this={promptTextarea}
 			bind:value={prompt}
 			placeholder={$i18n.t('Send a message to IONOS GPT', { ns: "ionos" })}
 			className="w-full rounded-lg p-3 text-sm dark:text-gray-300 dark:bg-gray-850 outline-none resize-none h-full bg-transparent"
 		/>
+
 
 		<button type="submit" class="p-0 mx-2 flex w-8">
 			<PaperPlane className="fill-gray-400 cursor-pointer hover:fill-ionos" />
 		</button>
 	</form>
 
-	<div class="w-3/5 py-5">
-		<Suggestions
-			on:select={({ detail: { prompt, model } }) => submit(prompt, model)}
-		/>
-	</div>
 
 	<Trailer />
 </div>
