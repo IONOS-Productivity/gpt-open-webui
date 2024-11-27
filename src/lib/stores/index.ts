@@ -52,6 +52,13 @@ export const temporaryChatEnabled = writable(false);
 export const scrollPaginationEnabled = writable(false);
 export const currentChatPage = writable(1);
 
+export const feedbackDialog:Writable<FeedbackDialog> = writable({ open: false });
+
+type FeedbackDialog = {
+	open: boolean;
+	rating?: number
+}
+
 export type Model = OpenAIModel | OllamaModel;
 
 type BaseModel = {
