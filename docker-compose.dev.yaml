@@ -59,6 +59,9 @@ services:
     environment:
       - ENV=dev
       - RUN_MIGRATIONS=false
+    depends_on:
+      - chromadb
+    network_mode: host
     ports:
       - "8080:8080"
     extra_hosts:
@@ -81,27 +84,32 @@ services:
       - data:/app/backend/data
 
 
-#  tika:
-#    image: apache/tika:2.5.0.2-full
-#    ports:
-#      - "9998:9998"
-#    environment:
-#      - TIKA_LOG_LEVEL=INFO
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0.7-0
+    command: ["start-dev", "--http-enabled=true", "--http-port=8079", "--log-level=info", "--import-realm"]
+    volumes:
+      - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json
+    environment:
+      # Needed to create a config from scratch. Causing errors when using --import-realm
+      # - KC_BOOTSTRAP_ADMIN_USERNAME=admin
+      # - KC_BOOTSTRAP_ADMIN_PASSWORD=admin
+      - KC_FEATURES=persistent-user-sessions
+    network_mode: host
+    ports:
+      - "8079:8079"
 
-
-#  keycloak:
-#    image: quay.io/keycloak/keycloak:26.0.7-0
-#    command: ["start-dev", "--http-enabled=true", "--http-port=8079", "--log-level=info", "--import-realm"]
-#    volumes:
-#      - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json
-#    environment:
-#      # Needed to create a config from scratch. Causing errors when using --import-realm
-#      # - KC_BOOTSTRAP_ADMIN_USERNAME=admin
-#      # - KC_BOOTSTRAP_ADMIN_PASSWORD=admin
-#      - KC_FEATURES=persistent-user-sessions
-#    network_mode: host
-#    ports:
-#      - "8079:8079"
+  chromadb:
+    image: chromadb/chroma:0.6.3
+    volumes:
+      - ./chromadb:/chroma/chroma
+    environment:
+      - CHROMA_HOST_ADDR=127.0.0.1
+      - IS_PERSISTENT=TRUE
+      - PERSIST_DIRECTORY=/chroma/chroma
+      - ANONYMIZED_TELEMETRY=FALSE
+    network_mode: host
+    ports:
+      - "8000:8000"
  
 volumes:
   data: {}
