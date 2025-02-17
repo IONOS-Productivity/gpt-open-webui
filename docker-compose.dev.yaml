@@ -38,6 +38,9 @@ services:
     env_file: ".env"
     environment:
       - ENV=dev
+    depends_on:
+      - chromadb
+    network_mode: host
     ports:
       - "8080:8080"
     extra_hosts:
@@ -59,6 +62,19 @@ services:
     network_mode: host
     ports:
       - "8079:8079"
+
+  chromadb:
+    image: chromadb/chroma:0.6.3
+    volumes:
+      - ./chromadb:/chroma/chroma
+    environment:
+      - CHROMA_HOST_ADDR=127.0.0.1
+      - IS_PERSISTENT=TRUE
+      - PERSIST_DIRECTORY=/chroma/chroma
+      - ANONYMIZED_TELEMETRY=FALSE
+    network_mode: host
+    ports:
+      - "8000:8000"
  
 volumes:
   data: {}
