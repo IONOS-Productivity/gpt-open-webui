@@ -3,7 +3,9 @@
 
 	import Channel from '$lib/components/channel/Channel.svelte';
 	import Sidebar from '$lib/components/layout/Sidebar.svelte';
+
+	let chat: Chat|null = null;
 </script>
 
-<Sidebar />
-<Channel id={$page.params.id} />
+<Sidebar on:new-chat={chat.newChat()} />
+<Channel bind:this={chat} id={$page.params.id} />

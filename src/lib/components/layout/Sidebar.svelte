@@ -22,7 +22,7 @@
 		config,
 		isApp
 	} from '$lib/stores';
-	import { onMount, getContext, tick, onDestroy } from 'svelte';
+	import { onMount, getContext, tick, onDestroy, createEventDispatcher } from 'svelte';
 
 	const i18n = getContext('i18n');
 
@@ -57,6 +57,8 @@
 	import ChannelModal from './Sidebar/ChannelModal.svelte';
 	import ChannelItem from './Sidebar/ChannelItem.svelte';
 	import PencilSquare from '../icons/PencilSquare.svelte';
+
+	const dispatch = createEventDispatcher();
 
 	const BREAKPOINT = 768;
 
@@ -507,9 +509,8 @@
 				on:click={async () => {
 					selectedChatId = null;
 					await goto('/');
-					const newChatButton = document.getElementById('new-chat-button');
 					setTimeout(() => {
-						newChatButton?.click();
+						dispatch('new-chat');
 						if ($mobile) {
 							showSidebar.set(false);
 						}
