@@ -15,6 +15,7 @@
 	} from '$lib/stores';
 
 	import { slide } from 'svelte/transition';
+	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 
 	import ShareChatModal from '../chat/ShareChatModal.svelte';
@@ -29,7 +30,6 @@
 
 	const i18n = getContext('i18n');
 
-	export let initNewChat: Function;
 	export let title: string = $WEBUI_NAME;
 	export let shareEnabled: boolean = false;
 
@@ -152,9 +152,7 @@
 						class=" flex {$showSidebar
 							? 'md:hidden'
 							: ''} cursor-pointer px-2 py-2 rounded-xl text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-850 transition"
-						on:click={() => {
-							initNewChat();
-						}}
+						on:click={() => goto('/')}
 						aria-label="New Chat"
 					>
 						<div class=" m-auto self-center">

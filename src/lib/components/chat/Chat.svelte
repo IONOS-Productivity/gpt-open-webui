@@ -1932,7 +1932,6 @@
 			title={$chatTitle}
 			bind:selectedModels
 			shareEnabled={!!history.currentId}
-			{initNewChat}
 		/>
 
 		<PaneGroup direction="horizontal" class="w-full h-full">
