@@ -4,12 +4,19 @@
 	import PromptSelector from '$lib/IONOS/components/PromptSelector.svelte'
 	import Robot from '$lib/components/icons/Robot.svelte'
 	import ChevronDown from '$lib/components/icons/ChevronDown.svelte'
+	import { chatId } from '$lib/stores';
 	import { init as initAgentsStore } from '$lib/IONOS/stores/agents';
 	import { init as initPromptsStore } from '$lib/IONOS/stores/prompts';
 
 	const i18n = getContext('i18n');
 
 	onMount(async () => {
+		// Explicitly disable possible previous chat to invalidate the
+		// chat and allow call to initNewChat() via onMount().
+		// At time of implementation onMount() only called initNewChat()
+		// when no chatId was set, preventing any second chat start via
+		// the startpage.
+		chatId.set('');
 		await initAgentsStore();
 		await initPromptsStore();
 	});
