@@ -1,0 +1,11 @@
+<svg
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink= "http://www.w3.org/1999/xlink"
+   width="800"
+   height="70"
+   viewBox="0 0 800 70">
+  <g style="font-family: sans; font-size:32px; line-height:1.25;">
+    <text x="400" y="35" style="text-align:center;text-anchor:middle">Welcome to IONOS GPT,</text>
+    <text x="400" y="65" style="text-align:center;text-anchor:middle">Where AI becomes your ultimate team of experts!</text>
+  </g>
+</svg>
