@@ -38,7 +38,7 @@
 		</span>
 	</div>
 
-	<div class="block py-5 my-16">
+	<div class="block py-5 my-2">
 		<AgentSelector />
 	</div>
 

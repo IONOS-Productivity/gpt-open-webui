@@ -7,10 +7,10 @@
 	const i18n = getContext('i18n');
 </script>
 
-<div class="flex flex-row gap-4 items-center h-96">
+<div class="flex flex-row gap-4 items-center">
 	{#each $agents as { id, name, subtitle, description, avatarUrl }}
 		<div
-			class="flex-0 transition group w-48 hover:w-60 pb-4 mx-6 hover:mx-0 bg-white text-left rounded-3xl shadow-xl cursor-pointer transition group"
+			class="flex-0 transition group w-48 hover:w-60 pb-4 mx-6 my-16 hover:mx-0 hover:my-0 bg-white text-left rounded-3xl shadow-xl cursor-pointer transition group"
 			data-id={id}
 			tabindex="0"
 			role="button"
