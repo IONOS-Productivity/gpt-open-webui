@@ -15,7 +15,7 @@
 	export let pressed = false;
 	export let pressable = false;
 
-	const baseClasses = 'select-none rounded-3xl outline-offset-2';
+	const baseClasses = 'select-none rounded-3xl outline-offset-2 px-4 py-1';
 
 	$: classes = `${className} ${baseClasses} ${stateClassBuilder(type, disabled, pressed)}`;
 </script>
