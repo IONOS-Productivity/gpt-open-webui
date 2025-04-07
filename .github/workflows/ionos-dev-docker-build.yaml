@@ -65,7 +65,7 @@ jobs:
           apiVersion: batch/v1
           kind: Job
           metadata:
-            name: openwebui-build-push-image
+            name: openwebui-pipelines-build-push-image
             namespace: arc-runners
           spec:
             template:
@@ -107,8 +107,6 @@ jobs:
             backoffLimit: 1
           " | kubectl apply -f -
           set -e
-        env:
-          TOKEN: ${{ secrets.GIT_TOKEN }}
 
       - name: Monitor Job Status and Print Logs
         run: |
