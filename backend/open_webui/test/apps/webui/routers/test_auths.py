@@ -1,3 +1,5 @@
+import pytest
+from unittest.mock import Mock, patch
 from test.util.abstract_integration_test import AbstractPostgresTest
 from test.util.mock_user import mock_webui_user
 
@@ -96,6 +98,29 @@ class TestAuths(AbstractPostgresTest):
         assert data["profile_image_url"] == "/user.png"
         assert data["token"] is not None and len(data["token"]) > 0
         assert data["token_type"] == "Bearer"
+
+
+
+    @patch("open_webui.config.ENABLE_OAUTH_SIGNUP")
+    @patch("open_webui.config.ClientSession")
+    def test_signout_with_oauth_enabled(mock_client_session, mock_enable_oauth_signup, client):
+        mock_enable_oauth_signup.value = True
+        mock_client_session.return_value.__aenter__.return_value.get.return_value.__aenter__.return_value.json.return_value = {
+            "end_session_endpoint": "https://example.com/end-session"
+        }
+        mock_client_session.return_value.__aenter__.return_value.get.return_value.__aenter__.return_value.status = 200
+
+        self.fast_api_client.cookies.set("token", "some_token")
+        self.fast_api_client.cookies.set("oauth_id_token", "some_oauth_id_token")
+
+        response = self.fast_api_client.get("/signout")
+
+        assert response.status_code == 302
+        assert response.headers["location"] == "https://example.com/end-session?id_token_hint=some_oauth_id_token"
+
+        assert "token" not in self.fast_api_client.cookies
+        assert "oauth_id_token" not in self.fast_api_client.cookies
+
 
     def test_signup(self):
         response = self.fast_api_client.post(
