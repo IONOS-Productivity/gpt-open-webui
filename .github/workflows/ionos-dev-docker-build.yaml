@@ -76,7 +76,7 @@ jobs:
                   command: ["/bin/sh", "-c"]
                   args:
                     - |
-                      git config --global url."https://oauth:${TOKEN}@github.com/".insteadOf "https://github.com/" &&
+                      git config --global url."https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/".insteadOf "https://github.com/" &&
                       git clone --recursive -b ${{ env.BRANCH_NAME }} --depth=1 https://github.com/${{ github.repository }}.git /workspace
                   volumeMounts:
                   - name: build-context
@@ -107,8 +107,6 @@ jobs:
             backoffLimit: 1
           " | kubectl apply -f -
           set -e
-        env:
-          TOKEN: ${{ secrets.GIT_TOKEN }}
 
       - name: Monitor Job Status and Print Logs
         run: |
