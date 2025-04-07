@@ -76,7 +76,6 @@ jobs:
                   command: ["/bin/sh", "-c"]
                   args:
                     - |
-                      echo git config --global url."https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/".insteadOf "https://github.com/" &&
                       git config --global url."https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/".insteadOf "https://github.com/" &&
                       git config --list &&
                       git clone --recursive -b ${{ env.BRANCH_NAME }} --depth=1 https://github.com/${{ github.repository }}.git /workspace
