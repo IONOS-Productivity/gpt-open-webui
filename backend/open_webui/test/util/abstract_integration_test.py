@@ -69,50 +69,6 @@ class AbstractPostgresTest(AbstractIntegrationTest):
     @classmethod
     def setup_class(cls):
         super().setup_class()
-        try:
-            env_vars_postgres = {
-                "POSTGRES_USER": "user",
-                "POSTGRES_PASSWORD": "example",
-                "POSTGRES_DB": "openwebui",
-            }
-            cls.docker_client = docker.from_env()
-            cls.docker_client.containers.run(
-                "postgres:16.2",
-                detach=True,
-                environment=env_vars_postgres,
-                name=cls.DOCKER_CONTAINER_NAME,
-                ports={5432: ("0.0.0.0", 8081)},
-                command="postgres -c log_statement=all",
-            )
-            time.sleep(0.5)
-
-            database_url = cls._create_db_url(env_vars_postgres)
-            os.environ["DATABASE_URL"] = database_url
-            retries = 10
-            db = None
-            while retries > 0:
-                try:
-                    from open_webui.config import OPEN_WEBUI_DIR
-
-                    db = create_engine(database_url, pool_pre_ping=True)
-                    db = db.connect()
-                    log.info("postgres is ready!")
-                    break
-                except Exception as e:
-                    log.warning(e)
-                    time.sleep(3)
-                    retries -= 1
-
-            if db:
-                # import must be after setting env!
-                cls.fast_api_client = get_fast_api_client()
-                db.close()
-            else:
-                raise Exception("Could not connect to Postgres")
-        except Exception as ex:
-            log.error(ex)
-            cls.teardown_class()
-            pytest.fail(f"Could not setup test environment: {ex}")
 
     def _check_db_connection(self):
         from open_webui.internal.db import Session
@@ -136,7 +92,6 @@ class AbstractPostgresTest(AbstractIntegrationTest):
     @classmethod
     def teardown_class(cls) -> None:
         super().teardown_class()
-        cls.docker_client.containers.get(cls.DOCKER_CONTAINER_NAME).remove(force=True)
 
     def teardown_method(self):
         from open_webui.internal.db import Session
