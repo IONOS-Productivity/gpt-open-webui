@@ -21,6 +21,7 @@
 
 	import { WEBUI_VERSION } from '$lib/constants';
 	import { compareVersion } from '$lib/utils';
+	import Footer from '$lib/IONOS/components/Footer.svelte';
 
 	import {
 		config,
@@ -296,6 +297,9 @@
 	</div>
 </div>
 
+<div class="fixed bottom-0 w-full">
+	<Footer />
+</div>
 <style>
 	.loading {
 		display: inline-block;
