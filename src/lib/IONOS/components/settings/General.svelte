@@ -9,6 +9,7 @@
 	import {
 		deleteAll,
 		exportAll,
+		importChats,
 	} from '$lib/IONOS/services/chats';
 	const i18n = getContext<Readable<I18Next>>('i18n');
 
@@ -18,8 +19,12 @@
 		await exportAll();
 	}
 
-	function onImportChats() {
-		console.warn('Implement me: import chats');
+	async function onFilesSelected({ detail: files }: { detail: File[] }) {
+		if (files.length === 0) {
+			return;
+		}
+
+		importChats(files[0]);
 	}
 
 	function onDeleteAllChats() {
@@ -58,7 +63,7 @@
 		</div>
 		<div>
 			<Filepicker
-				on:selected={(files) => console.log('selected', files)}
+				on:selected={onFilesSelected}
 				type={ButtonType.secondary}
 				multiple={false}
 				accept='*.json'

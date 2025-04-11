@@ -1,10 +1,14 @@
 import { goto } from '$app/navigation';
 import { default as saveAs } from 'file-saver';
 import dayjs from 'dayjs';
+import { readFile } from '$lib/IONOS/utils/files';
+import { parseChatExportData } from '$lib/IONOS/utils/import';
+import type { Chat } from '$lib/apis/chats/types';
 import {
 	deleteAllChats,
 	getAllChats,
 	getChatList,
+	createNewChat,
 } from '$lib/apis/chats';
 import {
 	chats,
@@ -28,4 +32,24 @@ export const exportAll = async (): Promise<void> => {
 	const timestamp = dayjs(Date.now()).format('YYYY-MM-DD--HH-mm');
 
 	saveAs(blob, `${EXPORT_FILENAME_PREFIX}-${timestamp}.json`);
+};
+
+export const importChats = async (file: File): Promise<void> => {
+	const token = localStorage.token;
+	console.log(file);
+	const contentsStr: string = await readFile(file);
+	let imported: Chat[] = parseChatExportData(contentsStr);
+
+	for (const chat of imported) {
+		console.log(chat);
+
+		if (chat.chat) {
+			console.warn('IMPORT: what is this?');
+			await createNewChat(localStorage.token, chat.chat);
+		} else {
+			await createNewChat(localStorage.token, chat);
+		}
+	}
+
+	await chats.set(await getChatList(localStorage.token, 1));
 };
