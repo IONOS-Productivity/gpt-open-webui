@@ -5,6 +5,7 @@
 	import { getContext } from 'svelte';
 	import Confirm from '$lib/IONOS/components/common/Confirm.svelte';
 	import Button, { ButtonType } from '$lib/IONOS/components/common/Button.svelte'
+	import Filepicker from '$lib/IONOS/components/common/Filepicker.svelte';
 	import {
 		deleteAll,
 		exportAll,
@@ -15,6 +16,10 @@
 
 	async function onExportChats() {
 		await exportAll();
+	}
+
+	function onImportChats() {
+		console.warn('Implement me: import chats');
 	}
 
 	function onDeleteAllChats() {
@@ -45,6 +50,21 @@
 			>
 				{$i18n.t('Export chats', { ns: 'ionos' })}
 			</Button>
+		</div>
+	</div>
+	<div class="flex flex-row items-center h-10">
+		<div class="flex-grow">
+			{$i18n.t('Import chats', { ns: 'ionos' })}
+		</div>
+		<div>
+			<Filepicker
+				on:selected={(files) => console.log('selected', files)}
+				type={ButtonType.secondary}
+				multiple={false}
+				accept='*.json'
+			>
+				{$i18n.t('Import chats', { ns: 'ionos' })}
+			</Filepicker>
 		</div>
 	</div>
 	<div class="flex flex-row items-center h-10">
