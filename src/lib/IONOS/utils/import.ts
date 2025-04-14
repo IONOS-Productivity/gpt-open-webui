@@ -1,4 +1,7 @@
 import { getImportOrigin } from '$lib/utils';
+import type {
+	ChatExport,
+} from '$lib/apis/chats/types';
 
 export const isIonosGptCompatible = (data: any): boolean => {
 	if (!Array.isArray(data)) {
@@ -14,7 +17,7 @@ export const isIonosGptCompatible = (data: any): boolean => {
 	return getImportOrigin(data) === 'webui';
 };
 
-export const parseChatExportData = (contentsStr: string): Chat[] => {
+export const parseChatExportData = (contentsStr: string): ChatExport[] => {
 	let imported: any|null = null;
 
 	try {
@@ -27,5 +30,5 @@ export const parseChatExportData = (contentsStr: string): Chat[] => {
 		throw new Error(`The file is not IONOS GPT compatible`);
 	}
 
-	return imported as unknown as Chat[];
+	return imported as unknown as ChatExport[];
 };
