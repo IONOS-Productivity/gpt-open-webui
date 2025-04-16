@@ -78,6 +78,8 @@
 
 	let folders = {};
 
+	let searchInput: SearchInput;
+
 	const initFolders = async () => {
 		const folderList = await getFolders(localStorage.token).catch((error) => {
 			toast.error(`${error}`);
@@ -343,6 +345,8 @@
 		selectedChatId = null;
 	};
 
+	let hoverTimeout: number | null = null;
+
 	onMount(async () => {
 		showPinnedChat = localStorage?.showPinnedChat ? localStorage.showPinnedChat === 'true' : true;
 
@@ -462,6 +466,14 @@
 		: 'transition-width duration-200 ease-in-out'}  flex-shrink-0 bg-gray-100 text-blue-800 dark:bg-gray-950 dark:text-gray-200 text-sm fixed z-50 top-0 left-0 overflow-x-hidden
         "
 	data-state={$showSidebar}
+	on:mouseover={() => {
+		hoverTimeout = setTimeout(() => {
+			$showSidebar = true;
+		}, 3000);
+	}}
+	on:mouseleave={() => {
+		clearTimeout(hoverTimeout);
+	}}
 >
 	<div
 		class="pt-10 pb-5 my-auto flex flex-col h-screen max-h-[100dvh] overflow-x-hidden z-50 gap-2.5 {$showSidebar
@@ -510,6 +522,7 @@
 						}
 					}, 0);
 				}}
+
 			>
 				<div class="self-center">
 					<Plus />
@@ -588,15 +601,17 @@
 			{#if $showSidebar}
 			<SearchInput
 				bind:value={search}
+				bind:this={searchInput}
 				on:input={searchDebounceHandler}
 				placeholder={$i18n.t('Search')}
 			/>
 			{:else}
-			<div class="self-center pl-3 py-2 rounded-l-xl bg-transparent"
-				on:click={() => {
+			<div class="mx-[2px] px-2.5 py-3 text-gray-600 dark:text-gray-400 rounded bg-transparent cursor-text hover:bg-gray-200 transition"
+				on:click={async () => {
 					if(!$showSidebar) {
-						// focus the search input
 						$showSidebar = true;
+						await tick();
+						searchInput?.focus();
 					}
 
 				}}
