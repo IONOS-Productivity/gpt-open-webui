@@ -9,6 +9,7 @@ on:
       - 'tl/ci-test-**'
     tags:
       - 'ionos-**'
+      - 'tl-ci-test-**'
 
 env:
   JOB_NAME: openwebui-build-push-image
@@ -78,6 +79,7 @@ jobs:
                     - |
                       git config --global url."https://oauth:${TOKEN}@github.com/".insteadOf "https://github.com/" &&
                       git clone --recursive -b ${{ env.BRANCH_NAME }} --depth=1 https://github.com/${{ github.repository }}.git /workspace
+                      echo "ADDITIONAL_TAG: ${ADDITIONAL_TAG}"
                   volumeMounts:
                   - name: build-context
                     mountPath: /workspace
@@ -109,6 +111,7 @@ jobs:
           set -e
         env:
           TOKEN: ${{ secrets.GIT_TOKEN }}
+          ADDITIONAL_TAG: $${{ github.ref_name }}
 
       - name: Monitor Job Status and Print Logs
         run: |
