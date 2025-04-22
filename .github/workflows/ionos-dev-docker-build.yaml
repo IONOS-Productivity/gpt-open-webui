@@ -9,6 +9,7 @@ on:
       - 'tl/ci-test-**'
     tags:
       - 'ionos-**'
+      - 'tl-ci-test-**'
 
 env:
   JOB_NAME: openwebui-build-push-image
@@ -89,6 +90,7 @@ jobs:
                   - --context=dir:///workspace
                   - --destination=${{ env.REGISTRY_URL }}:${{ github.run_id }}
                   - --destination=${{ env.REGISTRY_URL }}:latest
+                  - --destination=${{ github.ref_name | github.sha }}
                   - --build-arg=BUILD_HASH=${{ github.sha }}
                   - --git=recurse-submodules=true
                   - --skip-tls-verify
