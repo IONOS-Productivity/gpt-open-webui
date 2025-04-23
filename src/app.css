@@ -20,6 +20,9 @@
 	font-weight: bold;
 	font-display: swap;
 	src: url(/assets/fonts/OpenSans-Bold-webfont.woff2) format("woff2");
+
+	font-family: "Overpass Regular";
+	src: url(/assets/fonts/Overpass-Regular.woff2) format("woff2");
 }
 
 html {
