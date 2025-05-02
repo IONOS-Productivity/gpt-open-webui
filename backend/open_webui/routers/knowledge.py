@@ -504,6 +504,23 @@ async def delete_knowledge_by_id(id: str, user=Depends(get_verified_user)):
 
     log.info(f"Deleting knowledge base: {id} (name: {knowledge.name})")
 
+
+    # Get all Files for this knowledge base
+    file_ids = knowledge.data.get("file_ids", []) if knowledge.data else []
+    for file_id in file_ids:
+        file = Files.get_file_by_id(file_id)
+        if file:
+            # Remove the file's collection from vector database
+            file_collection = f"file-{file_id}"
+            if VECTOR_DB_CLIENT.has_collection(collection_name=file_collection):
+                VECTOR_DB_CLIENT.delete_collection(collection_name=file_collection)
+
+            # Delete physical file
+            if file.path:
+                Storage.delete_file(file.path)
+
+            # Delete file from database
+            Files.delete_file_by_id(file_id)
     # Get all models
     models = Models.get_all_models()
     log.info(f"Found {len(models)} models to check for knowledge base {id}")
@@ -560,6 +577,24 @@ async def reset_knowledge_by_id(id: str, user=Depends(get_verified_user)):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=ERROR_MESSAGES.ACCESS_PROHIBITED,
         )
+
+    # Get all Files for this knowledge base
+    file_ids = knowledge.data.get("file_ids", []) if knowledge.data else []
+    for file_id in file_ids:
+        file = Files.get_f
+        ile_by_id(file_id)
+        if file:
+            # Remove the file's collection from vector database
+            file_collection = f"file-{file_id}"
+            if VECTOR_DB_CLIENT.has_collection(collection_name=file_collection):
+                VECTOR_DB_CLIENT.delete_collection(collection_name=file_collection)
+
+            # Delete physical file
+            if file.path:
+                Storage.delete_file(file.path)
+
+            # Delete file from database
+            Files.delete_file_by_id(file_id)
 
     try:
         VECTOR_DB_CLIENT.delete_collection(collection_name=id)
