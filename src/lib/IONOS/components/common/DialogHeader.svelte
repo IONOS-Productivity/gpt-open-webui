@@ -1,13 +1,8 @@
 <script lang="ts">
-	import type { Readable } from 'svelte/store';
-	import type { I18Next } from '$lib/IONOS/i18next.d.ts';
-	import { getContext } from 'svelte';
 	import { createEventDispatcher } from 'svelte';
 	import XMark from '$lib/IONOS/components/icons/XMark.svelte';
 
 	const dispatch = createEventDispatcher();
-
-	const i18n = getContext<Readable<I18Next>>('i18n');
 
 	export let closable = true;
 	export let title = '';

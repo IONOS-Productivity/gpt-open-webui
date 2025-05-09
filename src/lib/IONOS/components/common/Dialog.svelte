@@ -1,10 +1,5 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
-
-	const dispatch = createEventDispatcher();
-
 	export let show = false;
-	export let closable = true;
 	export let dialogId = 'dialog';
 
 	let el: HTMLDialogElement|null = null;
