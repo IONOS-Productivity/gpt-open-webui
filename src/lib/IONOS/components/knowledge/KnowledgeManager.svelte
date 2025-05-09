@@ -105,7 +105,7 @@
 		<div class="flex pb-5 border-b min-w-[500px]" class:hidden={!loaded}>
 			<div class="flex grow">
 				<div class="self-center ml-1 mr-3">
-					<Search className="size-5" />
+					<MagnifyingGlass />
 				</div>
 				<input
 					class="w-full text-sm py-1 rounded-r-xl outline-none bg-transparent placeholder:text-blue-800"
