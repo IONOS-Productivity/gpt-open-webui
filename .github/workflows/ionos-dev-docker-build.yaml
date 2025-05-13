@@ -148,15 +148,13 @@ jobs:
           kubectl logs --namespace=arc-runners ${POD_NAME} --follow
           echo "=== END: Logs for pod ${POD_NAME} ==="
         
-          current_time=$(date +%s)
-          elapsed=$((current_time - start_time))
-          
           JOB_STATUS=$(kubectl get job --namespace=arc-runners ${{ env.JOB_NAME }} -o jsonpath='{.status.conditions[?(@.type=="Complete")].status}')
           if [[ "$JOB_STATUS" == "True" ]]; then
             echo "Job ${{ env.JOB_NAME }} is complete."
             echo "Image is pushed to the Harbor Registry with TAG '${{ github.run_id }}'"
-          elif [[ $elapsed -ge $TIMEOUT ]]; then
-            echo "Job ${{ env.JOB_NAME }} did not complete within timeout. Exiting."
+          else
+            echo "Job ${{ env.JOB_NAME }} failed. Exiting."
+            kubectl get job --namespace=arc-runners ${{ env.JOB_NAME }} -o yaml
             exit 1
           fi
             
