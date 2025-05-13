@@ -147,6 +147,11 @@ jobs:
           echo "------------------------------------"
           kubectl get job --namespace=arc-runners ${{ env.JOB_NAME }} -o yaml
           echo "------------------------------------"
+          echo "Phase="
+          kubectl get pod ${POD_NAME} -o jsonpath='{.status.phase}'
+          echo "Status="
+          kubectl get pod ${POD_NAME} -o jsonpath='{.status}'
+          echo "------------------------------------"
 
           echo "=== Logs for pod ${POD_NAME} ==="
           kubectl logs --namespace=arc-runners ${POD_NAME} --follow
