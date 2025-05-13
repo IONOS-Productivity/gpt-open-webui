@@ -147,8 +147,6 @@ jobs:
           echo "------------------------------------"
           kubectl get job --namespace=arc-runners ${{ env.JOB_NAME }} -o yaml
           echo "------------------------------------"
-          echo "Phase="
-          kubectl get pod ${POD_NAME} -o jsonpath='{.status.phase}'
           echo "Status="
           kubectl get pod ${POD_NAME} -o jsonpath='{.status}'
           echo "------------------------------------"
@@ -157,12 +155,16 @@ jobs:
           kubectl logs --namespace=arc-runners ${POD_NAME} --follow
           echo "=== END: Logs for pod ${POD_NAME} ==="
         
+          echo "Status="
+          kubectl get pod ${POD_NAME} -o jsonpath='{.status}'
+          
           JOB_STATUS=$(kubectl get job --namespace=arc-runners ${{ env.JOB_NAME }} -o jsonpath='{.status.conditions[?(@.type=="Complete")].status}')
           if [[ "$JOB_STATUS" == "True" ]]; then
             echo "Job ${{ env.JOB_NAME }} is complete."
             echo "Image is pushed to the Harbor Registry with TAG '${{ github.run_id }}'"
           else
             echo "Job ${{ env.JOB_NAME }} failed. Exiting."
+            
             kubectl get job --namespace=arc-runners ${{ env.JOB_NAME }} -o yaml
             exit 1
           fi
