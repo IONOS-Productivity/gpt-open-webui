@@ -143,6 +143,10 @@ jobs:
             fi
           done
           echo "Pod ${POD_NAME} is running. Following the log ..."
+          
+          echo "------------------------------------"
+          kubectl get job --namespace=arc-runners ${{ env.JOB_NAME }} -o yaml
+          echo "------------------------------------"
 
           echo "=== Logs for pod ${POD_NAME} ==="
           kubectl logs --namespace=arc-runners ${POD_NAME} --follow
