@@ -155,8 +155,12 @@ jobs:
           kubectl logs --namespace=arc-runners ${POD_NAME} --follow
           echo "=== END: Logs for pod ${POD_NAME} ==="
         
+          echo "------------------------------------"
           echo "Status="
           kubectl get pod ${POD_NAME} -o jsonpath='{.status}'
+          echo "exitCode="
+          kubectl get pod ${POD_NAME} -o jsonpath='{.status.containerStatuses[0].state.terminated.exitCode}'
+          echo "------------------------------------"
           
           JOB_STATUS=$(kubectl get job --namespace=arc-runners ${{ env.JOB_NAME }} -o jsonpath='{.status.conditions[?(@.type=="Complete")].status}')
           if [[ "$JOB_STATUS" == "True" ]]; then
