@@ -52,7 +52,7 @@
   "Knowledge Management": "Meine Wissensdatenbank",
   "Knowledge removed successfully.": "Wissendatenbank erfolgreich gelöscht.",
   "Login": "Login ",
-  "Message {{agentName}}": "Nachricht {{agentName}}",
+  "Message {{agentName}}": "Nachricht an {{agentName}}",
   "modelHubInfoLinkText": "IONOS AI Model Hub",
   "modelHubInfoLinkUrl": "https://cloud.ionos.de/managed/ai-model-hub",
   "modelLicenseLinkText": "Llama-Lizenz",
