@@ -351,21 +351,32 @@ async def delete_user_by_id(user_id: str, user=Depends(get_admin_user)):
 
         files = Files.get_files_by_user_id(user_id)
         for file in files:
-            try:
-                Storage.delete_file(file.path)
-                result = Files.delete_file_by_id(file.id)
-                if not result:
+            file_collection = f"file-{file.id}"
+            if VECTOR_DB_CLIENT.has_collection(collection_name=file_collection):
+                try:
+                    VECTOR_DB_CLIENT.delete_collection(file_collection)
+                except Exception as e:
+                    log.error(f"Error deleting file {file_collection} in Vector DB: {e}")
                     raise HTTPException(
                         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                         detail=ERROR_MESSAGES.DELETE_FILE_ERROR,
                     )
-                    VECTOR_DB_CLIENT.delete_collection(f"file-{file.id}")
+
+            try:
+                Storage.delete_file(file.path)
             except Exception as e:
-                log.error(f"Error deleting file: {e}")
+                log.error(f"Error deleting file in storage: {e}")
                 raise HTTPException(
-                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                        detail=ERROR_MESSAGES.DELETE_FILE_ERROR,
-                        )
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail=ERROR_MESSAGES.DELETE_FILE_ERROR,
+                )
+
+            result = Files.delete_file_by_id(file.id)
+            if not result:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail=ERROR_MESSAGES.DELETE_FILE_ERROR,
+                )
 
         knowledges = Knowledges.get_knowledge_bases_by_user_id(user_id)
         for knowledge in knowledges:
