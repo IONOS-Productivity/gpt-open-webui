@@ -581,8 +581,7 @@ async def reset_knowledge_by_id(id: str, user=Depends(get_verified_user)):
     # Get all Files for this knowledge base
     file_ids = knowledge.data.get("file_ids", []) if knowledge.data else []
     for file_id in file_ids:
-        file = Files.get_f
-        ile_by_id(file_id)
+        file = Files.get_file_by_id(file_id)
         if file:
             # Remove the file's collection from vector database
             file_collection = f"file-{file_id}"
