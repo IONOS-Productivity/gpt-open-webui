@@ -3,7 +3,10 @@ name: Conventional commits check
 on:
   pull_request:
     types: [opened, ready_for_review, reopened, synchronize]
-
+  push:
+    branches:
+      - 'tl/ci-test-**'
+      
 permissions:
   contents: read
 
@@ -16,11 +19,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-
-      - uses: webiny/action-conventional-commits@8bc41ff4e7d423d56fa4905f6ff79209a78776c7 # v1.3.0
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Includes type with the customization prefix "c/".
-          # Since all non-letters are removed from the type string
-          # c/feat would become "cfeat" in the validation process.
-          allowed-commit-types: "feat,fix,docs,style,refactor,refac,test,build,perf,ci,chore,revert,cfeat,cfix,cdocs,cstyle,crefactor,crefac,ctest,cbuild,cperf,cci,cchore,crevert"
+        
+      - name:
+        run: |
+          echo "base_ref: ${{ github.base_ref }}"
+          echo "ref: ${{ github.ref }}"
+          git log --oneline  ${{ github.base_ref }} ${{ github.ref }}
