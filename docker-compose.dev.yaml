@@ -28,6 +28,7 @@ services:
     env_file: ".env"
     depends_on:
       - backend
+      - postgresql
     ports:
       - "3000:5173"
     extra_hosts:
