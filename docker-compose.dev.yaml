@@ -4,10 +4,12 @@ services:
 
   postgresql:
     image: pgvector/pgvector:pg17
+    command: ["-h", "0.0.0.0"]
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: pass
       POSTGRES_DB: postgres
+    network_mode: host
     ports:
       - "5432:5432"
     volumes:
@@ -53,6 +55,7 @@ services:
     env_file: ".env"
     environment:
       - ENV=dev
+    network_mode: host
     ports:
       - "8080:8080"
     extra_hosts:
