@@ -1,0 +1,59 @@
+name: Conventional commits check
+
+on:
+  pull_request:
+    types: [opened, ready_for_review, reopened, synchronize]
+
+permissions:
+  contents: read
+
+jobs:
+  conventional-commits-check:
+    name: Check commit messages
+
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Check for conventional commits
+        uses: webiny/action-conventional-commits@8bc41ff4e7d423d56fa4905f6ff79209a78776c7 # v1.3.0
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Includes type with the customization prefix "c/".
+          # Since all non-letters are removed from the type string
+          # c/feat would become "cfeat" in the validation process.
+          allowed-commit-types: "feat,fix,docs,style,refactor,refac,test,build,perf,ci,chore,revert,cfeat,cfix,cdocs,cstyle,crefactor,crefac,ctest,cbuild,cperf,cci,cchore,crevert"
+
+      - name: Check for referenced issue IDs
+        run: |
+          if [ -z "${{ github.base_ref }}" ]; then
+            echo "Not a pull request, don't know the base. Skipped."
+            exit 0
+          fi
+
+          echo "Checking commit range ${from}..${to} for presence of \"Refs:\" ..."
+          # Debug
+          git branch -a
+
+          ok=0
+          nok=0
+          for c in $( git rev-list "${from}..${to}" ); do
+            if [ -z "$( git log -1 --pretty="SHA=%h %s%n%b" ${c} | grep -E '^Refs:' )" ]; then
+              git log -1 --pretty="Not OK: %h %s" ${c}
+              (( nok++ ))
+            else
+              (( ok++ ))
+            fi
+          done
+
+          echo "${ok} OK, ${nok} not OK"
+
+          if [ ${nok} -ne 0 ]; then
+            echo 'Add Refs: <comma separated list of issue IDs>; consider using "Refs: -" where not applicable.'
+            exit 1
+          fi
+        env:
+          from: refs/heads/${{ github.base_ref }}
+          to: ${{ github.ref }}
