@@ -23,6 +23,7 @@
 	import { compareVersion } from '$lib/utils';
 	import { hasStoredState } from '$lib/IONOS/services/startup';
 	import { hasChats } from '$lib/IONOS/services/chats';
+	import { init as initAgentsStore } from '$lib/IONOS/stores/agents';
 
 	import {
 		config,
@@ -210,6 +211,7 @@
 			await tick();
 		}
 
+		await initAgentsStore();
 		loaded = true;
 	});
 
