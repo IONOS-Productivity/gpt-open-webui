@@ -32,6 +32,7 @@
 	import Sparkles from '$lib/IONOS/components/icons/Sparkles.svelte';
 	import Stop from '$lib/IONOS/components/icons/Stop.svelte';
 	import Attachement from '../icons/Attachement.svelte';
+	import SmallAgentSelector from '$lib/IONOS/components/SmallAgentSelector.svelte';
 
 	const i18n = getContext<Readable<I18Next>>('i18n');
 
@@ -58,6 +59,8 @@
 
 	export let imageGenerationEnabled = false;
 	export let webSearchEnabled = false;
+
+	export let showAgentSelector = false;
 
 	$: onChange({
 		prompt,
@@ -635,6 +638,13 @@
 												<Attachement className="size-5" />
 											</button>
 										</InputMenu>
+
+										{#if showAgentSelector}
+											<SmallAgentSelector
+												bind:selectedModels={selectedModels}
+												anchorElement={chatInputElement}
+											/>
+										{/if}
 									</div>
 
 									<div class="grow">

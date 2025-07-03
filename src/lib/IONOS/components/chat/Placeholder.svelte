@@ -12,7 +12,6 @@
 	import { getUserSettings } from '$lib/apis/users';
 
 	import MessageInput from '$lib/IONOS/components/chat/MessageInput.svelte';
-	import SmallAgentSelector from '$lib/IONOS/components/SmallAgentSelector.svelte';
 	import TermsHint from '$lib/IONOS/components/TermsHint.svelte';
 
 	const i18n = getContext<Readable<I18Next>>('i18n');
@@ -79,7 +78,7 @@
 			>
 				<MessageInput
 					{history}
-					{selectedModels}
+					bind:selectedModels={selectedModels}
 					bind:files
 					bind:prompt
 					bind:autoScroll
@@ -91,6 +90,7 @@
 					{stopResponse}
 					{createMessagePair}
 					placeholder={placeholder}
+					showAgentSelector={true}
 					on:upload={(e) => {
 						dispatch('upload', e.detail);
 					}}
@@ -99,14 +99,6 @@
 					}}
 				/>
 			</div>
-		</div>
-	</div>
-
-	<div class="mx-auto max-w-3xl font-primary">
-		<div class="mx-9 mt-4">
-			<SmallAgentSelector
-				bind:selectedModels={selectedModels}
-			/>
 		</div>
 	</div>
 </div>
