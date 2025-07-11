@@ -53,7 +53,7 @@
 		side='bottom'
 		sideOffset={15}
 		align='start'
-		alignOffset={-30}
+		alignOffset={-50}
 		transition={flyAndScale}
 	>
 		<p class="font-semibold text-gray-500 pb-4 px-3">
@@ -64,7 +64,7 @@
 			<DropdownMenu.Item>
 				<div
 					on:click={() => select(id)}
-					class="flex flex-row justify-between content-center w-[160px] h-full py-2 px-3 rounded cursor-pointer {id == selectedModels[0] ? 'text-purple-700' : 'text-blue-800'}  hover:bg-gray-50 dark:hover:bg-gray-800"
+					class="flex flex-row justify-between content-center w-[160px] h-[80px] py-2 px-3 rounded cursor-pointer {id == selectedModels[0] ? 'text-purple-700' : 'text-blue-800'}  hover:bg-gray-50 dark:hover:bg-gray-800"
 					aria-pressed={id === selectedModels[0]}
 					role="button"
 				>
@@ -72,7 +72,7 @@
 						<p>
 							{name}
 						</p>
-						<p class="font-normal truncate w-[120px]">
+						<p class="font-normal text-wrap truncate w-[120px]">
 							{subtitle}
 						</p>
 					</div>
