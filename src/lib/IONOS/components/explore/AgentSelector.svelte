@@ -1,17 +1,24 @@
 <script lang="ts">
-	import type { Readable } from 'svelte/store';
+	import type { Readable, Writable } from 'svelte/store';
 	import type { I18Next } from '$lib/IONOS/i18next.d.ts';
 	import { createEventDispatcher, getContext } from 'svelte';
-	import { agents } from '$lib/IONOS/stores/agents';
+	import { agents, type Agent } from '$lib/IONOS/stores/agents';
 	import Button, { ButtonType } from '$lib/IONOS/components/common/Button.svelte';
 	import Sparkles from '$lib/IONOS/components/icons/Sparkles.svelte';
 
 	const i18n = getContext<Readable<I18Next>>('i18n');
 	const dispatch = createEventDispatcher();
+
+	let shownAgents: Agent[]
+
+	agents.subscribe((allAgents: Writable<Agent[]>) => {
+		const shuffled = allAgents.sort(() => 0.5 - Math.random());
+		shownAgents = shuffled.slice(0, 4);
+	});
 </script>
 
 <div class="flex flex-row gap-4 items-center justify-center flex-wrap">
-	{#each $agents as { id, name, subtitle, description }}
+	{#each shownAgents as { id, name, subtitle, description }}
 		<div class="min-h-96 flex items-center">
 			<button
 				class="flex-0 group w-56 hover:pb-0 duration-[500ms] transition-[padding] pb-4 mx-6 bg-white text-blue-800 text-left rounded-2xl shadow-xl transition group cursor-pointer"
