@@ -160,5 +160,101 @@
         "promptDisplayName": "Erstelle eine E-Mail, um einem Lieferanten freundlich abzusagen.",
         "prompt": "Erstelle eine E-Mail, um einem Lieferanten freundlich abzusagen.",
         "agentId": "cedric"
+    },
+    {
+        "id": 27,
+        "promptDisplayName": "Kannst du mir helfen, einen Plan zu erstellen, um mich auf meine bevorstehende Prüfung vorzubereiten?",
+        "prompt": "Kannst du mir helfen, einen Plan zu erstellen, um mich auf meine bevorstehende Prüfung vorzubereiten?",
+        "agentId": "chris"
+    },
+    {
+        "id": 28,
+        "promptDisplayName": "Wie kann ich meine Präsentationsfähigkeiten verbessern, um selbstbewusster aufzutreten?",
+        "prompt": "Wie kann ich meine Präsentationsfähigkeiten verbessern, um selbstbewusster aufzutreten?",
+        "agentId": "chris"
+    },
+    {
+        "id": 29,
+        "promptDisplayName": "Welche Methoden gibt es, um meine Konzentration während des Lernens zu steigern?",
+        "prompt": "Welche Methoden gibt es, um meine Konzentration während des Lernens zu steigern?",
+        "agentId": "chris"
+    },
+    {
+        "id": 30,
+        "promptDisplayName": "Hast du Tipps, wie ich meine Lernmotivation aufrechterhalten kann, auch wenn der Stoff langweilig ist?",
+        "prompt": "Hast du Tipps, wie ich meine Lernmotivation aufrechterhalten kann, auch wenn der Stoff langweilig ist?",
+        "agentId": "chris"
+    },
+    {
+        "id": 31,
+        "promptDisplayName": "Welche Strategien würdest du empfehlen, um langfristige Lerngewohnheiten zu entwickeln?",
+        "prompt": "Welche Strategien würdest du empfehlen, um langfristige Lerngewohnheiten zu entwickeln?",
+        "agentId": "chris"
+    },
+    {
+        "id": 32,
+        "promptDisplayName": "Ich möchte besser im Multitasking werden. Welche Übungen sind dafür geeignet?",
+        "prompt": "Ich möchte besser im Multitasking werden. Welche Übungen sind dafür geeignet?",
+        "agentId": "chris"
+    },
+    {
+        "id": 33,
+        "promptDisplayName": "Welche drei Hauptbereiche schlagen unsere Kunden für Verbesserungen vor, basierend auf ihrem Feedback?",
+        "prompt": "Welche drei Hauptbereiche schlagen unsere Kunden für Verbesserungen vor, basierend auf ihrem Feedback?",
+        "agentId": "fiona"
+    },
+    {
+        "id": 34,
+        "promptDisplayName": "Was sind die häufigsten Trends in unserem aktuellen Kundenfeedback zu unserem neuen Produktlaunch?",
+        "prompt": "Was sind die häufigsten Trends in unserem aktuellen Kundenfeedback zu unserem neuen Produktlaunch?",
+        "agentId": "fiona"
+    },
+    {
+        "id": 35,
+        "promptDisplayName": "Gibt es aufkommende Muster in den Kundenzufriedenheitsbewertungen, die beachtet werden sollten?",
+        "prompt": "Gibt es aufkommende Muster in den Kundenzufriedenheitsbewertungen, die beachtet werden sollten?",
+        "agentId": "fiona"
+    },
+    {
+        "id": 36,
+        "promptDisplayName": "Welche Rückmeldungen deuten auf eine hohe Kundentreue oder -abwanderung hin?",
+        "prompt": "Welche Rückmeldungen deuten auf eine hohe Kundentreue oder -abwanderung hin?",
+        "agentId": "fiona"
+    },
+    {
+        "id": 37,
+        "promptDisplayName": "Welche Rückschlüsse können wir aus dem Feedback ziehen, um die Benutzerfreundlichkeit unserer Website zu verbessern?",
+        "prompt": "Welche Rückschlüsse können wir aus dem Feedback ziehen, um die Benutzerfreundlichkeit unserer Website zu verbessern?",
+        "agentId": "fiona"
+    },
+    {
+        "id": 38,
+        "promptDisplayName": "Wie segmentiere ich mein Publikum, um unterschiedliche Botschaften je nach Interessen und Bedürfnissen zu verbreiten?",
+        "prompt": "Wie segmentiere ich mein Publikum, um unterschiedliche Botschaften je nach Interessen und Bedürfnissen zu verbreiten?",
+        "agentId": "sofia"
+    },
+    {
+        "id": 39,
+        "promptDisplayName": "Wie gestalte ich einprägsame Botschaften, die lange nach der Präsentation im Gedächtnis bleiben?",
+        "prompt": "Wie gestalte ich einprägsame Botschaften, die lange nach der Präsentation im Gedächtnis bleiben?",
+        "agentId": "sofia"
+    },
+    {
+        "id": 40,
+        "promptDisplayName": "Welche Ansätze eignen sich, um technische Vorteile eines Produkts für Laien verständlich zu machen?",
+        "prompt": "Welche Ansätze eignen sich, um technische Vorteile eines Produkts für Laien verständlich zu machen?",
+        "agentId": "sofia"
+    },
+    {
+        "id": 41,
+        "promptDisplayName": "Welche Herangehensweisen sind effektiv, um digitale Kanäle zur Kundenkonversion zu nutzen?",
+        "prompt": "Welche Herangehensweisen sind effektiv, um digitale Kanäle zur Kundenkonversion zu nutzen?",
+        "agentId": "sofia"
+    },
+    {
+        "id": 42,
+        "promptDisplayName": "Wie verpacke ich Preisargumente in einer Weise, die den wahrgenommenen Wert steigert?",
+        "prompt": "Wie verpacke ich Preisargumente in einer Weise, die den wahrgenommenen Wert steigert?",
+        "agentId": "sofia"
     }
 ]
