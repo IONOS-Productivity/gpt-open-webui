@@ -495,7 +495,7 @@
 		<div class="px-2.5 flex justify-center text-gray-600 dark:text-gray-400 {$showSidebar ? '' : 'content-center'}">
 			<a
 				id="sidebar-new-chat-button"
-				class="{$showSidebar ? 'flex-grow' : ''} flex space-x-3 rounded p-2.5 bg-transparent text-blue-800 hover:bg-gray-200 dark:hover:bg-gray-900 transition no-drag-region"
+				class="{$showSidebar ? 'flex-grow' : ''} flex space-x-3 rounded-sm p-2.5 bg-transparent text-blue-800 hover:bg-gray-200 dark:hover:bg-gray-900 transition no-drag-region"
 				href="/"
 				draggable="false"
 				on:click={async () => {
@@ -523,7 +523,7 @@
 		<div class="px-2.5 flex justify-center text-gray-600 dark:text-gray-400">
 			<a
 				id="sidebar-explore-button"
-				class="{$showSidebar ? 'flex-grow' : ''} flex space-x-3 rounded p-2.5 bg-transparent text-blue-800 hover:bg-gray-200 dark:hover:bg-gray-900 transition no-drag-region"
+				class="{$showSidebar ? 'flex-grow' : ''} flex space-x-3 rounded-sm p-2.5 bg-transparent text-blue-800 hover:bg-gray-200 dark:hover:bg-gray-900 transition no-drag-region"
 				href="/explore"
 				draggable="false"
 				on:click={async () => { await goto('/explore'); }}

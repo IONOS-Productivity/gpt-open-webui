@@ -316,7 +316,7 @@
 		</div>
 	{:else}
 		<table
-			class="w-full text-sm text-left text-gray-500 dark:text-gray-400 table-auto max-w-full rounded {loadingLeaderboard
+			class="w-full text-sm text-left text-gray-500 dark:text-gray-400 table-auto max-w-full rounded-sm {loadingLeaderboard
 				? 'opacity-20'
 				: ''}"
 		>

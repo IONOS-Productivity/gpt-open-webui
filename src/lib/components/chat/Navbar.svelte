@@ -52,7 +52,7 @@
 
 <nav class="sticky top-0 z-30 w-full px-1.5 pt-[30px] pb-4 -mb-8 flex items-center drag-region">
 	<div
-		class=" bg-gradient-to-b via-50% from-white via-white to-transparent dark:from-gray-900 dark:via-gray-900 dark:to-transparent pointer-events-none absolute inset-0 -bottom-7 z-[-1] blur"
+		class=" bg-gradient-to-b via-50% from-white via-white to-transparent dark:from-gray-900 dark:via-gray-900 dark:to-transparent pointer-events-none absolute inset-0 -bottom-7 z-[-1] blur-sm"
 	></div>
 
 	<div class=" flex max-w-full w-full mx-auto px-1 pt-0.5 bg-transparent">

@@ -619,7 +619,7 @@
 
 						<div class="flex gap-2 mb-1">
 							<input
-								class="flex-1 w-full text-sm bg-transparent outline-none"
+								class="flex-1 w-full text-sm bg-transparent outline-hidden"
 								placeholder={$i18n.t('API Base URL')}
 								bind:value={config.gemini.GEMINI_API_BASE_URL}
 								required

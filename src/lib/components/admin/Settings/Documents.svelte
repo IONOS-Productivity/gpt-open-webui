@@ -587,7 +587,7 @@
 									<input
 										bind:value={embeddingBatchSize}
 										type="number"
-										class=" bg-transparent text-center w-14 outline-none"
+										class=" bg-transparent text-center w-14 outline-hidden"
 										min="-2"
 										max="16000"
 										step="1"
