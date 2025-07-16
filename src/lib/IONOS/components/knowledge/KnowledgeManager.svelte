@@ -109,7 +109,7 @@
 						<MagnifyingGlass />
 					</div>
 					<input
-						class="w-full text-sm py-1 rounded-r-xl outline-none bg-transparent placeholder:text-blue-800"
+						class="w-full text-sm py-1 rounded-r-xl outline-hidden bg-transparent placeholder:text-blue-800"
 						bind:value={query}
 						placeholder={$i18n.t('Search Knowledge', { ns: 'ionos' })}
 					/>

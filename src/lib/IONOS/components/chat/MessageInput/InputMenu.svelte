@@ -35,7 +35,7 @@
 
 	<div slot="content">
 		<DropdownMenu.Content
-			class="w-full max-w-[220px] rounded-2xl px-2 py-3 text-blue-800 text-xs font-semibold border-gray-300/30 dark:border-gray-700/50 z-50 bg-white dark:bg-gray-850 dark:text-white shadow"
+			class="w-full max-w-[220px] rounded-2xl px-2 py-3 text-blue-800 text-xs font-semibold border-gray-300/30 dark:border-gray-700/50 z-50 bg-white dark:bg-gray-850 dark:text-white shadow-sm"
 			sideOffset={15}
 			alignOffset={-8}
 			side="top"
