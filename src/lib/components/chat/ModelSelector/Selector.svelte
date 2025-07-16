@@ -395,7 +395,7 @@
 						>
 							{#if (items.find((item) => item.model?.owned_by === 'ollama') && items.find((item) => item.model?.owned_by === 'openai')) || items.find((item) => item.model?.direct) || tags.length > 0}
 								<button
-									class="min-w-fit outline-none p-1.5 {selectedTag === '' &&
+									class="min-w-fit outline-hidden p-1.5 {selectedTag === '' &&
 									selectedConnectionType === ''
 										? ''
 										: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition capitalize"
@@ -410,7 +410,7 @@
 
 							{#if items.find((item) => item.model?.owned_by === 'ollama') && items.find((item) => item.model?.owned_by === 'openai')}
 								<button
-									class="min-w-fit outline-none p-1.5 {selectedConnectionType === 'ollama'
+									class="min-w-fit outline-hidden p-1.5 {selectedConnectionType === 'ollama'
 										? ''
 										: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition capitalize"
 									on:click={() => {
@@ -421,7 +421,7 @@
 									{$i18n.t('Local')}
 								</button>
 								<button
-									class="min-w-fit outline-none p-1.5 {selectedConnectionType === 'openai'
+									class="min-w-fit outline-hidden p-1.5 {selectedConnectionType === 'openai'
 										? ''
 										: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition capitalize"
 									on:click={() => {
@@ -435,7 +435,7 @@
 
 							{#if items.find((item) => item.model?.direct)}
 								<button
-									class="min-w-fit outline-none p-1.5 {selectedConnectionType === 'direct'
+									class="min-w-fit outline-hidden p-1.5 {selectedConnectionType === 'direct'
 										? ''
 										: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition capitalize"
 									on:click={() => {
@@ -449,7 +449,7 @@
 
 							{#each tags as tag}
 								<button
-									class="min-w-fit outline-none p-1.5 {selectedTag === tag
+									class="min-w-fit outline-hidden p-1.5 {selectedTag === tag
 										? ''
 										: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition capitalize"
 									on:click={() => {

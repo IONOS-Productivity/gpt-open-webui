@@ -837,7 +837,7 @@
 					</div>
 
 					<button
-						class="p-1 px-3 text-xs flex rounded transition"
+						class="p-1 px-3 text-xs flex rounded-sm transition"
 						on:click={() => {
 							togglectrlEnterToSend();
 						}}

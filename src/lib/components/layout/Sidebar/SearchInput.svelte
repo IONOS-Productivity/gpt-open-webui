@@ -97,7 +97,7 @@
 		</div>
 
 		<input
-			class="w-full rounded py-1.5 pl-2.5 pr-4 text-sm bg-transparent placeholder:text-blue-800 text-blue-800 dark:text-gray-300 outline-hidden"
+			class="w-full rounded-sm py-1.5 pl-2.5 pr-4 text-sm bg-transparent placeholder:text-blue-800 text-blue-800 dark:text-gray-300 outline-hidden"
 			placeholder={placeholder ? placeholder : $i18n.t('Search')}
 			bind:value
 			bind:this={inputEl}
@@ -172,7 +172,7 @@
 					<div class="max-h-60 overflow-auto">
 						{#each filteredTags as tag, tagIdx}
 							<button
-								class=" px-1.5 py-0.5 flex gap-1 hover:bg-gray-100 dark:hover:bg-gray-900 w-full rounded {selectedIdx ===
+								class=" px-1.5 py-0.5 flex gap-1 hover:bg-gray-100 dark:hover:bg-gray-900 w-full rounded-sm {selectedIdx ===
 								tagIdx
 									? 'bg-gray-100 dark:bg-gray-900'
 									: ''}"
@@ -206,7 +206,7 @@
 					<div class=" max-h-60 overflow-auto">
 						{#each filteredOptions as option, optionIdx}
 							<button
-								class=" px-1.5 py-0.5 flex gap-1 hover:bg-gray-100 dark:hover:bg-gray-900 w-full rounded {selectedIdx ===
+								class=" px-1.5 py-0.5 flex gap-1 hover:bg-gray-100 dark:hover:bg-gray-900 w-full rounded-sm {selectedIdx ===
 								optionIdx
 									? 'bg-gray-100 dark:bg-gray-900'
 									: ''}"

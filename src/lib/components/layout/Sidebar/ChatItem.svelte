@@ -251,7 +251,7 @@
 >
 	{#if confirmEdit}
 		<div
-			class=" w-full flex justify-between rounded p-2.5 {id === $chatId ||
+			class=" w-full flex justify-between rounded-sm p-2.5 {id === $chatId ||
 			confirmEdit
 				? 'bg-gray-200 dark:bg-gray-900'
 				: selected
@@ -268,7 +268,7 @@
 		</div>
 	{:else}
 		<a
-			class=" w-full flex justify-between rounded p-2.5 {id === $chatId ||
+			class=" w-full flex justify-between rounded-sm p-2.5 {id === $chatId ||
 			confirmEdit
 				? 'bg-gray-200 dark:bg-gray-900'
 				: selected
