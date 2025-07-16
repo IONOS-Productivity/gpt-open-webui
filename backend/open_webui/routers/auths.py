@@ -417,6 +417,7 @@ async def signin(request: Request, response: Response, form_data: SigninForm):
             "email": user.email,
             "name": user.name,
             "role": user.role,
+            "created_at": user.created_at,
             "profile_image_url": user.profile_image_url,
             "permissions": user_permissions,
         }
