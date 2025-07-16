@@ -27,7 +27,7 @@
 	tippyOptions={tippyOptions}
 	allowHTML={true}
 	content={`<div class="flex flex-row rounded-2xl px-px py-[5px] text-blue-800">
-				<div class="flex-shrink-0 pr-4">
+				<div class="shrink-0 pr-4">
 					<img class="w-[120px] h-[120px] object-cover rounded-full" src=${model?.info?.meta?.profile_image_url} alt="Model avatar image">
 				</div>
 				<div>

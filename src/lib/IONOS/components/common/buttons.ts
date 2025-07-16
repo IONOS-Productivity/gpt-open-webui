@@ -35,8 +35,8 @@ const stateMap = {
 	'tertiary': {
 		'all': 'border-2 border-transparent text-blue-700 outline-offset-4 rounded-full',
 		'stateless': 'bg-transparent',
-		'hover': 'hover:bg-blue-300 hover:bg-opacity-20',
-		'active': 'active:bg-blue-300 active:bg-opacity-10',
+		'hover': 'hover:bg-blue-300/20',
+		'active': 'active:bg-blue-300/10',
 		'focus': 'focus:outline-blue-400',
 		'pressed': 'bg-transparent',
 		'disabled': 'bg-transparent cursor-default text-blue-700',
@@ -45,8 +45,8 @@ const stateMap = {
 	'caution': {
 		'all': 'border-2 border-white text-red-500 rounded-full',
 		'stateless': ' outline-offset-4',
-		'hover': 'hover:bg-red-200 hover:bg-opacity-50',
-		'active': 'active:bg-red-200 active:bg-opacity-65',
+		'hover': 'hover:bg-red-200/50',
+		'active': 'active:bg-red-200/65',
 		'focus': 'focus:outline-blue-400',
 		'pressed': 'bg-transparent',
 		'disabled': 'bg-white cursor-default',

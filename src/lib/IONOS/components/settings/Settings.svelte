@@ -31,7 +31,7 @@
 	/>
 
 	<div slot="content" class="flex flex-row gap-[30px] p-5 text-blue-800">
-		<nav class="w-48 flex-shrink-0">
+		<nav class="w-48 shrink-0">
 			<ul class="flex flex-col">
 				<li class="mb-3">
 					<NavItem bind:group={section} value="general">
