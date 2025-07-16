@@ -226,7 +226,7 @@
 
 						<div class="flex flex-wrap text-sm font-medium gap-1.5 mt-2 m-1 justify-end w-full">
 							<button
-								class=" px-3.5 py-1.5 font-medium hover:bg-black/5 dark:hover:bg-white/5 outline outline-1 outline-gray-300 dark:outline-gray-800 rounded-3xl"
+								class=" px-3.5 py-1.5 font-medium hover:bg-black/5 dark:hover:bg-white/5 outline outline-gray-300 dark:outline-gray-800 rounded-3xl"
 								on:click={() => {
 									showUnarchiveAllConfirmDialog = true;
 								}}
@@ -235,7 +235,7 @@
 							</button>
 
 							<button
-								class="px-3.5 py-1.5 font-medium hover:bg-black/5 dark:hover:bg-white/5 outline outline-1 outline-gray-300 dark:outline-gray-800 rounded-3xl"
+								class="px-3.5 py-1.5 font-medium hover:bg-black/5 dark:hover:bg-white/5 outline outline-gray-300 dark:outline-gray-800 rounded-3xl"
 								on:click={() => {
 									exportChatsHandler();
 								}}
