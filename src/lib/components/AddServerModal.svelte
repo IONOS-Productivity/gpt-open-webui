@@ -249,7 +249,7 @@
 								<div class="  text-xs text-gray-500">{$i18n.t('Auth')}</div>
 
 								<div class="flex gap-2">
-									<div class="flex-shrink-0 self-start">
+									<div class="shrink-0 self-start">
 										<select
 											class="w-full text-sm bg-transparent dark:bg-gray-900 placeholder:text-gray-300 dark:placeholder:text-gray-700 outline-hidden pr-5"
 											bind:value={auth_type}

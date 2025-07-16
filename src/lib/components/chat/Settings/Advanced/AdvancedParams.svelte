@@ -744,7 +744,7 @@
 				</div>
 
 				<button
-					class="p-1 px-3 text-xs flex rounded transition flex-shrink-0 outline-none"
+					class="p-1 px-3 text-xs flex rounded transition shrink-0 outline-none"
 					type="button"
 					on:click={() => {
 						params.presence_penalty = (params?.presence_penalty ?? null) === null ? 0.0 : null;
@@ -1020,7 +1020,7 @@
 				</div>
 
 				<button
-					class="p-1 px-3 text-xs flex rounded transition flex-shrink-0 outline-none"
+					class="p-1 px-3 text-xs flex rounded transition shrink-0 outline-none"
 					type="button"
 					on:click={() => {
 						params.repeat_penalty = (params?.repeat_penalty ?? null) === null ? 1.1 : null;
