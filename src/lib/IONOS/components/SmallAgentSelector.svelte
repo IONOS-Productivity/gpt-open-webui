@@ -64,7 +64,7 @@
 			<DropdownMenu.Item>
 				<div
 					on:click={() => select(id)}
-					class="flex flex-row justify-between content-center w-[160px] h-[80px] py-2 px-3 rounded cursor-pointer {id == selectedModels[0] ? 'text-purple-700' : 'text-blue-800'}  hover:bg-gray-50 dark:hover:bg-gray-800"
+					class="flex flex-row justify-between content-center w-[160px] h-[80px] py-2 px-3 rounded-sm cursor-pointer {id == selectedModels[0] ? 'text-purple-700' : 'text-blue-800'}  hover:bg-gray-50 dark:hover:bg-gray-800"
 					aria-pressed={id === selectedModels[0]}
 					role="button"
 				>

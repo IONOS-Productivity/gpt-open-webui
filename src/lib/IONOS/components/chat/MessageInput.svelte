@@ -404,7 +404,7 @@
 									id="chat-input"
 									lang="de"
 									bind:this={chatInputElement}
-									class="scrollbar-hidden bg-transparent text-blue-700 placeholder:text-gray-400 dark:text-gray-100 outline-none w-full py-3 px-4 rounded-xl resize-none text-sm"
+									class="scrollbar-hidden bg-transparent text-blue-700 placeholder:text-gray-400 dark:text-gray-100 outline-hidden w-full py-3 px-4 rounded-xl resize-none text-sm"
 									placeholder={placeholder ? placeholder : $i18n.t('Send a Message')}
 									bind:value={prompt}
 									on:keypress={(e) => {
@@ -631,7 +631,7 @@
 											}}
 										>
 											<button
-												class="bg-transparent hover:bg-white/80 text-gray-800 dark:text-white dark:hover:bg-gray-800 transition rounded-full p-2 outline-none focus:outline-none"
+												class="bg-transparent hover:bg-white/80 text-gray-800 dark:text-white dark:hover:bg-gray-800 transition rounded-full p-2 outline-hidden focus:outline-hidden"
 												type="button"
 												aria-label="More"
 											>
