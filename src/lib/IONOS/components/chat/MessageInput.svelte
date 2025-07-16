@@ -17,7 +17,7 @@
 		user as _user,
 	} from '$lib/stores';
 
-	import { blobToFile, compressImage, findWordIndices } from '$lib/utils';
+	import { blobToFile, compressImage, extractCurlyBraceWords } from '$lib/utils';
 	import { transcribeAudio } from '$lib/apis/audio';
 	import { uploadFile } from '$lib/apis/files';
 
@@ -515,7 +515,7 @@
 
 											commandOptionButton?.click();
 										} else if (e.key === 'Tab') {
-											const words = findWordIndices(prompt);
+											const words = extractCurlyBraceWords(prompt);
 
 											if (words.length > 0) {
 												const word = words.at(0);
