@@ -182,7 +182,7 @@
 							</div>
 
 							<a
-								class="flex-shrink-0 text-xs font-medium underline"
+								class="shrink-0 text-xs font-medium underline"
 								href="https://docs.openwebui.com/"
 								target="_blank"
 							>
@@ -263,7 +263,7 @@
 							</div>
 
 							<!-- <button
-								class="flex-shrink-0 text-xs px-3 py-1.5 bg-gray-50 hover:bg-gray-100 dark:bg-gray-850 dark:hover:bg-gray-800 transition rounded-lg font-medium"
+								class="shrink-0 text-xs px-3 py-1.5 bg-gray-50 hover:bg-gray-100 dark:bg-gray-850 dark:hover:bg-gray-800 transition rounded-lg font-medium"
 							>
 								{$i18n.t('Activate')}
 							</button> -->
