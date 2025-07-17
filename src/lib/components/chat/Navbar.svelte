@@ -4,7 +4,9 @@
 
 	import {
 		WEBUI_NAME,
+		banners,
 		chatId,
+		config,
 		mobile,
 		settings,
 		showArchivedChats,
@@ -38,6 +40,7 @@
 	export const shareEnabled: boolean = false;
 
 	export let chat;
+	export let history;
 	export let selectedModels;
 	export let showModelSelector = true;
 
@@ -96,7 +99,6 @@
 			<PrivacySlogan />
 
 			<div class="self-start flex flex-none items-center self-center text-gray-600 dark:text-gray-400">
-				<!-- <div class="md:hidden flex self-center w-[1px] h-5 mx-2 bg-gray-300 dark:bg-stone-700" /> -->
 				{#if shareEnabled && chat && (chat.id || $temporaryChatEnabled)}
 					<Menu
 						{chat}
@@ -130,7 +132,7 @@
 							</div>
 						</button>
 					</Menu>
-				{:else if $mobile && ($user.role === 'admin' || $user?.permissions.chat?.controls)}
+				{:else if $mobile && ($user?.role === 'admin' || $user?.permissions.chat?.controls)}
 					<Tooltip content={$i18n.t('Controls')}>
 						<button
 							class=" flex cursor-pointer px-2 py-2 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-850 transition"
@@ -146,7 +148,7 @@
 					</Tooltip>
 				{/if}
 
-				{#if !$mobile && ($user.role === 'admin' || $user?.permissions.chat?.controls)}
+				{#if !$mobile && ($user?.role === 'admin' || $user?.permissions.chat?.controls)}
 					<Tooltip content={$i18n.t('Controls')}>
 						<button
 							class=" flex cursor-pointer px-2 py-2 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-850 transition"
@@ -162,10 +164,10 @@
 					</Tooltip>
 				{/if}
 
-				{#if $user !== undefined}
+				{#if $user !== undefined && $user !== null}
 					<UserMenu
 						className="max-w-[200px]"
-						role={$user.role}
+						role={$user?.role}
 						on:show={(e) => {
 							if (e.detail === 'archived-chat') {
 								showArchivedChats.set(true);
@@ -185,4 +187,53 @@
 			</div>
 		</div>
 	</div>
+
+	{#if !history.currentId && !$chatId && ($banners.length > 0 || ($config?.license_metadata?.type ?? null) === 'trial' || (($config?.license_metadata?.seats ?? null) !== null && $config?.user_count > $config?.license_metadata?.seats))}
+		<div class=" w-full z-30 mt-5">
+			<div class=" flex flex-col gap-1 w-full">
+				{#if ($config?.license_metadata?.type ?? null) === 'trial'}
+					<Banner
+						banner={{
+							type: 'info',
+							title: 'Trial License',
+							content: $i18n.t(
+								'You are currently using a trial license. Please contact support to upgrade your license.'
+							)
+						}}
+					/>
+				{/if}
+
+				{#if ($config?.license_metadata?.seats ?? null) !== null && $config?.user_count > $config?.license_metadata?.seats}
+					<Banner
+						banner={{
+							type: 'error',
+							title: 'License Error',
+							content: $i18n.t(
+								'Exceeded the number of seats in your license. Please contact support to increase the number of seats.'
+							)
+						}}
+					/>
+				{/if}
+
+				{#each $banners.filter( (b) => (b.dismissible ? !JSON.parse(localStorage.getItem('dismissedBannerIds') ?? '[]').includes(b.id) : true) ) as banner}
+					<Banner
+						{banner}
+						on:dismiss={(e) => {
+							const bannerId = e.detail;
+
+							localStorage.setItem(
+								'dismissedBannerIds',
+								JSON.stringify(
+									[
+										bannerId,
+										...JSON.parse(localStorage.getItem('dismissedBannerIds') ?? '[]')
+									].filter((id) => $banners.find((b) => b.id === id))
+								)
+							);
+						}}
+					/>
+				{/each}
+			</div>
+		</div>
+	{/if}
 </nav>

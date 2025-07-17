@@ -2,7 +2,7 @@
 	import { toast } from 'svelte-sonner';
 	import { createEventDispatcher, tick, getContext, onMount, onDestroy } from 'svelte';
 	import { config, settings } from '$lib/stores';
-	import { blobToFile, calculateSHA256, findWordIndices } from '$lib/utils';
+	import { blobToFile, calculateSHA256, extractCurlyBraceWords } from '$lib/utils';
 
 	import { transcribeAudio } from '$lib/apis/audio';
 
@@ -159,7 +159,7 @@
 	};
 
 	const startRecording = async () => {
-		startDurationCounter();
+		loading = true;
 
 		stream = await navigator.mediaDevices.getUserMedia({
 			audio: {
@@ -171,6 +171,9 @@
 		mediaRecorder = new MediaRecorder(stream);
 		mediaRecorder.onstart = () => {
 			console.log('Recording started');
+			loading = false;
+			startDurationCounter();
+
 			audioChunks = [];
 			analyseAudio(stream);
 		};
@@ -362,7 +365,7 @@
 			{#each visualizerData.slice().reverse() as rms}
 				<div class="flex items-center h-full">
 					<div
-						class="w-[2px] flex-shrink-0
+						class="w-[2px] shrink-0
                     
                     {loading
 							? ' bg-gray-500 dark:bg-gray-400   '

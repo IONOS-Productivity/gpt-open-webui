@@ -1,5 +1,6 @@
 import typography from '@tailwindcss/typography';
-const defaultTheme = require('tailwindcss/defaultTheme')
+import defaultTheme from 'tailwindcss/defaultTheme';
+import containerQuries from '@tailwindcss/container-queries';
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -108,5 +109,5 @@ export default {
 			}
 		}
 	},
-	plugins: [typography]
+	plugins: [typography, containerQuries]
 };

@@ -83,11 +83,19 @@
 			currentChatPage.set(1);
 			await chats.set(await getChatList(localStorage.token, $currentChatPage));
 			await pinnedChats.set(await getPinnedChatList(localStorage.token));
+
+			dispatch('change');
 		}
 	};
 
 	const cloneChatHandler = async (id) => {
-		const res = await cloneChatById(localStorage.token, id).catch((error) => {
+		const res = await cloneChatById(
+			localStorage.token,
+			id,
+			$i18n.t('Clone of {{TITLE}}', {
+				TITLE: title
+			})
+		).catch((error) => {
 			toast.error(`${error}`);
 			return null;
 		});
@@ -193,6 +201,19 @@
 	});
 
 	let showDeleteConfirm = false;
+
+	const chatTitleInputKeydownHandler = (e) => {
+		if (e.key === 'Enter') {
+			e.preventDefault();
+			editChatTitle(id, chatTitle);
+			confirmEdit = false;
+			chatTitle = '';
+		} else if (e.key === 'Escape') {
+			e.preventDefault();
+			confirmEdit = false;
+			chatTitle = '';
+		}
+	};
 </script>
 
 <ShareChatModal bind:show={showShareChatModal} chatId={id} />
@@ -223,7 +244,11 @@
 	</DragGhost>
 {/if}
 
-<div bind:this={itemElement} class=" w-full {className} relative group" {draggable}>
+<div
+	bind:this={itemElement}
+	class=" w-full {className} relative group"
+	draggable={draggable && !confirmEdit}
+>
 	{#if confirmEdit}
 		<div
 			class=" w-full flex justify-between rounded p-2.5 {id === $chatId ||
@@ -237,7 +262,8 @@
 				use:focusEdit
 				bind:value={chatTitle}
 				id="chat-title-input-{id}"
-				class=" bg-transparent w-full outline-none mr-10"
+				class=" bg-transparent w-full outline-hidden mr-10"
+				on:keydown={chatTitleInputKeydownHandler}
 			/>
 		</div>
 	{:else}
@@ -270,7 +296,7 @@
 			draggable="false"
 		>
 			<div class=" flex self-center flex-1 w-full">
-				<div class=" text-left self-center overflow-hidden w-full h-[20px]">
+				<div dir="auto" class="text-left self-center overflow-hidden w-full h-[20px]">
 					{title}
 				</div>
 			</div>
@@ -287,7 +313,7 @@
 				: 'invisible group-hover:visible dark:from-gray-950'}
             absolute {className === 'pr-2'
 			? 'right-[8px]'
-			: 'right-0'}  top-[9px] py-1 pr-0.5 mr-1.5 pl-5 bg-gradient-to-l from-80%
+			: 'right-0'}  top-[9px] py-1 pr-0.5 mr-1.5 pl-5 bg-linear-to-l from-80%
 
               to-transparent"
 		on:mouseenter={(e) => {
