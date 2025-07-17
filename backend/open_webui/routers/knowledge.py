@@ -169,6 +169,74 @@ async def create_new_knowledge(
 
 
 ############################
+# ReindexKnowledgeFiles
+############################
+
+
+@router.post("/reindex", response_model=bool)
+async def reindex_knowledge_files(request: Request, user=Depends(get_verified_user)):
+    if user.role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=ERROR_MESSAGES.UNAUTHORIZED,
+        )
+
+    knowledge_bases = Knowledges.get_knowledge_bases()
+
+    log.info(f"Starting reindexing for {len(knowledge_bases)} knowledge bases")
+
+    for knowledge_base in knowledge_bases:
+        try:
+            files = Files.get_files_by_ids(knowledge_base.data.get("file_ids", []))
+
+            try:
+                if VECTOR_DB_CLIENT.has_collection(collection_name=knowledge_base.id):
+                    VECTOR_DB_CLIENT.delete_collection(
+                        collection_name=knowledge_base.id
+                    )
+            except Exception as e:
+                log.error(f"Error deleting collection {knowledge_base.id}: {str(e)}")
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail=f"Error deleting vector DB collection",
+                )
+
+            failed_files = []
+            for file in files:
+                try:
+                    process_file(
+                        request,
+                        ProcessFileForm(
+                            file_id=file.id, collection_name=knowledge_base.id
+                        ),
+                        user=user,
+                    )
+                except Exception as e:
+                    log.error(
+                        f"Error processing file {file.filename} (ID: {file.id}): {str(e)}"
+                    )
+                    failed_files.append({"file_id": file.id, "error": str(e)})
+                    continue
+
+        except Exception as e:
+            log.error(f"Error processing knowledge base {knowledge_base.id}: {str(e)}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Error processing knowledge base",
+            )
+
+        if failed_files:
+            log.warning(
+                f"Failed to process {len(failed_files)} files in knowledge base {knowledge_base.id}"
+            )
+            for failed in failed_files:
+                log.warning(f"File ID: {failed['file_id']}, Error: {failed['error']}")
+
+    log.info("Reindexing completed successfully")
+    return True
+
+
+############################
 # GetKnowledgeById
 ############################
 
@@ -265,9 +333,10 @@ def add_file_to_knowledge_by_id(
     user=Depends(get_verified_user),
 ):
     knowledge = get_knowledge_by_id_or_raise(id)
-    enforce_ownership_or_admin(user, knowledge.user_id)
+    enforce_ownership_or_admin(user, knowledge)
 
     file = get_file_by_id_or_raise(form_data.file_id)
+
     if not file.data:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -277,7 +346,9 @@ def add_file_to_knowledge_by_id(
     # Add content to the vector database
     try:
         process_file(
-            request, ProcessFileForm(file_id=form_data.file_id, collection_name=id)
+            request,
+            ProcessFileForm(file_id=form_data.file_id, collection_name=id),
+            user=user,
         )
     except Exception as e:
         log.debug(e)
@@ -328,8 +399,9 @@ def update_file_from_knowledge_by_id(
     user=Depends(get_verified_user),
 ):
     knowledge = get_knowledge_by_id_or_raise(id)
-    enforce_ownership_or_admin(user, knowledge.user_id)
+    enforce_ownership_or_admin(user, knowledge)
     file = get_file_by_id_or_raise(form_data.file_id)
+
     # Remove content from the vector database
     VECTOR_DB_CLIENT.delete(
         collection_name=knowledge.id, filter={"file_id": form_data.file_id}
@@ -338,7 +410,9 @@ def update_file_from_knowledge_by_id(
     # Add content to the vector database
     try:
         process_file(
-            request, ProcessFileForm(file_id=form_data.file_id, collection_name=id)
+            request,
+            ProcessFileForm(file_id=form_data.file_id, collection_name=id),
+            user=user,
         )
     except Exception as e:
         raise HTTPException(
@@ -375,7 +449,7 @@ def remove_file_from_knowledge_by_id(
     user=Depends(get_verified_user),
 ):
     knowledge = get_knowledge_by_id_or_raise(id)
-    enforce_ownership_or_admin(user, knowledge.user_id)
+    enforce_ownership_or_admin(user, knowledge)
 
     if knowledge:
         data = knowledge.data or {}
@@ -433,7 +507,7 @@ def remove_file_from_knowledge_by_id(
 @router.delete("/{id}/delete", response_model=bool)
 async def delete_knowledge_by_id(id: str, user=Depends(get_verified_user)):
     knowledge = get_knowledge_by_id_or_raise(id)
-    enforce_ownership_or_admin(user, knowledge.user_id)
+    enforce_ownership_or_admin(user, knowledge)
 
     # Get all Files for this knowledge base
     file_ids = knowledge.data.get("file_ids", []) if knowledge.data else []
@@ -443,6 +517,7 @@ async def delete_knowledge_by_id(id: str, user=Depends(get_verified_user)):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=ERROR_MESSAGES.DEFAULT("Error deleting files"),
         )
+
     # Get all models
     models = Models.get_all_models()
     log.info(f"Found {len(models)} models to check for knowledge base {id}")
@@ -489,7 +564,7 @@ async def delete_knowledge_by_id(id: str, user=Depends(get_verified_user)):
 async def reset_knowledge_by_id(id: str, user=Depends(get_verified_user)):
 
     knowledge = get_knowledge_by_id_or_raise(id)
-    enforce_ownership_or_admin(user, knowledge.user_id)
+    enforce_ownership_or_admin(user, knowledge)
 
     # Get all Files for this knowledge base
     file_ids = knowledge.data.get("file_ids", []) if knowledge.data else []
@@ -526,10 +601,11 @@ def add_files_to_knowledge_batch(
     Add multiple files to a knowledge base
     """
     knowledge = get_knowledge_by_id_or_raise(id)
-    enforce_ownership_or_admin(user, knowledge.user_id)
+    enforce_ownership_or_admin(user, knowledge)
 
     # Get files content
-    log.debug(f"Processing batch of {len(form_data)} files")
+    log.info(f"files/batch/add - {len(form_data)} files")
+
     files: List[FileModel] = []
     for form in form_data:
         file = get_file_by_id_or_raise(form.file_id)
@@ -596,8 +672,12 @@ def get_knowledge_by_id_or_raise(id: str) -> Optional[KnowledgeModel]:
         )
     return knowledge
 
-def enforce_ownership_or_admin(user, owner_id):
-    if user.role != "admin" and user.id != owner_id:
+def enforce_ownership_or_admin(user, knowledge):
+    if (
+        user.id != knowledge.user_id
+        and user.role != "admin"
+        and not has_access(user.id, "write", knowledge.access_control)
+    ):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=ERROR_MESSAGES.ACCESS_PROHIBITED)
 
 

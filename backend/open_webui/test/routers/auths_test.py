@@ -48,8 +48,8 @@ class TestAuths:
 
     @pytest.mark.asyncio
     async def test_get_session_user(self, monkeypatch, mock_request, mock_response, mock_user):
-        monkeypatch.setattr("open_webui.routers.auths.WEBUI_SESSION_COOKIE_SAME_SITE", 'Strict', raising = True)
-        monkeypatch.setattr("open_webui.routers.auths.WEBUI_SESSION_COOKIE_SECURE", True, raising = True)
+        monkeypatch.setattr("open_webui.routers.auths.WEBUI_AUTH_COOKIE_SAME_SITE", 'Strict', raising = True)
+        monkeypatch.setattr("open_webui.routers.auths.WEBUI_AUTH_COOKIE_SECURE", True, raising = True)
 
         # Patch the function where it was imported _to_
         # (not where it is defined and exported from)

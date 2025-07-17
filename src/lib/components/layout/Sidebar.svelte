@@ -79,6 +79,7 @@
 	let allChatsLoaded = false;
 
 	let folders = {};
+	let newFolderId = null;
 
 	let searchInput: SearchInput;
 
@@ -94,6 +95,11 @@
 		for (const folder of folderList) {
 			// Ensure folder is added to folders with its data
 			folders[folder.id] = { ...(folders[folder.id] || {}), ...folder };
+
+			if (newFolderId && folder.id === newFolderId) {
+				folders[folder.id].new = true;
+				newFolderId = null;
+			}
 		}
 
 		// Second pass: Tie child folders to their parents
@@ -154,6 +160,7 @@
 		});
 
 		if (res) {
+			newFolderId = res.id;
 			await initFolders();
 		}
 	};
@@ -397,7 +404,7 @@
 		window.addEventListener('touchend', onTouchEnd);
 
 		window.addEventListener('focus', onFocus);
-		window.addEventListener('blur', onBlur);
+		window.addEventListener('blur-sm', onBlur);
 
 		const dropZone = document.getElementById('sidebar');
 
@@ -414,7 +421,7 @@
 		window.removeEventListener('touchend', onTouchEnd);
 
 		window.removeEventListener('focus', onFocus);
-		window.removeEventListener('blur', onBlur);
+		window.removeEventListener('blur-sm', onBlur);
 
 		const dropZone = document.getElementById('sidebar');
 
@@ -436,7 +443,7 @@
 		});
 
 		if (res) {
-			$socket.emit('join-channels', { auth: { token: $user.token } });
+			$socket.emit('join-channels', { auth: { token: $user?.token } });
 			await initChannels();
 			showCreateChannel = false;
 		}
@@ -463,7 +470,7 @@
 		? 'md:relative w-[260px] max-w-[260px]'
 		: 'w-[60px]'} {$isApp
 		? `ml-[4.5rem] md:ml-0 `
-		: 'transition-width duration-200 ease-in-out'}  flex-shrink-0 bg-gray-100 text-blue-800 dark:bg-gray-950 dark:text-gray-200 text-sm z-30 overflow-x-hidden
+		: 'transition-width duration-200 ease-in-out'}  shrink-0 bg-gray-100 text-blue-800 dark:bg-gray-950 dark:text-gray-200 text-sm z-30 overflow-x-hidden
 		"
 	data-state={$showSidebar}
 >
@@ -535,7 +542,7 @@
 		{#if $user?.role === 'admin'}
 			<div class="px-1.5 flex justify-center text-gray-800 dark:text-gray-200 outline-1 outline-amber-500 outline-dashed">
 				<a
-					class="flex-grow flex space-x-3 rounded-lg p-2.5 hover:bg-gray-100 dark:hover:bg-gray-900 transition"
+					class="grow flex space-x-3 rounded-lg p-2.5 hover:bg-gray-100 dark:hover:bg-gray-900 transition"
 					href="/workspace"
 					on:click={() => {
 						selectedChatId = null;
@@ -564,7 +571,7 @@
 						</svg>
 					</div>
 
-					<div class="flex self-center">
+					<div class="flex self-center translate-y-[0.5px]">
 						<div class=" self-center font-medium text-sm font-primary">{$i18n.t('Workspace')}</div>
 					</div>
 				</a>
@@ -583,6 +590,7 @@
 				on:input={searchDebounceHandler}
 				placeholder={$i18n.t('Search')}
 				class="pl-2.5"
+				showClearButton={true}
 			/>
 			{:else}
 			<div class="self-center pl-3 py-2 rounded-l-xl bg-transparent"
@@ -607,13 +615,13 @@
 				? 'opacity-20'
 				: ''}"
 		>
-			{#if $config?.features?.enable_channels && ($user.role === 'admin' || $channels.length > 0) && !search}
+			{#if $config?.features?.enable_channels && ($user?.role === 'admin' || $channels.length > 0) && !search}
 				<Folder
 					className="px-2 mt-0.5"
 					name={$i18n.t('Channels')}
 					dragAndDrop={false}
 					onAdd={async () => {
-						if ($user.role === 'admin') {
+						if ($user?.role === 'admin') {
 							await tick();
 
 							setTimeout(() => {

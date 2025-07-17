@@ -12,7 +12,7 @@
 	import { getChatList } from '$lib/apis/chats';
 	import { getKnowledgeBases } from '$lib/apis/knowledge';
 	import { getFunctions } from '$lib/apis/functions';
-	import { getModels, getVersionUpdates } from '$lib/apis';
+	import { getModels, getToolServersData, getVersionUpdates } from '$lib/apis';
 	import { getAllTags } from '$lib/apis/chats';
 	import { getPrompts } from '$lib/apis/prompts';
 	import { getTools } from '$lib/apis/tools';
@@ -38,7 +38,8 @@
 		banners,
 		showSettings,
 		showChangelog,
-		temporaryChatEnabled
+		temporaryChatEnabled,
+		toolServers
 	} from '$lib/stores';
 	import { notifications } from '$lib/IONOS/stores/notifications';
 
@@ -47,6 +48,8 @@
 	import ChangelogModal from '$lib/components/ChangelogModal.svelte';
 	import AccountPending from '$lib/IONOS/components/AccountPending.svelte';
 	import UpdateInfoToast from '$lib/components/layout/UpdateInfoToast.svelte';
+	import { get } from 'svelte/store';
+	import Spinner from '$lib/components/common/Spinner.svelte';
 	import KnowledgeManager from '$lib/IONOS/components/knowledge/KnowledgeManager.svelte';
 
 	const i18n = getContext('i18n');
@@ -58,12 +61,12 @@
 	let version;
 
 	onMount(async () => {
-		if ($user === undefined) {
+		if ($user === undefined || $user === null) {
 			await goto('/auth');
 		} else if (!await hasChats() && !hasStoredState()) {
 			await goto('/explore');
 			return;
-		} else if (['user', 'admin'].includes($user.role)) {
+		} else if (['user', 'admin'].includes($user?.role)) {
 			try {
 				// Check if IndexedDB exists
 				DB = await openDB('Chats', 1);
@@ -101,9 +104,16 @@
 				settings.set(localStorageSettings);
 			}
 
-			models.set(await getModels(localStorage.token));
+			models.set(
+				await getModels(
+					localStorage.token,
+					$config?.features?.enable_direct_connections && ($settings?.directConnections ?? null)
+				)
+			);
+
 			banners.set(await getBanners(localStorage.token));
 			tools.set(await getTools(localStorage.token));
+			toolServers.set(await getToolServersData($i18n, $settings?.toolServers ?? []));
 
 			document.addEventListener('keydown', async function (event) {
 				const isCtrlPressed = event.ctrlKey || event.metaKey; // metaKey is for Cmd key on Mac
@@ -174,7 +184,11 @@
 				}
 
 				// Check if Ctrl + Shift + ' is pressed
-				if (isCtrlPressed && isShiftPressed && event.key.toLowerCase() === `'`) {
+				if (
+					isCtrlPressed &&
+					isShiftPressed &&
+					(event.key.toLowerCase() === `'` || event.key.toLowerCase() === `"`)
+				) {
 					event.preventDefault();
 					console.log('temporaryChat');
 					temporaryChatEnabled.set(!$temporaryChatEnabled);
@@ -186,16 +200,22 @@
 				}
 			});
 
-			if ($user.role === 'admin' && ($settings?.showChangelog ?? true)) {
+			if ($user?.role === 'admin' && ($settings?.showChangelog ?? true)) {
 				showChangelog.set($settings?.version !== $config.version);
 			}
 
-			if ($page.url.searchParams.get('temporary-chat') === 'true') {
-				temporaryChatEnabled.set(true);
+			if ($user?.permissions?.chat?.temporary ?? true) {
+				if ($page.url.searchParams.get('temporary-chat') === 'true') {
+					temporaryChatEnabled.set(true);
+				}
+
+				if ($user?.permissions?.chat?.temporary_enforced) {
+					temporaryChatEnabled.set(true);
+				}
 			}
 
 			// Check for version updates
-			if ($user.role === 'admin') {
+			if ($user?.role === 'admin') {
 				// Check if the user has dismissed the update toast in the last 24 hours
 				if (localStorage.dismissedUpdateToast) {
 					const dismissedUpdateToast = new Date(Number(localStorage.dismissedUpdateToast));
@@ -247,64 +267,68 @@
 		class=" text-gray-700 dark:text-gray-100 bg-white dark:bg-gray-900 overflow-auto flex flex-row justify-end"
 		style="max-height: calc(100dvh - {$notifications.length * 60}px);"
 	>
-		{#if loaded}
-			{#if !['user', 'admin'].includes($user.role)}
-				<AccountPending />
-			{:else if localDBChats.length > 0}
-				<div class="fixed w-full h-full flex z-50">
-					<div
-						class="absolute w-full h-full backdrop-blur-md bg-white/20 dark:bg-gray-900/50 flex justify-center"
-					>
-						<div class="m-auto pb-44 flex flex-col justify-center">
-							<div class="max-w-md">
-								<div class="text-center dark:text-white text-2xl font-medium z-50">
-									Important Update<br /> Action Required for Chat Log Storage
-								</div>
+		{#if !['user', 'admin'].includes($user?.role)}
+			<AccountPending />
+		{:else if localDBChats.length > 0}
+			<div class="fixed w-full h-full flex z-50">
+				<div
+					class="absolute w-full h-full backdrop-blur-md bg-white/20 dark:bg-gray-900/50 flex justify-center"
+				>
+					<div class="m-auto pb-44 flex flex-col justify-center">
+						<div class="max-w-md">
+							<div class="text-center dark:text-white text-2xl font-medium z-50">
+								Important Update<br /> Action Required for Chat Log Storage
+							</div>
 
-								<div class=" mt-4 text-center text-sm dark:text-gray-200 w-full">
-									{$i18n.t(
-										"Saving chat logs directly to your browser's storage is no longer supported. Please take a moment to download and delete your chat logs by clicking the button below. Don't worry, you can easily re-import your chat logs to the backend through"
-									)}
-									<span class="font-semibold dark:text-white"
-										>{$i18n.t('Settings')} > {$i18n.t('Chats')} > {$i18n.t('Import Chats')}</span
-									>. {$i18n.t(
-										'This ensures that your valuable conversations are securely saved to your backend database. Thank you!'
-									)}
-								</div>
+							<div class=" mt-4 text-center text-sm dark:text-gray-200 w-full">
+								{$i18n.t(
+									"Saving chat logs directly to your browser's storage is no longer supported. Please take a moment to download and delete your chat logs by clicking the button below. Don't worry, you can easily re-import your chat logs to the backend through"
+								)}
+								<span class="font-semibold dark:text-white"
+									>{$i18n.t('Settings')} > {$i18n.t('Chats')} > {$i18n.t('Import Chats')}</span
+								>. {$i18n.t(
+									'This ensures that your valuable conversations are securely saved to your backend database. Thank you!'
+								)}
+							</div>
 
-								<div class=" mt-6 mx-auto relative group w-fit">
-									<button
-										class="relative z-20 flex px-5 py-2 rounded-full bg-white border border-gray-100 dark:border-none hover:bg-gray-100 transition font-medium text-sm"
-										on:click={async () => {
-											let blob = new Blob([JSON.stringify(localDBChats)], {
-												type: 'application/json'
-											});
-											saveAs(blob, `chat-export-${Date.now()}.json`);
+							<div class=" mt-6 mx-auto relative group w-fit">
+								<button
+									class="relative z-20 flex px-5 py-2 rounded-full bg-white border border-gray-100 dark:border-none hover:bg-gray-100 transition font-medium text-sm"
+									on:click={async () => {
+										let blob = new Blob([JSON.stringify(localDBChats)], {
+											type: 'application/json'
+										});
+										saveAs(blob, `chat-export-${Date.now()}.json`);
 
-											const tx = DB.transaction('chats', 'readwrite');
-											await Promise.all([tx.store.clear(), tx.done]);
-											await deleteDB('Chats');
+										const tx = DB.transaction('chats', 'readwrite');
+										await Promise.all([tx.store.clear(), tx.done]);
+										await deleteDB('Chats');
 
-											localDBChats = [];
-										}}
-									>
-										Download & Delete
-									</button>
+										localDBChats = [];
+									}}
+								>
+									Download & Delete
+								</button>
 
-									<button
-										class="text-xs text-center w-full mt-2 text-gray-400 underline"
-										on:click={async () => {
-											localDBChats = [];
-										}}>{$i18n.t('Close')}</button
-									>
-								</div>
+								<button
+									class="text-xs text-center w-full mt-2 text-gray-400 underline"
+									on:click={async () => {
+										localDBChats = [];
+									}}>{$i18n.t('Close')}</button
+								>
 							</div>
 						</div>
 					</div>
 				</div>
-			{/if}
+			</div>
+		{/if}
 
+		{#if loaded}
 			<slot />
+		{:else}
+			<div class="w-full flex-1 h-full flex items-center justify-center">
+				<Spinner />
+			</div>
 		{/if}
 	</div>
 </div>

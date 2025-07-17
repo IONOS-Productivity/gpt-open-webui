@@ -1,6 +1,7 @@
 <script>
 	import { io } from 'socket.io-client';
 	import { spring } from 'svelte/motion';
+	import PyodideWorker from '$lib/workers/pyodide.worker?worker';
 
 	let loadingProgress = spring(0, {
 		stiffness: 0.05
@@ -23,13 +24,14 @@
 		temporaryChatEnabled,
 		isLastActiveTab,
 		isApp,
-		appInfo
+		appInfo,
+		toolServers
 	} from '$lib/stores';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { Toaster, toast } from 'svelte-sonner';
 
-	import { getBackendConfig } from '$lib/apis';
+	import { executeToolServer, getBackendConfig } from '$lib/apis';
 	import { getSessionUser } from '$lib/apis/auths';
 
 	import '../tailwind.css';
@@ -38,11 +40,12 @@
 	import 'tippy.js/dist/tippy.css';
 
 	import { WEBUI_BASE_URL, WEBUI_HOSTNAME } from '$lib/constants';
-	import i18n, { initI18n, getLanguages } from '$lib/i18n';
+	import i18n, { initI18n, getLanguages, changeLanguage } from '$lib/i18n';
 	import { bestMatchingLanguage } from '$lib/utils';
 	import { getAllTags, getChatList } from '$lib/apis/chats';
 	import NotificationToast from '$lib/components/NotificationToast.svelte';
 	import AppSidebar from '$lib/components/app/AppSidebar.svelte';
+	import { chatCompletion } from '$lib/apis/openai';
 
 	setContext('i18n', i18n);
 
@@ -89,7 +92,141 @@
 		});
 	};
 
-	const chatEventHandler = async (event) => {
+	const executePythonAsWorker = async (id, code, cb) => {
+		let result = null;
+		let stdout = null;
+		let stderr = null;
+
+		let executing = true;
+		let packages = [
+			code.includes('requests') ? 'requests' : null,
+			code.includes('bs4') ? 'beautifulsoup4' : null,
+			code.includes('numpy') ? 'numpy' : null,
+			code.includes('pandas') ? 'pandas' : null,
+			code.includes('matplotlib') ? 'matplotlib' : null,
+			code.includes('sklearn') ? 'scikit-learn' : null,
+			code.includes('scipy') ? 'scipy' : null,
+			code.includes('re') ? 'regex' : null,
+			code.includes('seaborn') ? 'seaborn' : null,
+			code.includes('sympy') ? 'sympy' : null,
+			code.includes('tiktoken') ? 'tiktoken' : null,
+			code.includes('pytz') ? 'pytz' : null
+		].filter(Boolean);
+
+		const pyodideWorker = new PyodideWorker();
+
+		pyodideWorker.postMessage({
+			id: id,
+			code: code,
+			packages: packages
+		});
+
+		setTimeout(() => {
+			if (executing) {
+				executing = false;
+				stderr = 'Execution Time Limit Exceeded';
+				pyodideWorker.terminate();
+
+				if (cb) {
+					cb(
+						JSON.parse(
+							JSON.stringify(
+								{
+									stdout: stdout,
+									stderr: stderr,
+									result: result
+								},
+								(_key, value) => (typeof value === 'bigint' ? value.toString() : value)
+							)
+						)
+					);
+				}
+			}
+		}, 60000);
+
+		pyodideWorker.onmessage = (event) => {
+			console.log('pyodideWorker.onmessage', event);
+			const { id, ...data } = event.data;
+
+			console.log(id, data);
+
+			data['stdout'] && (stdout = data['stdout']);
+			data['stderr'] && (stderr = data['stderr']);
+			data['result'] && (result = data['result']);
+
+			if (cb) {
+				cb(
+					JSON.parse(
+						JSON.stringify(
+							{
+								stdout: stdout,
+								stderr: stderr,
+								result: result
+							},
+							(_key, value) => (typeof value === 'bigint' ? value.toString() : value)
+						)
+					)
+				);
+			}
+
+			executing = false;
+		};
+
+		pyodideWorker.onerror = (event) => {
+			console.log('pyodideWorker.onerror', event);
+
+			if (cb) {
+				cb(
+					JSON.parse(
+						JSON.stringify(
+							{
+								stdout: stdout,
+								stderr: stderr,
+								result: result
+							},
+							(_key, value) => (typeof value === 'bigint' ? value.toString() : value)
+						)
+					)
+				);
+			}
+			executing = false;
+		};
+	};
+
+	const executeTool = async (data, cb) => {
+		const toolServer = $settings?.toolServers?.find((server) => server.url === data.server?.url);
+		const toolServerData = $toolServers?.find((server) => server.url === data.server?.url);
+
+		console.log('executeTool', data, toolServer);
+
+		if (toolServer) {
+			console.log(toolServer);
+			const res = await executeToolServer(
+				(toolServer?.auth_type ?? 'bearer') === 'bearer' ? toolServer?.key : localStorage.token,
+				toolServer.url,
+				data?.name,
+				data?.params,
+				toolServerData
+			);
+
+			console.log('executeToolServer', res);
+			if (cb) {
+				cb(JSON.parse(JSON.stringify(res)));
+			}
+		} else {
+			if (cb) {
+				cb(
+					JSON.parse(
+						JSON.stringify({
+							error: 'Tool Server Not Found'
+						})
+					)
+				);
+			}
+		}
+	};
+
+	const chatEventHandler = async (event, cb) => {
 		const chat = $page.url.pathname.includes(`/c/${event.chat_id}`);
 
 		let isFocused = document.visibilityState !== 'visible';
@@ -102,11 +239,11 @@
 			}
 		}
 
-		if ((event.chat_id !== $chatId && !$temporaryChatEnabled) || isFocused) {
-			await tick();
-			const type = event?.data?.type ?? null;
-			const data = event?.data?.data ?? null;
+		await tick();
+		const type = event?.data?.type ?? null;
+		const data = event?.data?.data ?? null;
 
+		if ((event.chat_id !== $chatId && !$temporaryChatEnabled) || isFocused) {
 			if (type === 'chat:completion') {
 				const { done, content, title } = data;
 
@@ -138,6 +275,101 @@
 				await chats.set(await getChatList(localStorage.token, $currentChatPage));
 			} else if (type === 'chat:tags') {
 				tags.set(await getAllTags(localStorage.token));
+			}
+		} else if (data?.session_id === $socket.id) {
+			if (type === 'execute:python') {
+				console.log('execute:python', data);
+				executePythonAsWorker(data.id, data.code, cb);
+			} else if (type === 'execute:tool') {
+				console.log('execute:tool', data);
+				executeTool(data, cb);
+			} else if (type === 'request:chat:completion') {
+				console.log(data, $socket.id);
+				const { session_id, channel, form_data, model } = data;
+
+				try {
+					const directConnections = $settings?.directConnections ?? {};
+
+					if (directConnections) {
+						const urlIdx = model?.urlIdx;
+
+						const OPENAI_API_URL = directConnections.OPENAI_API_BASE_URLS[urlIdx];
+						const OPENAI_API_KEY = directConnections.OPENAI_API_KEYS[urlIdx];
+						const API_CONFIG = directConnections.OPENAI_API_CONFIGS[urlIdx];
+
+						try {
+							if (API_CONFIG?.prefix_id) {
+								const prefixId = API_CONFIG.prefix_id;
+								form_data['model'] = form_data['model'].replace(`${prefixId}.`, ``);
+							}
+
+							const [res, controller] = await chatCompletion(
+								OPENAI_API_KEY,
+								form_data,
+								OPENAI_API_URL
+							);
+
+							if (res) {
+								// raise if the response is not ok
+								if (!res.ok) {
+									throw await res.json();
+								}
+
+								if (form_data?.stream ?? false) {
+									cb({
+										status: true
+									});
+									console.log({ status: true });
+
+									// res will either be SSE or JSON
+									const reader = res.body.getReader();
+									const decoder = new TextDecoder();
+
+									const processStream = async () => {
+										while (true) {
+											// Read data chunks from the response stream
+											const { done, value } = await reader.read();
+											if (done) {
+												break;
+											}
+
+											// Decode the received chunk
+											const chunk = decoder.decode(value, { stream: true });
+
+											// Process lines within the chunk
+											const lines = chunk.split('\n').filter((line) => line.trim() !== '');
+
+											for (const line of lines) {
+												console.log(line);
+												$socket?.emit(channel, line);
+											}
+										}
+									};
+
+									// Process the stream in the background
+									await processStream();
+								} else {
+									const data = await res.json();
+									cb(data);
+								}
+							} else {
+								throw new Error('An error occurred while fetching the completion');
+							}
+						} catch (error) {
+							console.error('chatCompletion', error);
+							cb(error);
+						}
+					}
+				} catch (error) {
+					console.error('chatCompletion', error);
+					cb(error);
+				} finally {
+					$socket.emit(channel, {
+						done: true
+					});
+				}
+			} else {
+				console.log('chatEventHandler', event);
 			}
 		}
 	};
@@ -191,6 +423,10 @@
 	};
 
 	onMount(async () => {
+		if (typeof window !== 'undefined' && window.applyTheme) {
+			window.applyTheme();
+		}
+
 		if (window?.electronAPI) {
 			const info = await window.electronAPI.send({
 				type: 'app:info'
@@ -232,6 +468,7 @@
 		handleVisibilityChange();
 
 		mobile.set(window.innerWidth < BREAKPOINT);
+
 		const onResize = () => {
 			if (window.innerWidth < BREAKPOINT) {
 				mobile.set(true);
@@ -239,8 +476,20 @@
 				mobile.set(false);
 			}
 		};
-
 		window.addEventListener('resize', onResize);
+
+		user.subscribe((value) => {
+			if (value) {
+				$socket?.off('chat-events', chatEventHandler);
+				$socket?.off('channel-events', channelEventHandler);
+
+				$socket?.on('chat-events', chatEventHandler);
+				$socket?.on('channel-events', channelEventHandler);
+			} else {
+				$socket?.off('chat-events', chatEventHandler);
+				$socket?.off('channel-events', channelEventHandler);
+			}
+		});
 
 		let backendConfig = null;
 		try {
@@ -263,6 +512,9 @@
 			if ($config) {
 				await setupSocket($config.features?.enable_websocket ?? true);
 
+				const currentUrl = `${window.location.pathname}${window.location.search}`;
+				const encodedUrl = encodeURIComponent(currentUrl);
+
 				if (localStorage.token) {
 					// Get Session User Info
 					const sessionUser = await getSessionUser(localStorage.token).catch((error) => {
@@ -279,7 +531,7 @@
 					} else {
 						// Redirect Invalid Session User to /auth Page
 						localStorage.removeItem('token');
-						await goto('/auth');
+						await goto(`/auth?redirect=${encodedUrl}`);
 					}
 				} else {
 					// Don't redirect if we're already on the auth page
