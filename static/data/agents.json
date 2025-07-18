@@ -26,25 +26,25 @@
     {
         "id": "chris",
         "name": "Chris Coach",
-        "subtitle": "Der Lern-Navigator",
-        "description": "Chris hilft dir dabei, neue Fähigkeiten zu meistern und komplexe Themen mühelos zu verstehen. Ob Schüler, lebenslanger Lerner oder Anfänger in einem neuen Gebiet – Chris ist dein geduldiger und strukturierter Lernbegleiter."
+        "subtitle": "Der Lernbegleiter",
+        "description": "Chris bringt Struktur ins Lernen und hilft dir, komplexe Themen einfach zu verstehen. Ob Schule, Weiterbildung oder Quereinstieg – Chris ist an deiner Seite, geduldig und klar."
     },
     {
         "id": "fiona",
         "name": "Fiona Feedback Analyzer",
-        "subtitle": "Die Erkenntnis-Gewinnerin",
-        "description": "Fiona verwandelt rohes Kundenfeedback in wertvolle Geschäftseinblicke. Mit datenbasierter Präzision erkennt sie Trends, identifiziert Probleme und schlägt smarte Verbesserungen vor – damit dein Unternehmen immer einen Schritt voraus ist."
+        "subtitle": "Die Feedback-Expertin",
+        "description": "Fiona verwandelt Kundenfeedback in Geschäftseinblicke, erkennt datenbasiert Trends und Probleme und schlägt gezielte Verbesserungen vor."
     },
     {
         "id": "simon",
         "name": "Simon Startup",
-        "subtitle": "Der Gründer-Wegbegleiter",
-        "description": "Simon ist dein strategischer Partner für den Aufbau und das Wachstum eines Unternehmens. Von Businessplänen bis hin zu Pitch-Decks – Simon begleitet dich mit praxisnahen Einblicken und konkreter Unterstützung auf jedem Schritt deiner Gründungsreise."
+        "subtitle": "Der Gründer Coach",
+        "description": "Simon ist der strategische Partner für Aufbau und Wachstum eines Unternehmens – mit praxisnahen Einblicken und konkreter Unterstützung bei jedem Schritt."
     },
     {
         "id": "sofia",
         "name": "Sofia Sales",
-        "subtitle": "Die Pitch-Architektin",
-        "description": "Sofia ist deine Expertin für überzeugende und wirkungsvolle Verkaufskommunikation. Sie hilft dir, Verkaufspräsentationen, E-Mails, Angebote und Werbetexte zu erstellen, die Interesse wecken und Ergebnisse liefern."
+        "subtitle": "Die Vertriebsspezialistin",
+        "description": "Sofia ist die Expertin für wirkungsvolle Verkaufskommunikation und unterstützt bei Präsentationen, E-Mails und Texten, die Interesse wecken und überzeugen."
     }
 ]
