@@ -103,7 +103,7 @@
 
 	<div slot="content" class="p-5 flex flex-col">
 		{#if loaded}
-			<div class="flex pb-5 border-b min-w-[500px]">
+			<div class="flex pb-5 border-gray-200 border-b min-w-[500px]">
 				<div class="flex grow">
 					<div class="self-center ml-1 mr-3">
 						<MagnifyingGlass />
@@ -129,7 +129,7 @@
 					on:select={select}
 				/>
 			</div>
-			<div class=" text-gray-400 text-xs py-5 border-t">
+			<div class=" text-gray-400 text-xs py-5 border-t border-gray-200">
 				ⓘ {$i18n.t("Use '#' in the prompt input to load and include your knowledge.", { ns: 'ionos' })}
 			</div>
 		{:else}
