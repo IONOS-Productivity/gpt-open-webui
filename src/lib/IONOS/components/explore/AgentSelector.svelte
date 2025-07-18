@@ -21,7 +21,7 @@
 	{#each shownAgents as { id, name, subtitle, description }}
 		<div class="min-h-96 flex items-center">
 			<button
-				class="flex-0 group w-56 hover:pb-0 duration-[500ms] transition-[padding] pb-4 mx-6 bg-white text-blue-800 text-left rounded-2xl shadow-xl transition group cursor-pointer"
+				class="group w-56 hover:pb-0 duration-[500ms] transition-[padding] pb-4 mx-6 bg-white text-blue-800 text-left rounded-2xl shadow-xl transition group cursor-pointer"
 				data-id={id}
 				on:click={() => dispatch('select', id)}
 			>
