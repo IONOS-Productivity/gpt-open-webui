@@ -9,7 +9,7 @@
 </script>
 
 {#each items as { id, meta: { name } }}
-	<div class="flex flex-row border-b last:border-none items-center" data-id={id}>
+	<div class="flex flex-row border-gray-200 border-b last:border-none items-center" data-id={id}>
 		<div class="grow px-3 py-3 cursor-default">
 			<span class="block text-nowrap overflow-hidden text-ellipsis">{name}</span>
 		</div>
