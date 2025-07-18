@@ -12,7 +12,7 @@
 	let shownAgents: Agent[]
 
 	agents.subscribe((allAgents: Writable<Agent[]>) => {
-		const shuffled = allAgents.sort(() => 0.5 - Math.random());
+		const shuffled = [...allAgents].sort(() => 0.5 - Math.random());
 		shownAgents = shuffled.slice(0, 4);
 	});
 </script>
