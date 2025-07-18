@@ -98,7 +98,7 @@
 
 			<PrivacySlogan />
 
-			<div class="self-start flex flex-none items-center self-center text-gray-600 dark:text-gray-400">
+			<div class="flex flex-none items-center self-center text-gray-600 dark:text-gray-400">
 				{#if shareEnabled && chat && (chat.id || $temporaryChatEnabled)}
 					<Menu
 						{chat}
