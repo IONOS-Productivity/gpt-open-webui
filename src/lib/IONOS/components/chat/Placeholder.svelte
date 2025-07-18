@@ -66,7 +66,7 @@
 					{/if}
 				</div>
 			</div>
-			{#if $chats.length < 1 && !userSettings.ui?.ionosAgreedToTerms}
+			{#if $chats?.length < 1 && !userSettings.ui?.ionosAgreedToTerms}
 				<div class="xl:translate-x-6 md:max-w-3xl w-full px-2.5">
 					<TermsHint />
 				</div>
