@@ -39,11 +39,11 @@
 					<h2 class="text-xs">
 						{subtitle}
 					</h2>
-					<div class="mt-0 overflow-hidden duration-[500ms] transition-[height,margin-top] h-0 group-hover:h-40 group-hover:mt-4 group-focus:h-40 group-focus:mt-4 focus-within:h-40 focus-within:mt-4 max-xs:h-40 max-xs:mt-4 max-xs:h-40 max-xs:mt-4">
-						<p class="text-xs h-full max-h-[95px] overflow-scroll">
+					<div class="flex flex-col justify-between mt-0 overflow-hidden duration-[500ms] transition-[height,margin-top] h-0 group-hover:h-40 group-hover:mt-4 group-focus:h-40 group-focus:mt-4 focus-within:h-40 focus-within:mt-4 max-xs:h-40 max-xs:mt-4 max-xs:h-40 max-xs:mt-4">
+						<p class="text-xs">
 							{description}
 						</p>
-						<div class="mt-4 text-center">
+						<div class="mb-4 text-center">
 							<Button
 								interactive={false}
 								name={id}
