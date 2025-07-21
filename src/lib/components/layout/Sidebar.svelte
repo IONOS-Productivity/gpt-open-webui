@@ -227,7 +227,7 @@
 				currentChatPage.set(1);
 				await chats.set(await getChatListBySearchText(localStorage.token, search));
 
-				if ($chats.length === 0) {
+				if ($chats?.length === 0) {
 					tags.set(await getAllTags(localStorage.token));
 				}
 			}, 1000);
