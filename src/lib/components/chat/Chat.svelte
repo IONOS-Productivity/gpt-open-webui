@@ -2030,7 +2030,7 @@
 						</div>
 
 						<div class="flex flex-col gap-5 md:gap-10 pb-[1rem]">
-							{#if $chats.length < 1 && !userSettings.ui?.ionosAgreedToTerms !== true}
+							{#if $chats?.length < 1 && !userSettings.ui?.ionosAgreedToTerms !== true}
 								<div class="md:max-w-3xl w-full px-2.5 lg:px-0 mx-auto">
 									<TermsHint />
 								</div>
