@@ -32,6 +32,7 @@ RUN npm ci
 COPY . .
 ENV APP_BUILD_HASH=${BUILD_HASH}
 ENV NODE_OPTIONS=--max-old-space-size=3300
+RUN apk add python3 && backend/custom_resources/tools/create-agents-json backend/custom_resources/models.json
 RUN npm run build
 
 ######## WebUI backend ########
