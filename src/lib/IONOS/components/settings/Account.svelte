@@ -10,9 +10,6 @@
 	import { resetPassword, deleteAccount } from '$lib/IONOS/services/account';
 	const i18n = getContext<Readable<I18Next>>('i18n');
 
-	const isAccountDeletionAllowedBackend = $config?.features?.ionos_user_account_deletion_allowed ?? false;
-	const isAccountDeletionAllowedFrontend = localStorage.accountDeletionAllowedOverride === 'true';
-
 	let confirmAccountDeletion = false;
 	let loading = false;
 
@@ -48,7 +45,6 @@
 			</Button>
 		</div>
 	</div>
-	{#if isAccountDeletionAllowedFrontend || isAccountDeletionAllowedBackend}
 	<div class="flex flex-row items-center h-10">
 		<div class="flex-grow">
 			{$i18n.t('Delete account', { ns: 'ionos' })}
@@ -61,7 +57,6 @@
 			</Button>
 		</div>
 	</div>
-	{/if}
 </div>
 
 {#if loading}
