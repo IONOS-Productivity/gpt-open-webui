@@ -11,6 +11,7 @@ services:
       - NODE_OPTIONS=--max-old-space-size=3300
     depends_on:
       - backend
+      - vectordb
     ports:
       - "3000:5173"
     extra_hosts:
@@ -38,6 +39,9 @@ services:
     env_file: ".env"
     environment:
       - ENV=dev
+    network_mode: host
+    extra_hosts:
+      - localhost:127.0.0.1
     ports:
       - "8080:8080"
     extra_hosts:
@@ -45,6 +49,25 @@ services:
     volumes:
       - ./backend:/app/backend
       - data:/app/backend/data
+
+  vectordb:
+    # After first start run this, then restart:
+    # $ podman container exec -it open-webui-dev-vectordb_1 /bin/bash -c "echo \"listen_addresses = '127.0.0.1'\" >> /var/lib/postgresql/data/postgresql.conf"
+    #
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: postgres
+    network_mode: host
+    volumes:
+      - ./initdb.d/custom_init.sql:/docker-entrypoint-initdb.d/custom_init.sql
+      - pgdata:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer
+    network_mode: host
+    command: ["php", "-S", "127.0.0.1:8081", "-t", "/var/www/html"]
 
   keycloak:
     image: quay.io/keycloak/keycloak:26.0.7-0
@@ -62,3 +85,4 @@ services:
  
 volumes:
   data: {}
+  pgdata: {}
