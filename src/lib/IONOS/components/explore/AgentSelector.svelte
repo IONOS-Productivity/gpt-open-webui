@@ -5,19 +5,49 @@
 	import { agents, type Agent } from '$lib/IONOS/stores/agents';
 	import Button, { ButtonType } from '$lib/IONOS/components/common/Button.svelte';
 	import Sparkles from '$lib/IONOS/components/icons/Sparkles.svelte';
+	import ChevronUp from '$lib/components/icons/ChevronUp.svelte';
+	import ChevronDown from '$lib/components/icons/ChevronDown.svelte';
 
 	const i18n = getContext<Readable<I18Next>>('i18n');
 	const dispatch = createEventDispatcher();
 
-	let shownAgents: Agent[]
+	let shownAgents: Agent[] = [];
+	let showAllAgents = false;
+	let allAgents: Agent[] = [];
+	let isSmallScreen = false;
 
-	agents.subscribe((allAgents: Writable<Agent[]>) => {
-		const shuffled = allAgents.sort(() => 0.5 - Math.random());
-		shownAgents = shuffled.slice(0, 4);
+	// Check if screen is small
+	function checkScreenSize() {
+		isSmallScreen = window.innerWidth < 640; // sm breakpoint is 640px
+		updateShownAgents();
+	}
+
+	// Initialize screen size check
+	if (typeof window !== 'undefined') {
+		checkScreenSize();
+		window.addEventListener('resize', checkScreenSize);
+	}
+
+	agents.subscribe((agentsList: Agent[]) => {
+		allAgents = [...agentsList];
+		updateShownAgents();
 	});
+
+	function updateShownAgents() {
+		if (!isSmallScreen || showAllAgents) {
+			shownAgents = allAgents;
+		} else {
+			shownAgents = allAgents.slice(0, 4);
+		}
+	}
+
+	function toggleShowMore() {
+		showAllAgents = !showAllAgents;
+		updateShownAgents();
+	}
 </script>
 
-<div class="flex flex-row gap-4 items-center justify-center flex-wrap">
+<div class="grid lg:grid-cols-4 md:grid-cols-2 gap-4 md:gap-y-0">
 	{#each shownAgents as { id, name, subtitle, description }}
 		<div class="min-h-96 flex items-center">
 			<button
@@ -39,11 +69,11 @@
 					<h2 class="text-xs">
 						{subtitle}
 					</h2>
-					<div class="mt-0 overflow-hidden duration-[500ms] transition-[height,margin-top] h-0 group-hover:h-40 group-hover:mt-4 group-focus:h-40 group-focus:mt-4 focus-within:h-40 focus-within:mt-4 max-xs:h-40 max-xs:mt-4 max-xs:h-40 max-xs:mt-4">
-						<p class="text-xs h-full max-h-[95px] overflow-scroll">
+					<div class="flex flex-col justify-between mt-0 overflow-hidden duration-[500ms] transition-[height,margin-top] h-0 group-hover:h-40 group-hover:mt-4 group-focus:h-40 group-focus:mt-4 focus-within:h-40 focus-within:mt-4 max-xs:h-40 max-xs:mt-4 max-xs:h-40 max-xs:mt-4">
+						<p class="text-xs">
 							{description}
 						</p>
-						<div class="mt-4 text-center">
+						<div class="mb-4 text-center">
 							<Button
 								interactive={false}
 								name={id}
@@ -62,3 +92,22 @@
 		</div>
 	{/each}
 </div>
+
+{#if allAgents.length > 4 && isSmallScreen}
+	<div class="flex justify-center mt-6">
+		<button
+			class="flex items-center gap-1 text-blue-600 hover:text-blue-800 font-medium text-sm transition-colors duration-200"
+			on:click={toggleShowMore}
+		>
+			{showAllAgents
+				? $i18n.t('Show less', { ns: 'ionos' })
+				: $i18n.t('Show more', { ns: 'ionos' })
+			}
+			{#if showAllAgents}
+				<ChevronUp className="size-4" />
+			{:else}
+				<ChevronDown className="size-4" />
+			{/if}
+		</button>
+	</div>
+{/if}

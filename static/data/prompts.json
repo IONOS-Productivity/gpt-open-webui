@@ -229,30 +229,60 @@
     },
     {
         "id": 38,
+        "promptDisplayName": "Welche Finanzierungsmöglichkeiten gibt es für meine App-Idee ?",
+        "prompt": "Welche Finanzierungsmöglichkeiten gibt es für meine App-Idee ?",
+        "agentId": "simon"
+    },
+    {
+        "id": 39,
+        "promptDisplayName": "Wie führe ich eine SWOT-Analyse durch, um die Stärken und Chancen meines Unternehmens zu bewerten?",
+        "prompt": "Wie führe ich eine SWOT-Analyse durch, um die Stärken und Chancen meines Unternehmens zu bewerten?",
+        "agentId": "simon"
+    },
+    {
+        "id": 40,
+        "promptDisplayName": "Was sind die Unterschiede zwischen einer GmbH und einer Partnerschaft? Welche Struktur ist besser für mein Tech-Startup geeignet?",
+        "prompt": "Was sind die Unterschiede zwischen einer GmbH und einer Partnerschaft? Welche Struktur ist besser für mein Tech-Startup geeignet?",
+        "agentId": "simon"
+    },
+    {
+        "id": 41,
+        "promptDisplayName": "Welche Strategien kann ich anwenden, um das nachhaltige Wachstum meines Unternehmens zu planen und umzusetzen?",
+        "prompt": "Welche Strategien kann ich anwenden, um das nachhaltige Wachstum meines Unternehmens zu planen und umzusetzen?",
+        "agentId": "simon"
+    },
+    {
+        "id": 42,
+        "promptDisplayName": "Wie kann ich den internationalen Markteintritt für mein Startup planen und angehen?",
+        "prompt": "Wie kann ich den internationalen Markteintritt für mein Startup planen und angehen?",
+        "agentId": "simon"
+    },
+    {
+        "id": 43,
         "promptDisplayName": "Wie segmentiere ich mein Publikum, um unterschiedliche Botschaften je nach Interessen und Bedürfnissen zu verbreiten?",
         "prompt": "Wie segmentiere ich mein Publikum, um unterschiedliche Botschaften je nach Interessen und Bedürfnissen zu verbreiten?",
         "agentId": "sofia"
     },
     {
-        "id": 39,
+        "id": 44,
         "promptDisplayName": "Wie gestalte ich einprägsame Botschaften, die lange nach der Präsentation im Gedächtnis bleiben?",
         "prompt": "Wie gestalte ich einprägsame Botschaften, die lange nach der Präsentation im Gedächtnis bleiben?",
         "agentId": "sofia"
     },
     {
-        "id": 40,
+        "id": 45,
         "promptDisplayName": "Welche Ansätze eignen sich, um technische Vorteile eines Produkts für Laien verständlich zu machen?",
         "prompt": "Welche Ansätze eignen sich, um technische Vorteile eines Produkts für Laien verständlich zu machen?",
         "agentId": "sofia"
     },
     {
-        "id": 41,
+        "id": 46,
         "promptDisplayName": "Welche Herangehensweisen sind effektiv, um digitale Kanäle zur Kundenkonversion zu nutzen?",
         "prompt": "Welche Herangehensweisen sind effektiv, um digitale Kanäle zur Kundenkonversion zu nutzen?",
         "agentId": "sofia"
     },
     {
-        "id": 42,
+        "id": 47,
         "promptDisplayName": "Wie verpacke ich Preisargumente in einer Weise, die den wahrgenommenen Wert steigert?",
         "prompt": "Wie verpacke ich Preisargumente in einer Weise, die den wahrgenommenen Wert steigert?",
         "agentId": "sofia"
