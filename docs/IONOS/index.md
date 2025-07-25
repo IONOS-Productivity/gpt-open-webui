@@ -5,6 +5,7 @@
 * [Git](./git.md)
 * [Keycloak](./keycloak.md)
 * [Local development](./local-development.md)
+* [Merge checklist](./merge-checklist.md)
 * [Model details](./model-details.md)
 * [Signup](./signup.md)
 * [Translations](./translations.md)
