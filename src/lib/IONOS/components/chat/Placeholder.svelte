@@ -58,7 +58,7 @@
 	<div class="w-full text-3xl text-gray-800 dark:text-gray-100 font-medium text-center flex items-center gap-4 font-primary">
 		<div class="w-full flex flex-col justify-center items-center gap-5 md:gap-10">
 			<div class="flex flex-row justify-center gap-3 sm:gap-3.5 w-fit px-5">
-				<div class="pb-[50px] md:pb-[100px] text-3xl sm:text-5xl leading-[56px] font-overpass text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-700">
+				<div class="pb-[50px] md:pb-[100px] text-3xl sm:text-5xl font-overpass text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-700">
 					{#if agentName}
 							{$i18n.t("I'm {{agentName}},", { agentName, ns: 'ionos' })}
 							<br>
