@@ -48,7 +48,7 @@
 	import AddFilesPlaceholder from '../AddFilesPlaceholder.svelte';
 	import SearchInput from './Sidebar/SearchInput.svelte';
 	import Folder from '../common/Folder.svelte';
-	import Plus from '$lib/IONOS/components/icons/Plus.svelte';
+	import PenSquare from '$lib/IONOS/components/icons/PenSquare.svelte';
 	import Tooltip from '../common/Tooltip.svelte';
 	import Folders from './Sidebar/Folders.svelte';
 	import { getChannels, createNewChannel } from '$lib/apis/channels';
@@ -510,7 +510,7 @@
 				}}
 			>
 				<div class="self-center">
-					<Plus />
+					<PenSquare />
 				</div>
 				{#if $showSidebar}
 					<div class=" self-center font-medium text-sm text-blue-800 dark:text-white font-primary">
