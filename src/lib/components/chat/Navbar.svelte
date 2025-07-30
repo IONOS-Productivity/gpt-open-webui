@@ -96,7 +96,9 @@
 				{/if}
 			</div>
 
-			<PrivacySlogan />
+			{#if !$mobile }
+				<PrivacySlogan />
+			{/if}
 
 			<div class="flex flex-none items-center self-center text-gray-600 dark:text-gray-400">
 				{#if shareEnabled && chat && (chat.id || $temporaryChatEnabled)}
