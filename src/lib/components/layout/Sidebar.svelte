@@ -19,7 +19,8 @@
 		channels,
 		socket,
 		config,
-		isApp
+		isApp,
+		showArchivedChats,
 	} from '$lib/stores';
 	import { onMount, getContext, tick, onDestroy, createEventDispatcher } from 'svelte';
 
@@ -56,8 +57,11 @@
 	import ChannelItem from './Sidebar/ChannelItem.svelte';
 	import PencilSquare from '../icons/PencilSquare.svelte';
 	import Sparkles from '$lib/IONOS/components/icons/Sparkles.svelte';
-	import Bars from '$lib/IONOS/components/icons/Bars.svelte';
 	import MagnifyingGlass from '$lib/IONOS/components/icons/MagnifyingGlass.svelte';
+	import FilledUserAvatar from '$lib/IONOS/components/icons/FilledUserAvatar.svelte';
+	import IonosLogo from '$lib/IONOS/components/icons/IonosLogo.svelte';
+	import SidebarExpander from '$lib/IONOS/components/common/SidebarExpander.svelte';
+	import Ellipsis from '$lib/IONOS/components/icons/Ellipsis.svelte';
 
 	const dispatch = createEventDispatcher();
 
@@ -456,7 +460,7 @@
 	<div
 		class=" {$isApp
 			? ' ml-[4.5rem] md:ml-0'
-			: ''} fixed md:hidden z-40 top-0 right-0 left-0 bottom-0 bg-black/60 w-full min-h-screen h-screen flex justify-center overflow-hidden overscroll-contain"
+			: ''} fixed block md:hidden sm:block z-40 top-0 right-0 bottom-0 bg-black/60 w-[calc(100%-290px)] min-h-screen h-screen flex justify-center overflow-hidden overscroll-contain"
 		on:mousedown={() => {
 			showSidebar.set(!$showSidebar);
 		}}
@@ -467,29 +471,31 @@
 	bind:this={navElement}
 	id="sidebar"
 	class="select-none {$showSidebar
-		? 'md:relative w-[260px] max-w-[260px]'
-		: 'w-[60px]'} {$isApp
+		? 'md:relative md:w-[260px] md:max-w-[260px] w-[290px] max-w-[290px]'
+		: 'sm:w-[60px] w-[0px]'} {$isApp
 		? `ml-[4.5rem] md:ml-0 `
 		: 'transition-width duration-200 ease-in-out'}  shrink-0 bg-gray-100 text-blue-800 dark:bg-gray-950 dark:text-gray-200 text-sm z-30 overflow-x-hidden
 		"
 	data-state={$showSidebar}
 >
 	<div
-		class="pt-[30px] pb-5 my-auto flex flex-col overflow-x-hidden z-50 gap-2.5 {$showSidebar
-			? 'justify-between w-[260px]'
-			: 'justify-start w-[60px] px-2.5'}"
+		class="pt-[30px] max-h-[100vh] pb-5 my-auto flex flex-col overflow-x-hidden z-50 gap-2.5 {$showSidebar
+			? 'justify-between sm:w-[260px] w-[290px]'
+			: 'justify-start sm:w-[60px] w-0 px-2.5'}"
 	>
-		<div class="{$showSidebar ? 'px-2.5' : 'self-center'} flex justify-between space-x-1 text-gray-600 dark:text-gray-400 mb-5 ">
-			<button
-				class=" cursor-pointer p-2.5 flex rounded-xl hover:bg-gray-100 dark:hover:bg-gray-900 transition"
-				on:click={() => {
-					showSidebar.set(!$showSidebar);
-				}}
-			>
-				<div class=" m-auto self-center">
-					<Bars />
+
+		<div class="{$showSidebar ? 'px-2.5' : 'self-center'} flex justify-start space-x-1 text-gray-600 dark:text-gray-400 mb-5 ">
+			<SidebarExpander />
+
+			{#if $showSidebar && $mobile}
+				<div
+					class="items-center flex h-10 overflow-hidden py-0.5"
+				>
+					<a href="/" on:click={() => goto('/')}>
+						<IonosLogo className={"h-6"} />
+					</a>
 				</div>
-			</button>
+			{/if}
 		</div>
 
 		<div class="px-2.5 flex justify-center text-gray-600 dark:text-gray-400 {$showSidebar ? '' : 'content-center'}">
@@ -611,7 +617,7 @@
 
 		{#if $showSidebar}
 		<div
-			class="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden {$temporaryChatEnabled
+			class="relative flex flex-col shrink sm:flex-1 overflow-y-scroll sm:overflow-y-auto overflow-x-hidden {$temporaryChatEnabled
 				? 'opacity-20'
 				: ''}"
 		>
@@ -871,6 +877,34 @@
 				</div>
 			</Folder>
 		</div>
+		{#if $mobile}
+			<div class="flex flex-row justify-start items-center px-5 py-2.5 gap-2.5">
+				<div>
+					<FilledUserAvatar />
+				</div>
+				<p class="grow text-ellipsis text-nowrap">{$user.email}</p>
+				<div>
+					<UserMenu
+						className="max-w-[200px]"
+						role={$user?.role}
+						on:show={(e) => {
+							if (e.detail === 'archived-chat') {
+								showArchivedChats.set(true);
+							}
+						}}
+					>
+						<button
+							class="select-none flex rounded p-1.5 w-full hover:bg-gray-200 dark:hover:bg-gray-850 transition"
+							aria-label="User Menu"
+						>
+							<div class="text-blue-800 self-center">
+								<Ellipsis />
+							</div>
+						</button>
+					</UserMenu>
+				</div>
+			</div>
+		{/if}
 		{/if}
 	</div>
 </div>
