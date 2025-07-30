@@ -47,9 +47,9 @@
 	}
 </script>
 
-<div class="grid py-12 lg:grid-cols-4 md:grid-cols-2 gap-4 gap-y-[20px]">
+<div class="grid py-12 lg:grid-cols-4 md:grid-cols-2 gap-4 gap-y-[20px] max-xs:gap-y-[50px] max-xs:py-0">
 	{#each shownAgents as { id, name, subtitle, description }}
-		<div class="h-[280px] flex items-center">
+		<div class="h-[280px] max-xs:h-[380px] flex items-center">
 			<button
 				class="group w-56 duration-[500ms] pb-4 mx-6 bg-white text-blue-800 text-left rounded-2xl shadow-xl group cursor-pointer"
 				data-id={id}
