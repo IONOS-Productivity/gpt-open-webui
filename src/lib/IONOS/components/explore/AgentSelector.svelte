@@ -51,7 +51,7 @@
 	{#each shownAgents as { id, name, subtitle, description }}
 		<div class="h-[280px] flex items-center">
 			<button
-				class="group w-56 hover:pb-0 duration-[500ms] transition-[padding] pb-4 mx-6 bg-white text-blue-800 text-left rounded-2xl shadow-xl group cursor-pointer"
+				class="group w-56 duration-[500ms] pb-4 mx-6 bg-white text-blue-800 text-left rounded-2xl shadow-xl group cursor-pointer"
 				data-id={id}
 				on:click={() => dispatch('select', id)}
 			>
@@ -69,11 +69,11 @@
 					<h2 class="text-xs">
 						{subtitle}
 					</h2>
-					<div class="flex flex-col justify-between mt-0 overflow-hidden duration-[500ms] transition-[height,margin-top] h-0 group-hover:h-[160px] group-hover:mt-4 group-focus:h-[160px] group-focus:mt-4 focus-within:h-[160px] focus-within:mt-4 max-xs:h-[160px] max-xs:mt-4 max-xs:h-[160px] max-xs:mt-4">
+					<div class="flex flex-col justify-between mt-0 overflow-hidden duration-[500ms] transition-[height,margin-top] h-0 group-hover:h-[145px] group-hover:mt-4 group-focus:h-[145px] group-focus:mt-4 focus-within:h-[145px] focus-within:mt-4 max-xs:h-[145px] max-xs:mt-4 max-xs:h-[145px] max-xs:mt-4">
 						<p class="text-xs">
 							{description}
 						</p>
-						<div class="mb-4 text-center">
+						<div class="text-center">
 							<Button
 								interactive={false}
 								name={id}
