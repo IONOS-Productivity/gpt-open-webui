@@ -23,4 +23,6 @@ elif VECTOR_DB == "elasticsearch":
 else:
     from open_webui.retrieval.vector.dbs.chroma import ChromaClient
 
+    print("######### " + str(ChromaClient))
     VECTOR_DB_CLIENT = ChromaClient()
+    print("######### " + str(VECTOR_DB_CLIENT))
