@@ -32,6 +32,8 @@
 	import IonosLogo from '$lib/IONOS/components/icons/IonosLogo.svelte';
 	import PrivacySlogan from '$lib/IONOS/components/PrivacySlogan.svelte';
 	import FilledUserAvatar from '$lib/IONOS/components/icons/FilledUserAvatar.svelte';
+	import SidebarExpander from '$lib/IONOS/components/common/SidebarExpander.svelte';
+	import PenSquare from '../../IONOS/components/icons/PenSquare.svelte';
 
 	const i18n = getContext('i18n');
 
@@ -75,6 +77,13 @@
 					</div>
 				</button>
 			</div>
+
+			{#if $mobile && !$showSidebar}
+				<div class="flex-none mr-1 self-start items-center text-gray-600 dark:text-gray-400 sm:hidden">
+					<SidebarExpander />
+				</div>
+
+			{/if}
 
 			<div
 				class="items-center flex h-10 overflow-hidden py-0.5"
@@ -167,24 +176,37 @@
 				{/if}
 
 				{#if $user !== undefined && $user !== null}
-					<UserMenu
-						className="max-w-[200px]"
-						role={$user?.role}
-						on:show={(e) => {
-							if (e.detail === 'archived-chat') {
-								showArchivedChats.set(true);
-							}
-						}}
-					>
-						<button
-							class="select-none flex rounded-xl p-1.5 w-full hover:bg-gray-50 dark:hover:bg-gray-850 transition"
-							aria-label="User Menu"
+					{#if $mobile}
+						<a
+							id="sidebar-new-chat-button"
+							class="{$showSidebar ? 'flex-grow' : ''} flex space-x-3 rounded-sm p-2.5 bg-transparent text-blue-800 hover:bg-gray-200 dark:hover:bg-gray-900 transition no-drag-region"
+							href="/"
+							draggable="false"
 						>
-							<div class="text-blue-800 self-center">
-								<FilledUserAvatar />
+							<div class="self-center">
+								<PenSquare />
 							</div>
-						</button>
-					</UserMenu>
+						</a>
+					{:else}
+						<UserMenu
+							className="max-w-[200px]"
+							role={$user?.role}
+							on:show={(e) => {
+								if (e.detail === 'archived-chat') {
+									showArchivedChats.set(true);
+								}
+							}}
+						>
+							<button
+								class="select-none flex rounded-xl p-1.5 w-full hover:bg-gray-50 dark:hover:bg-gray-850 transition"
+								aria-label="User Menu"
+							>
+								<div class="text-blue-800 self-center">
+									<FilledUserAvatar />
+								</div>
+							</button>
+						</UserMenu>
+					{/if}
 				{/if}
 			</div>
 		</div>
