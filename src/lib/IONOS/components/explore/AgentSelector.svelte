@@ -63,10 +63,10 @@
 					/>
 				</div>
 				<div class="px-4 overflow-hidden">
-					<h1 class="text-xs font-semibold mt-2">
+					<h1 class="text-xs/normal font-semibold mt-2">
 						{name}
 					</h1>
-					<h2 class="text-xs">
+					<h2 class="text-xs/normal">
 						{subtitle}
 					</h2>
 					<div class="flex flex-col justify-between mt-0 overflow-hidden duration-[500ms] transition-[height,margin-top] h-0 group-hover:h-[145px] group-hover:mt-4 group-focus:h-[145px] group-focus:mt-4 focus-within:h-[145px] focus-within:mt-4 max-xs:h-[145px] max-xs:mt-4 max-xs:h-[145px] max-xs:mt-4">
