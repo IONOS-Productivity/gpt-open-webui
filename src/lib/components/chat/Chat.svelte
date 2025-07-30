@@ -1955,8 +1955,8 @@
 
 <div
 	class="transition-width duration-200 ease-in-out {$showSidebar
-		? '  md:max-w-[calc(100%-260px)]'
-		: ' max-w-[calc(100%-60px)]'} w-full flex flex-col"
+		? '  md:max-w-[calc(100%-260px)] max-w-[calc(100%-290px)] blur-xl sm:blur-none'
+		: ' sm:max-w-[calc(100%-60px)] max-w-full'} w-full flex flex-col"
 	id="chat-container"
 	style="height: calc(100dvh - {$notifications.length * 60}px);"
 >
