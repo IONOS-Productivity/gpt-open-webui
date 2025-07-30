@@ -8,7 +8,8 @@
 	import NotificationManager from '$lib/IONOS/components/notifications/NotificationManager.svelte';
 	import {
 		user,
-		showSidebar
+		showSidebar,
+		mobile,
 	} from '$lib/stores';
 	import { notifications } from '$lib/IONOS/stores/notifications';
 </script>
@@ -34,7 +35,9 @@
 						</a>
 					</div>
 
-					<PrivacySlogan />
+					{#if !$mobile }
+						<PrivacySlogan />
+					{/if}
 
 					<div class="self-center flex flex-none items-center text-gray-600 dark:text-gray-400">
 						{#if $user !== undefined}
