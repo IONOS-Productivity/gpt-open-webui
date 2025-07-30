@@ -47,9 +47,9 @@
 	}
 </script>
 
-<div class="grid lg:grid-cols-4 md:grid-cols-2 gap-4 md:gap-y-0">
+<div class="grid py-12 lg:grid-cols-4 md:grid-cols-2 gap-4 gap-y-[20px]">
 	{#each shownAgents as { id, name, subtitle, description }}
-		<div class="min-h-96 flex items-center">
+		<div class="h-[280px] flex items-center">
 			<button
 				class="group w-56 hover:pb-0 duration-[500ms] transition-[padding] pb-4 mx-6 bg-white text-blue-800 text-left rounded-2xl shadow-xl group cursor-pointer"
 				data-id={id}
@@ -69,7 +69,7 @@
 					<h2 class="text-xs">
 						{subtitle}
 					</h2>
-					<div class="flex flex-col justify-between mt-0 overflow-hidden duration-[500ms] transition-[height,margin-top] h-0 group-hover:h-40 group-hover:mt-4 group-focus:h-40 group-focus:mt-4 focus-within:h-40 focus-within:mt-4 max-xs:h-40 max-xs:mt-4 max-xs:h-40 max-xs:mt-4">
+					<div class="flex flex-col justify-between mt-0 overflow-hidden duration-[500ms] transition-[height,margin-top] h-0 group-hover:h-[160px] group-hover:mt-4 group-focus:h-[160px] group-focus:mt-4 focus-within:h-[160px] focus-within:mt-4 max-xs:h-[160px] max-xs:mt-4 max-xs:h-[160px] max-xs:mt-4">
 						<p class="text-xs">
 							{description}
 						</p>
