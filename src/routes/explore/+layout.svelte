@@ -6,6 +6,7 @@
 	import Sidebar from '$lib/components/layout/Sidebar.svelte';
 	import FilledUserAvatar from '$lib/IONOS/components/icons/FilledUserAvatar.svelte';
 	import NotificationManager from '$lib/IONOS/components/notifications/NotificationManager.svelte';
+	import SidebarExpander from '$lib/IONOS/components/common/SidebarExpander.svelte';
 	import {
 		user,
 		showSidebar,
@@ -19,14 +20,20 @@
 	{#if $user !== undefined}
 		<Sidebar />
 	{/if}
-	<div class="overflow-scroll" style="height: calc(100dvh - {$notifications.length * 60}px);">
-		<nav class="fixed z-30 w-full {($user !== undefined) ? ($showSidebar ? 'max-w-[calc(100%-260px)]' : 'max-w-[calc(100%-60px)]') : 'max-w-full' } px-1.5 py-4 -mb-8 pt-[30px] flex items-center drag-region transition-width duration-200 ease-in-out">
+	<div class="overflow-scroll {$showSidebar ? 'blur-xl sm:blur-none' : ''}" style="height: calc(100dvh - {$notifications.length * 60}px);">
+		<nav class="fixed z-30 w-full {($user !== undefined) ? ($showSidebar ? 'max-w-[calc(100%-260px)]' : '') : 'max-w-full' } px-1.5 py-4 -mb-8 pt-[30px] flex items-center drag-region transition-width duration-200 ease-in-out">
 			<div
 				class="bg-gradient-to-b via-50% from-white via-white to-transparent dark:from-gray-900 dark:via-gray-900 dark:to-transparent pointer-events-none absolute inset-0 -top-10 -bottom-10 z-[-1] blur-sm"
 			></div>
 
 			<div class=" flex w-full mx-auto px-1 pt-0.5 bg-transparent">
 				<div class="flex justify-between items-center w-full">
+					{#if $mobile && !$showSidebar}
+						<div class="flex-none mr-1 self-start items-center text-gray-600 dark:text-gray-400 sm:hidden">
+							<SidebarExpander />
+						</div>
+
+					{/if}
 					<div
 						class="items-center flex flex-1 h-10 overflow-hidden py-0.5"
 					>
