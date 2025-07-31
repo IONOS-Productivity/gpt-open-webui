@@ -2,6 +2,7 @@
 	import type { Readable, Writable } from 'svelte/store';
 	import type { I18Next } from '$lib/IONOS/i18next.d.ts';
 	import { createEventDispatcher, getContext } from 'svelte';
+	import { showSidebar } from '$lib/stores';
 	import { agents, type Agent } from '$lib/IONOS/stores/agents';
 	import Button, { ButtonType } from '$lib/IONOS/components/common/Button.svelte';
 	import Sparkles from '$lib/IONOS/components/icons/Sparkles.svelte';
@@ -47,7 +48,7 @@
 	}
 </script>
 
-<div class="grid py-12 lg:grid-cols-4 md:grid-cols-2 gap-4 gap-y-[20px] max-xs:gap-y-[50px] max-xs:py-0">
+<div class="grid py-12 max-xs:grid-cols-1 grid-cols-2 2xl:grid-cols-4 gap-4 gap-y-[20px] max-xs:gap-y-[50px] max-xs:py-0"  class:max-lg:grid-cols-1={$showSidebar} class:max-xl:grid-cols-2={$showSidebar}>
 	{#each shownAgents as { id, name, subtitle, description }}
 		<div class="h-[280px] max-xs:h-[380px] flex items-center">
 			<button
