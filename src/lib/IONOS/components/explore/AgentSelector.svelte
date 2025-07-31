@@ -70,7 +70,7 @@
 					<h2 class="text-xs/normal">
 						{subtitle}
 					</h2>
-					<div class="flex flex-col justify-between mt-0 overflow-hidden duration-[500ms] transition-[height,margin-top] h-0 group-hover:h-[145px] group-hover:mt-4 group-focus:h-[145px] group-focus:mt-4 focus-within:h-[145px] focus-within:mt-4 max-xs:h-[145px] max-xs:mt-4 max-xs:h-[145px] max-xs:mt-4">
+					<div class="flex flex-col justify-between mt-0 overflow-hidden duration-[500ms] transition-[height,margin-top] h-0 group-hover:h-[145px] group-hover:mt-4 group-focus:h-[145px] group-focus:mt-4 focus-within:h-[145px] focus-within:mt-4 max-xs:h-[125px] max-xs:mt-4">
 						<p class="text-xs">
 							{description}
 						</p>
