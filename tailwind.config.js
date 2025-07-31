@@ -106,6 +106,7 @@ export default {
 			},
 			screens: {
 				xs: "560px",
+				"2xl": "1440px",
 			}
 		}
 	},
