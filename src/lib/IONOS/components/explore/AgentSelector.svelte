@@ -52,11 +52,11 @@
 	{#each shownAgents as { id, name, subtitle, description }}
 		<div class="h-[280px] max-xs:h-[380px] flex items-center">
 			<button
-				class="group w-56 duration-[500ms] pb-4 mx-6 bg-white text-blue-800 text-left rounded-2xl shadow-xl group cursor-pointer"
+				class="group w-[210px] duration-[500ms] pb-4 mx-6 bg-white text-blue-800 text-left rounded-2xl shadow-xl group cursor-pointer"
 				data-id={id}
 				on:click={() => dispatch('select', id)}
 			>
-				<div class="overflow-hidden h-36 rounded-t-2xl">
+				<div class="overflow-hidden h-[140px] rounded-t-2xl">
 					<img
 						class="h-full w-full object-cover rounded-2xl rounded-b-none"
 						src={`/avatars/${id}.jpg`}
