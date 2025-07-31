@@ -52,11 +52,11 @@
 	{#each shownAgents as { id, name, subtitle, description }}
 		<div class="h-[280px] max-xs:h-[380px] flex items-center">
 			<button
-				class="group w-[210px] duration-[500ms] pb-4 mx-6 bg-white text-blue-800 text-left rounded-2xl shadow-xl group cursor-pointer"
+				class="group w-[210px] max-xs:w-[270px] duration-[500ms] pb-4 mx-6 bg-white text-blue-800 text-left rounded-2xl shadow-xl group cursor-pointer"
 				data-id={id}
 				on:click={() => dispatch('select', id)}
 			>
-				<div class="overflow-hidden h-[140px] rounded-t-2xl">
+				<div class="overflow-hidden h-[140px] max-xs:h-[180px] rounded-t-2xl">
 					<img
 						class="h-full w-full object-cover rounded-2xl rounded-b-none"
 						src={`/avatars/${id}.jpg`}
@@ -70,7 +70,7 @@
 					<h2 class="text-xs/normal">
 						{subtitle}
 					</h2>
-					<div class="flex flex-col justify-between mt-0 overflow-hidden duration-[500ms] transition-[height,margin-top] h-0 group-hover:h-[145px] group-hover:mt-4 group-focus:h-[145px] group-focus:mt-4 focus-within:h-[145px] focus-within:mt-4 max-xs:h-[125px] max-xs:mt-4">
+					<div class="flex flex-col justify-between mt-0 overflow-hidden duration-[500ms] transition-[height,margin-top] h-0 group-hover:h-[145px] group-hover:mt-4 group-focus:h-[145px] group-focus:mt-4 focus-within:h-[145px] focus-within:mt-4 max-xs:group-focus:h-[125px] max-xs:focus-within:h-[125px] max-xs:h-[125px] max-xs:mt-4">
 						<p class="text-xs">
 							{description}
 						</p>
