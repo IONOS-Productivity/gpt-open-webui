@@ -28,7 +28,7 @@
 
 			<div class=" flex w-full mx-auto px-1 pt-0.5 bg-transparent">
 				<div class="flex justify-between items-center w-full">
-					{#if $mobile && !$showSidebar && $user}
+					{#if !!$user && $mobile && !$showSidebar}
 						<div class="flex-none mr-1 self-start items-center text-gray-600 dark:text-gray-400 sm:hidden">
 							<SidebarExpander />
 						</div>
