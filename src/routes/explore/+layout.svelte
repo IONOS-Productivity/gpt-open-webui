@@ -47,7 +47,7 @@
 					{/if}
 
 					<div class="self-center flex flex-none items-center text-gray-600 dark:text-gray-400">
-						{#if $user !== undefined}
+						{#if !!$user && !$mobile}
 							<UserMenu
 								className="max-w-[200px]"
 								role={$user?.role}
