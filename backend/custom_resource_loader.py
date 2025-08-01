@@ -13,6 +13,13 @@ from open_webui.models.models import (
     Models,
 )
 
+from open_webui.models.functions import (
+    FunctionForm,
+    FunctionModel,
+    FunctionResponse,
+    Functions,
+)
+
 from open_webui.models.auths import (
     Auths,
 )
@@ -54,21 +61,97 @@ def load_image_file_base64_string(file_path: str):
         print(f"Error: File '{file_path}' not found.")
         return None
 
+
+def load_function_file_as_string(file_path: str):
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            function_data = f.read()
+            if function_data:
+                return function_data
+            else:
+                print(f"Error reading function file '{file_path}'.")
+                return None
+    except FileNotFoundError:
+        print(f"Error: File '{file_path}' not found.")
+        return None
+
+
 def load_db_models():
     return Models.get_models()
+
+def load_db_functions():
+    return Functions.get_functions()
 
 def delete_model_by_id(id: str):
     result = Models.delete_model_by_id(id)
     return result
 
-def create_new_model(form_data: ModelForm):
-    model = Models.insert_new_model(form_data, user.id)
-    if model:
-        return true
+def delete_function_by_id(id: str):
+    result = Functions.delete_function_by_id(id)
+    return result
 
 def update_model_by_id(id: str, form_data: ModelForm):
     model = Models.update_model_by_id(id, form_data)
     return model
+
+def update_function_by_id(id: str, form_data: FunctionForm):
+    function = Functions.update_function_form_by_id(id, form_data)
+    return function
+
+def handle_function_update(admin_user_id, db_functions, json_functions):
+    if not resources_path:
+        raise Exception("Assertion error: resources_path not defined")
+
+    db_function_id_set = set([function.id for function in db_functions])
+    json_function_id_set = set([function['id'] for function in json_functions])
+
+    for function in json_functions:
+        function_path = function.get('content', None)
+        if function_path:
+            # Load icon file from path and replace the icon field with the icon data as base64 string with the prefix 'data:image/png;base64,'
+            function_content = load_function_file_as_string(resources_path + '/' + function_path)
+            if function_content:
+                function['content'] = function_content
+            else:
+                print(f"Error reading function file '{function_path}'.")
+        else:
+            print(f"Function path not found in content.")
+
+    # Get Set of functions which in exist in database but not in json
+    function_delete_set = db_function_id_set.difference(json_function_id_set)
+    # Get Set of functions which in exist in json but not in database
+    function_create_set = json_function_id_set.difference(db_function_id_set)
+    # Get Set of functions which in exist in both database and json
+    function_update_set = db_function_id_set.intersection(json_function_id_set)
+
+    print(f"Found {len(function_delete_set)} function{'s' if len(function_delete_set) != 1 else ''} in the database that do{'es' if len(function_delete_set) == 1 else ''} not exist in the JSON file.")
+    for function_id in function_delete_set:
+        result = delete_function_by_id(function_id)
+        if result:
+            print(f"Function with id '{function_id}' deleted successfully.")
+        else:
+            print(f"Error deleting function with id '{function_id}'.")
+
+    print(f"Found {len(function_create_set)} function{'s' if len(function_create_set) != 1 else ''} in the JSON file that do{'es' if len(function_create_set) == 1 else ''} not exist in the database.")
+    for function in json_functions:
+        if function['id'] in function_create_set:
+            form_data = getFunctionForm(function)
+            result = Functions.insert_new_function(admin_user_id,function['type'],form_data)
+            if result:
+                print(f"Function with id '{function['id']}' created successfully.")
+            else:
+                print(f"Error creating function with id '{function['id']}'.")
+
+    print(f"Found {len(function_update_set)} function{'s' if len(function_update_set) != 1 else ''} that exist in both the database and the JSON file.")
+    for function in json_functions:
+        if function['id'] in function_update_set:
+            form_data = getFunctionForm(function)
+            result = update_function_by_id(function['id'], form_data)
+            if result:
+                print(f"Function with id '{function['id']}' updated successfully.")
+            else:
+                print(f"Error updating function with id '{function['id']}'.")
+
 
 
 def handle_model_update(admin_user_id, db_models, json_models):
@@ -129,6 +212,32 @@ def handle_model_update(admin_user_id, db_models, json_models):
                 print(f"Error updating model with id '{model['id']}'.")
 
 
+def getFunctionForm(function_data: dict[str, any]):
+
+    manifest = {
+        "title": function_data.get("name","default_name"),
+        "version": function_data.get("version", "1.0.0"),
+    }
+
+    meta = {
+        "description": function_data.get("description","default_description"),
+        "manifest": manifest,
+    }
+
+    function_form_data = {
+        "id": function_data.get("id", "default_id"),
+        "name": function_data.get("name", "default_name"),
+        "type": function_data.get("type", "function"),
+        "is_global": function_data.get("is_global", False),
+        "is_active": function_data.get("is_active", True),
+        "meta" : meta,
+        "content": function_data.get("content", ""),
+    }
+
+    # Create a FunctionForm instance
+    function_form = FunctionForm(**function_form_data)
+    return function_form
+
 def getModelForm(model_data: dict[str, any]):
 
     isPrivate = model_data.get('isPrivate', False) is True
@@ -160,6 +269,25 @@ def getModelForm(model_data: dict[str, any]):
     model_form = ModelForm(**model_form_data)
     return model_form
 
+def sync_functions(admin_user_id: str):
+    if not resources_path:
+        raise Exception("Assertion error: resources_path not defined")
+
+    file_path = resources_path + '/functions.json'
+    db_functions = load_db_functions()
+    print(f"Found {len(db_functions)} functions in database.")
+    data = []
+    if os.path.exists(file_path):
+        data = load_json_file(file_path)
+        if not data:
+            raise Exception("Error loading json file.")
+    else:
+        print(f"File '{file_path}' not found.")
+        print("Skipping function sync.")
+        return
+    print(f"Found {len(data)} functions in json.")
+    handle_function_update(admin_user_id, db_functions, data)
+
 def sync_models(admin_user_id: str):
     if not resources_path:
         raise Exception("Assertion error: resources_path not defined")
@@ -167,13 +295,15 @@ def sync_models(admin_user_id: str):
     file_path = resources_path + '/models.json'
     db_models = load_db_models()
     print(f"Found {len(db_models)} models in database.")
-    data = None
+    data = []
     if os.path.exists(file_path):
         data = load_json_file(file_path)
         if not data:
             raise Exception("Error loading json file.")
     else:
         print(f"File '{file_path}' not found.")
+        print("Skipping model sync.")
+        return
     print(f"Found {len(data)} models in json.")
     handle_model_update(admin_user_id, db_models, data)
 
@@ -248,7 +378,7 @@ def main():
 
     admin_id = sync_admin_user()
     sync_models(admin_id)
-
+    sync_functions(admin_id)
 
 if __name__ == "__main__":
     main()
