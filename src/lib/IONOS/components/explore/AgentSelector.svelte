@@ -78,7 +78,7 @@
 							<Button
 								interactive={false}
 								name={id}
-								className="px-4 py-1"
+								className="px-4 py-1 inline-block"
 								type={ButtonType.special}
 							>
 								<span class="pr-1 text-sm font-semibold">
