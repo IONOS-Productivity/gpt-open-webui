@@ -11,7 +11,7 @@
 	<a
 		href="https://www.ionos.de/ionos-gpt-datenschutz-manifest#digitale-loesungen"
 		target="_blank"
-
+		aria-label={$i18n.t('Privacy by Design!', { ns: 'ionos' })}
 	>
 		<Shield className={"h-6 w-6 inline-block mr-2 fill-purple-700"} />
 
