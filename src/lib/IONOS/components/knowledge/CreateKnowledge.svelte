@@ -13,6 +13,7 @@
 	const dispatch = createEventDispatcher();
 
 	export let show = false;
+	export let submenu: boolean = false;
 
 	async function create() {
 		if (name.trim() === '' || description.trim() === '') {
@@ -43,18 +44,19 @@
 <Dialog
 	dialogId="knowledge-create"
 	show={show}
-	class="p-0"
+	class="p-0 h-screen w-screen md:max-w-fit md:max-h-fit {show ? 'max-md:translate-x-0' : 'max-md:translate-x-[100dvw]'}"
 >
 	<DialogHeader
 			slot="header"
 			title={$i18n.t("Create a knowledge base", { ns: 'ionos' })}
 			on:close={() => { dispatch('close'); }}
 			dialogId="knowledge-create"
-			class="p-[30px]"
+			class="p-[30px] border-b border-gray-200 overflow-y-scroll"
+			{submenu}
 		/>
 	<form
 		on:submit|preventDefault={create}
-		class="flex flex-col gap-4 min-w-[500px] p-5"
+		class="flex flex-col gap-4 md:min-w-[500px] p-5"
 		slot="content"
 	>
 		<div class="flex flex-col justify-center cursor-default gap-5">
@@ -85,9 +87,10 @@
 			/>
 		</div>
 
-		<div class="flex justify-end items-end py-4 cursor-default">
+		<div class="flex justify-center md:justify-end items-end py-4 cursor-default">
 			<Button
 				type={ButtonType.secondary}
+				className="w-full"
 			>
 				{$i18n.t('Create knowledge base', { ns: 'ionos' })}
 			</Button>
