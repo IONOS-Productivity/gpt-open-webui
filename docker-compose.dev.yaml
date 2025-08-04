@@ -1,6 +1,26 @@
 name: open-webui-dev
 
+# SQL custom_init.sql >
+# CREATE DATABASE openwebui_vector;
+# \c openwebui_vector
+# CREATE EXTENSION vector;
+
+
 services:
+
+#  postgresql:
+#    image: pgvector/pgvector:pg17
+#    environment:
+#      POSTGRES_USER: postgres
+#      POSTGRES_PASSWORD: pass
+#      POSTGRES_DB: postgres
+#    ports:
+#      - "5432:5432"
+#    volumes:
+#      - ./initdb.d/custom_init.sql:/docker-entrypoint-initdb.d/custom_init.sql
+#      - pgdata:/var/lib/postgresql/data
+
+
   frontend:
     build:
       context: .
@@ -38,6 +58,7 @@ services:
     env_file: ".env"
     environment:
       - ENV=dev
+      - RUN_MIGRATIONS=false
     ports:
       - "8080:8080"
     extra_hosts:
@@ -45,20 +66,43 @@ services:
     volumes:
       - ./backend:/app/backend
       - data:/app/backend/data
+    depends_on:
+      - backend-migrate  # wartet auf Migrationen
 
-  keycloak:
-    image: quay.io/keycloak/keycloak:26.0.7-0
-    command: ["start-dev", "--http-enabled=true", "--http-port=8079", "--log-level=info", "--import-realm"]
-    volumes:
-      - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json
+  backend-migrate:
+    image: open-webui-dev-backend
+    env_file: ".env"
+    command: ["python", "custom_resource_loader.py"]
     environment:
-      # Needed to create a config from scratch. Causing errors when using --import-realm
-      # - KC_BOOTSTRAP_ADMIN_USERNAME=admin
-      # - KC_BOOTSTRAP_ADMIN_PASSWORD=admin
-      - KC_FEATURES=persistent-user-sessions
-    network_mode: host
-    ports:
-      - "8079:8079"
+      - ENV=dev
+      - RUN_MIGRATIONS=true
+    volumes:
+      - ./backend:/app/backend
+      - data:/app/backend/data
+
+
+#  tika:
+#    image: apache/tika:2.5.0.2-full
+#    ports:
+#      - "9998:9998"
+#    environment:
+#      - TIKA_LOG_LEVEL=INFO
+
+
+#  keycloak:
+#    image: quay.io/keycloak/keycloak:26.0.7-0
+#    command: ["start-dev", "--http-enabled=true", "--http-port=8079", "--log-level=info", "--import-realm"]
+#    volumes:
+#      - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json
+#    environment:
+#      # Needed to create a config from scratch. Causing errors when using --import-realm
+#      # - KC_BOOTSTRAP_ADMIN_USERNAME=admin
+#      # - KC_BOOTSTRAP_ADMIN_PASSWORD=admin
+#      - KC_FEATURES=persistent-user-sessions
+#    network_mode: host
+#    ports:
+#      - "8079:8079"
  
 volumes:
   data: {}
+  pgdata: {}

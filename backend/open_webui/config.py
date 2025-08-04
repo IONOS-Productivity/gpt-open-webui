@@ -64,7 +64,9 @@ def run_migrations():
         log.exception(f"Error running migrations: {e}")
 
 
-run_migrations()
+
+if os.getenv("RUN_MIGRATIONS", "true").lower() == "true":
+    run_migrations()
 
 
 class Config(Base):
