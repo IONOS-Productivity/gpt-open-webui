@@ -29,6 +29,7 @@
 	// Can be null as the Dialog can be rendered with show = false,
 	// when no data-to-be-edited is known yet
 	export let knowledge: Knowledge|null = null;
+	export let submenu: boolean = false;
 
 	let confirmKnowledgeDeletion = false;
 	let uploadRunning = false;
@@ -106,7 +107,7 @@
 <Dialog
 	dialogId="knowledge-editor"
 	{show}
-	class="p-0"
+	class="p-0 h-screen w-screen md:max-w-fit md:max-h-fit overflow-y-scroll {show ? 'max-md:translate-x-0' : 'max-md:translate-x-[100dvw]'}"
 >
 	<DialogHeader
 		slot="header"
@@ -114,11 +115,12 @@
 		on:close={() => { dispatch('close'); }}
 		dialogId="knowledge-editor"
 		class="p-[30px]"
+		{submenu}
 	/>
 
-	<div slot="content" class="flex flex-col min-w-[500px] min-h-[200px] relative p-5 text-blue-800">
+	<div slot="content" class="flex flex-col md:min-w-[500px] min-h-[200px] relative p-5 text-blue-800">
 		{#if knowledge}
-			<div class="flex justify-end items-end pb-5 border-gray-200 border-b cursor-default" class:grow={$files.length === 0}>
+			<div class="hidden md:flex justify-end items-end pb-5 border-gray-200 border-b cursor-default" class:grow={$files.length === 0}>
 				<Button
 					on:click={() => { confirmKnowledgeDeletion = true; }}
 					type={ButtonType.caution}
@@ -163,6 +165,15 @@
 					</div>
 				{/if}
 			</DropUploadZone>
+			<div class="flex md:hidden justify-center items-end pb-5 cursor-default" class:grow={$files.length === 0}>
+				<Button
+					on:click={() => { confirmKnowledgeDeletion = true; }}
+					type={ButtonType.caution}
+					className="w-full"
+				>
+					{$i18n.t('Delete knowledge base', { ns: 'ionos' })}
+				</Button>
+			</div>
 		{/if}
 	</div>
 </Dialog>
