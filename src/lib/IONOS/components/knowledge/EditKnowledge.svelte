@@ -26,6 +26,7 @@
 	const dispatch = createEventDispatcher();
 
 	export let knowledge: Knowledge;
+	export let submenu: boolean = false;
 
 	let confirmKnowledgeDeletion = false;
 	let uploadRunning = false;
@@ -103,7 +104,7 @@
 <Dialog
 	dialogId="knowledge-editor"
 	show={true}
-	class="p-0"
+	class="p-0 h-screen w-screen md:max-w-fit md:max-h-fit overflow-y-scroll"
 >
 	<DialogHeader
 		slot="header"
@@ -111,10 +112,11 @@
 		on:close={() => { dispatch('close'); }}
 		dialogId="knowledge-editor"
 		class="p-[30px]"
+		{submenu}
 	/>
 
-	<div slot="content" class="flex flex-col min-w-[500px] min-h-[200px] relative p-5 text-blue-800">
-		<div class="flex justify-end items-end pb-5 border-gray-200 border-b cursor-default" class:grow={$files.length === 0}>
+	<div slot="content" class="flex flex-col md:min-w-[500px] min-h-[200px] relative p-5 text-blue-800">
+		<div class="hidden md:flex justify-end items-end pb-5 border-gray-200 border-b cursor-default" class:grow={$files.length === 0}>
 			<Button
 				on:click={() => { confirmKnowledgeDeletion = true; }}
 				type={ButtonType.caution}
@@ -159,6 +161,15 @@
 				</div>
 			{/if}
 		</DropUploadZone>
+		<div class="flex md:hidden justify-center items-end pb-5 cursor-default" class:grow={$files.length === 0}>
+			<Button
+				on:click={() => { confirmKnowledgeDeletion = true; }}
+				type={ButtonType.caution}
+				className="w-full"
+			>
+				{$i18n.t('Delete knowledge base', { ns: 'ionos' })}
+			</Button>
+		</div>
 	</div>
 </Dialog>
 

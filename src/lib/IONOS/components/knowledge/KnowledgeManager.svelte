@@ -7,7 +7,7 @@
 	} from '$lib/apis/knowledge/types';
 	import { getContext, onMount } from 'svelte';
 	import Fuse from 'fuse.js';
-	import { knowledge } from '$lib/stores';
+	import { knowledge, mobile } from '$lib/stores';
 	import { getKnowledgeBaseList } from '$lib/apis/knowledge';
 	import { WEBUI_NAME } from '$lib/stores';
 	import { knowledgeManager, showKnowlegeManager } from '$lib/IONOS/stores/dialogs';
@@ -31,6 +31,14 @@
 	let filteredItems: Knowledge[] = [];
 	let knowledgeBeingEdited:Knowledge|null = null;
 	let create = false;
+	let animationDuration = 200;
+	let slideInAnimation: string;
+
+	$: if ($mobile) {
+		slideInAnimation = $knowledgeManager ? '-translate-x-0' : '-translate-x-full';
+	} else {
+		slideInAnimation = $knowledgeManager ? 'translate-y-0' : 'translate-y-[90dvh]';
+	}
 
 	$: if (knowledgeBases) {
 		fuse = new Fuse(knowledgeBases, {
@@ -91,30 +99,31 @@
 <Dialog
 	dialogId="knowledge-manager"
 	show={$knowledgeManager}
-	class="max-w-[800px] min-h-[300px] max-h-[436px] w-full"
+	class="p-0 md:min-h-[300px] h-screen w-screen md:max-h-[436px] md:min-w-[750px] md:max-w-[800px] transition-transform duration-[{animationDuration}ms] ease-out {slideInAnimation}"
 >
 	<DialogHeader
 		slot="header"
 		title={$i18n.t("Knowledge Management", { ns: 'ionos' })}
 		on:close={() => { showKnowlegeManager(false); }}
 		dialogId="knowledge-manager"
-		class="p-[30px]"
+		class="p-[30px] border-b border-gray-200 overflow-x-scroll"
+		submenu={$mobile ? true : false}
 	/>
 
 	<div slot="content" class="p-5 flex flex-col">
 		{#if loaded}
-			<div class="flex pb-5 border-gray-200 border-b min-w-[500px]">
-				<div class="flex grow">
+			<div class="flex pb-5 gap-2.5 border-gray-200 border-b md:min-w-[500px]">
+				<div class="flex grow rounded-lg p-3 text-sm bg-gray-100 outline-hidden text-blue-800 placeholder:text-gray-400">
 					<div class="self-center ml-1 mr-3">
 						<MagnifyingGlass />
 					</div>
 					<input
-						class="w-full text-sm py-1 rounded-r-xl outline-hidden bg-transparent placeholder:text-blue-800"
+						class="w-full"
 						bind:value={query}
 						placeholder={$i18n.t('Search Knowledge', { ns: 'ionos' })}
 					/>
 				</div>
-				<div>
+				<div class="hidden md:block self-center">
 					<Button
 						on:click={() => create = true}
 						type={ButtonType.secondary}
@@ -129,8 +138,17 @@
 					on:select={select}
 				/>
 			</div>
-			<div class=" text-gray-400 text-xs py-5 border-t border-gray-200">
+			<div class="hidden md:block text-gray-400 text-xs py-5 border-t border-gray-200">
 				ⓘ {$i18n.t("Use '#' in the prompt input to load and include your knowledge.", { ns: 'ionos' })}
+			</div>
+			<div class="md:hidden block mt-5">
+				<Button
+					on:click={() => create = true}
+					type={ButtonType.secondary}
+					className="w-full"
+				>
+					{$i18n.t('Create knowledge base', { ns: 'ionos' })}
+				</Button>
 			</div>
 		{:else}
 			<LoadingCover />
@@ -143,6 +161,7 @@
 		knowledge={knowledgeBeingEdited}
 		on:deleted={onKnowledgeDeleted}
 		on:close={onEditClose}
+		submenu={$mobile ? true : false}
 	/>
 {/if}
 
@@ -151,5 +170,6 @@
 		show={true}
 		on:created={onKnowledgeCreated}
 		on:close={onCloseManager}
+		submenu={$mobile ? true : false}
 	/>
 {/if}
