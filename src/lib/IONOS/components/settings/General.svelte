@@ -9,6 +9,9 @@
 		deleteAll,
 		exportAll,
 	} from '$lib/IONOS/services/chats';
+	import GarbageBin from '$lib/IONOS/components/icons/GarbageBin.svelte';
+	import DatabaseExport from '$lib/IONOS/components/icons/DatabaseExport.svelte';
+	import SettingInfo from './SettingInfo.svelte';
 	const i18n = getContext<Readable<I18Next>>('i18n');
 
 	let confirmChatDeletion = false;
@@ -33,12 +36,12 @@
 	}
 </script>
 
-<div class="flex flex-col gap-5 text-sm">
-	<div class="flex flex-row items-center h-10">
+<div class="flex flex-col md:gap-5 text-sm">
+	<div class="hidden md:flex flex-row items-center h-10  border-none">
 		<div class="flex-grow">
 			{$i18n.t('Export all chats', { ns: 'ionos' })}
 		</div>
-		<div>
+		<div class="hidden md:block">
 			<Button
 				on:click={onExportChats}
 				type={ButtonType.secondary}
@@ -47,17 +50,41 @@
 			</Button>
 		</div>
 	</div>
-	<div class="flex flex-row items-center h-10">
+
+	<div class="md:hidden flex flex-row h-[60px] py-5 border-b border-gray-200"
+		on:click={onExportChats}
+		role="button"
+	>
+		<span class="grow">{$i18n.t('Export all chats', { ns: 'ionos' })}</span>
+		<div class="md:hidden block">
+			<DatabaseExport />
+		</div>
+	</div>
+	<div class="block md:hidden">
+		<SettingInfo>
+			{$i18n.t('When you export your chats, they’re saved in a .json file. You can open this file with any app that supports JSON format.', { ns: 'ionos' })}
+		</SettingInfo>
+	</div>
+	<div class="hidden md:flex flex-row items-center h-[60px] md:h-10 py-5 border-b border-gray-200 md:border-none">
 		<div class="flex-grow">
 			{$i18n.t('Delete all chats', { ns: 'ionos' })}
 		</div>
-		<div>
+		<div class="hidden md:block">
 			<Button
 				on:click={onDeleteAllChats}
 				type={ButtonType.caution}
 			>
 				{$i18n.t('Delete chats', { ns: 'ionos' })}
 			</Button>
+		</div>
+	</div>
+	<div class="md:hidden flex flex-row h-[60px] py-5 border-b border-gray-200"
+		on:click={onDeleteAllChats}
+		role="button"
+	>
+		<span class="grow">{$i18n.t('Delete all chats', { ns: 'ionos' })}</span>
+		<div class="md:hidden block">
+			<GarbageBin />
 		</div>
 	</div>
 </div>
