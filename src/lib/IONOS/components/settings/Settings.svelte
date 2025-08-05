@@ -21,7 +21,7 @@
 	dialogId="settings"
 	show={show}
 	on:close={() => { showSettings.set(false); } }
-	class="p-0 min-h-[400px] min-w-[750px] max-w-[750px]"
+	class="p-0 md:min-h-[400px] md:min-w-[750px] md:max-w-[750px]"
 >
 	<DialogHeader
 		slot="header"
