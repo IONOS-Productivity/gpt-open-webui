@@ -9,8 +9,8 @@
 	export let dialogId = title;
 </script>
 
-<div class="flex items-center justify-between {$$props.class} border-gray-200" class:border-b={closable}>
-	<h1 class="font-semibold text-sm text-blue-800">
+<div class="flex items-center justify-between {$$props.class} " >
+	<h1 class="grow font-semibold text-sm text-blue-800">
 		{title}
 	</h1>
 	{#if closable}

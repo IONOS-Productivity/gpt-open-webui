@@ -14,10 +14,15 @@
 	export let confirmHandler = () => { };
 	export let cancelText = $i18n.t('Cancel');
 	export let cancelHandler = () => { };
+
+	let animationDuration = 200;
 </script>
 
 <Dialog
 	dialogId="confirmation-dialog"
+	{animationDuration}
+	positioning="items-end md:items-center pb-[25px] px-[25px] md:pb-0 md:px-0"
+	class="p-[30px] transition-transform duration-[{animationDuration}ms] ease-out {show ? 'translate-y-0' : 'translate-y-[25%]'}"
 	{show}
 >
 	<DialogHeader
@@ -25,27 +30,30 @@
 			{title}
 			closable={false}
 			dialogId="confirmation-dialog"
-			class="mb-2.5"
+			class="mb-2.5 text-center md:text-left"
 		/>
-	<div slot="content" class="flex flex-col min-w-[calc(400px-60px)] max-w-[calc(550px-60px)] text-blue-800">
-		<div class="mb-2.5 text-sm" >
+	<div slot="content" class="flex flex-col max-w-dvw md:min-w-[calc(400px-60px)] md:max-w-[calc(550px-60px)] text-blue-800">
+		<div class="mb-2.5 text-sm text-center md:text-left" >
 			<slot />
 		</div>
 
-		<div class="flex flex-row justify-end mt-2.5">
-			<Button
-				on:click={cancelHandler}
-				type={ButtonType.tertiary}
-			>
-				{cancelText}
-			</Button>
-
-			<Button
-				on:click={() => { confirmHandler() }}
-				type={ButtonType.caution}
-			>
-				{confirmText}
-			</Button>
+		<div class="flex flex-col md:flex-row justify-end mt-2.5 gap-2.5">
+			<div class="order-2 md:order-1 m-auto md:m-0">
+				<Button
+					on:click={cancelHandler}
+					type={ButtonType.tertiary}
+				>
+					{cancelText}
+				</Button>
+			</div>
+			<div class="order-1 md:order-2 m-auto md:m-0">
+				<Button
+					on:click={() => { confirmHandler() }}
+					type={ButtonType.caution}
+				>
+					{confirmText}
+				</Button>
+			</div>
 		</div>
 	</div>
 </Dialog>
