@@ -9,7 +9,7 @@
 	import General from './General.svelte';
 	import Account from './Account.svelte';
 	import NavItem from './NavItem.svelte';
-	import { showSettings } from '$lib/stores';
+	import { showSettings, mobile } from '$lib/stores';
 	const i18n = getContext<Readable<I18Next>>('i18n');
 
 	export let show = false;
@@ -21,44 +21,52 @@
 	dialogId="settings"
 	show={show}
 	on:close={() => { showSettings.set(false); } }
-	class="p-0 md:min-h-[400px] md:min-w-[750px] md:max-w-[750px]"
+	class="p-0 md:min-h-[400px] md:min-w-[750px] md:max-w-[750px] {show ? 'max-md:translate-y-0' : 'max-md:translate-y-[100dvh]'}"
 >
 	<DialogHeader
 		slot="header"
 		title={$i18n.t("Settings", { ns: 'ionos' })}
-		on:close={() => { showSettings.set(false); }}
+		on:close={() => {
+			showSettings.set(false);
+		}}
 		dialogId="settings"
-		class="p-[30px]"
+		class="p-[30px] border-gray-200 border-b"
 	/>
 
-	<div slot="content" class="flex flex-row gap-[30px] p-5 text-blue-800">
-		<nav class="w-48 shrink-0">
-			<ul class="flex flex-col">
-				<li class="mb-3">
-					<NavItem bind:group={section} value="general">
-						<Gear slot="icon" className="inline s-4"/>
-						<span class="ml-2 text-sm">
-							{$i18n.t('General', { ns: 'ionos' })}
-						</span>
-					</NavItem>
-				</li>
-				<li class="mb-3">
-					<NavItem bind:group={section} value="account">
-						<FilledUserAvatar slot="icon" className="inline s-4"/>
-						<span class="ml-2 text-sm">
-							{$i18n.t('Account', { ns: 'ionos' })}
-						</span>
-					</NavItem>
-				</li>
-			</ul>
-		</nav>
+	<div slot="content" class="flex flex-col md:flex-row sm:gap-[30px] p-5 text-blue-800">
+		{#if !$mobile}
+			<nav class="w-48 shrink-0">
+				<ul class="flex flex-col">
+					<li class="mb-3">
+						<NavItem bind:group={section} value="general">
+							<Gear slot="icon" className="inline s-4"/>
+							<span class="ml-2 text-sm">
+								{$i18n.t('General', { ns: 'ionos' })}
+							</span>
+						</NavItem>
+					</li>
+					<li class="mb-3">
+						<NavItem bind:group={section} value="account">
+							<FilledUserAvatar slot="icon" className="inline s-4"/>
+							<span class="ml-2 text-sm">
+								{$i18n.t('Account', { ns: 'ionos' })}
+							</span>
+						</NavItem>
+					</li>
+				</ul>
+			</nav>
 
-		<div class="flex-grow pr-2.5">
-			{#if section === 'general'}
-				<General />
-			{:else if section === 'account'}
-				<Account />
-			{/if}
-		</div>
+			<div class="flex-grow pr-2.5">
+				{#if section === 'general'}
+					<General />
+				{:else if section === 'account'}
+					<Account />
+				{/if}
+			</div>
+		{:else}
+			<General />
+			<hr />
+			<Account />
+		{/if}
 	</div>
 </Dialog>
