@@ -61,7 +61,7 @@
 				</button>
 			{/if}
 
-			{#if page.url.pathname !== '/explore'}
+			{#if page.url.pathname !== '/explore' && !$mobile}
 				<button
 					class="flex rounded-md p-2.5 w-full text-blue-800 hover:bg-gray-200 dark:hover:bg-gray-800 transition"
 					on:click={() => {
