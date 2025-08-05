@@ -1027,7 +1027,7 @@ def process_file(
             # Usage: /files/
             file_path = file.path
             if file_path:
-                file_path = Storage.get_file(file_path)
+                file_stream = Storage.get_file(file_path)
                 loader = Loader(
                     engine=request.app.state.config.CONTENT_EXTRACTION_ENGINE,
                     TIKA_SERVER_URL=request.app.state.config.TIKA_SERVER_URL,
@@ -1037,8 +1037,9 @@ def process_file(
                     DOCUMENT_INTELLIGENCE_KEY=request.app.state.config.DOCUMENT_INTELLIGENCE_KEY,
                     MISTRAL_OCR_API_KEY=request.app.state.config.MISTRAL_OCR_API_KEY,
                 )
+
                 docs = loader.load(
-                    file.filename, file.meta.get("content_type"), file_path
+                    file.filename, file.meta.get("content_type"), file_stream
                 )
 
                 docs = [

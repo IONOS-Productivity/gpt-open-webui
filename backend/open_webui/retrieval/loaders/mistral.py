@@ -2,7 +2,7 @@ import requests
 import logging
 import os
 import sys
-from typing import List, Dict, Any
+from typing import List, Dict, Any, BinaryIO
 
 from langchain_core.documents import Document
 from open_webui.env import SRC_LOG_LEVELS, GLOBAL_LOG_LEVEL
@@ -19,21 +19,20 @@ class MistralLoader:
 
     BASE_API_URL = "https://api.mistral.ai/v1"
 
-    def __init__(self, api_key: str, file_path: str):
+    def __init__(self, api_key: str,file_name: str, file_stream: BinaryIO):
         """
         Initializes the loader.
 
         Args:
             api_key: Your Mistral API key.
-            file_path: The local path to the PDF file to process.
+            file_stream: The file stream of the PDF file to process.
         """
         if not api_key:
             raise ValueError("API key cannot be empty.")
-        if not os.path.exists(file_path):
-            raise FileNotFoundError(f"File not found at {file_path}")
 
         self.api_key = api_key
-        self.file_path = file_path
+        self.file_stream = file_stream
+        self.file_name = file_name
         self.headers = {"Authorization": f"Bearer {self.api_key}"}
 
     def _handle_response(self, response: requests.Response) -> Dict[str, Any]:
@@ -58,18 +57,17 @@ class MistralLoader:
         """Uploads the file to Mistral for OCR processing."""
         log.info("Uploading file to Mistral API")
         url = f"{self.BASE_API_URL}/files"
-        file_name = os.path.basename(self.file_path)
 
         try:
-            with open(self.file_path, "rb") as f:
-                files = {"file": (file_name, f, "application/pdf")}
-                data = {"purpose": "ocr"}
 
-                upload_headers = self.headers.copy()  # Avoid modifying self.headers
+            files = {"file": (self.file_name, self.file_stream, "application/pdf")}
+            data = {"purpose": "ocr"}
 
-                response = requests.post(
-                    url, headers=upload_headers, files=files, data=data
-                )
+            upload_headers = self.headers.copy()  # Avoid modifying self.headers
+
+            response = requests.post(
+                url, headers=upload_headers, files=files, data=data
+            )
 
             response_data = self._handle_response(response)
             file_id = response_data.get("id")
