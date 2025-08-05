@@ -7,7 +7,7 @@ from functools import lru_cache
 from pathlib import Path
 from pydub import AudioSegment
 from pydub.silence import split_on_silence
-
+from typing import BinaryIO
 import aiohttp
 import aiofiles
 import requests
@@ -482,6 +482,15 @@ async def speech(request: Request, user=Depends(get_verified_user)):
             await f.write(json.dumps(payload))
 
         return FileResponse(file_path)
+
+
+def transcribe_stream(request: Request, filename: str, file_stream: BinaryIO):
+    file_ext = filename.split(".")[-1].lower()
+    with tempfile.NamedTemporaryFile(delete=True, suffix=f".{file_ext}") as tmp_file:
+        tmp_file.write(file_stream.read())
+        tmp_file.flush()
+        tmp_path = tmp_file.name
+        transcribe(request, tmp_path)
 
 
 def transcribe(request: Request, file_path):

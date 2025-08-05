@@ -2,6 +2,9 @@ import requests
 import logging
 import ftfy
 import sys
+import os
+import tempfile
+from typing import BinaryIO
 
 from langchain_community.document_loaders import (
     AzureAIDocumentIntelligenceLoader,
@@ -85,14 +88,12 @@ known_source_ext = [
 
 
 class TikaLoader:
-    def __init__(self, url, file_path, mime_type=None):
+    def __init__(self, url, file_stream, mime_type=None):
         self.url = url
-        self.file_path = file_path
+        self.file_stream = file_stream
         self.mime_type = mime_type
 
     def load(self) -> list[Document]:
-        with open(self.file_path, "rb") as f:
-            data = f.read()
 
         if self.mime_type is not None:
             headers = {"Content-Type": self.mime_type}
@@ -104,7 +105,7 @@ class TikaLoader:
             endpoint += "/"
         endpoint += "tika/text"
 
-        r = requests.put(endpoint, data=data, headers=headers)
+        r = requests.put(endpoint, data=self.file_stream, headers=headers)
 
         if r.ok:
             raw_metadata = r.json()
@@ -119,30 +120,30 @@ class TikaLoader:
         else:
             raise Exception(f"Error calling Tika: {r.reason}")
 
-
 class DoclingLoader:
-    def __init__(self, url, file_path=None, mime_type=None):
+    def __init__(self, url, file_name, file_stream=None, mime_type=None):
         self.url = url.rstrip("/")
-        self.file_path = file_path
+        self.file_stream = file_stream
         self.mime_type = mime_type
+        self.file_name = file_name
 
     def load(self) -> list[Document]:
-        with open(self.file_path, "rb") as f:
-            files = {
-                "files": (
-                    self.file_path,
-                    f,
-                    self.mime_type or "application/octet-stream",
-                )
-            }
 
-            params = {
-                "image_export_mode": "placeholder",
-                "table_mode": "accurate",
-            }
+        files = {
+			"files": (
+				self.file_name,
+				self.file_stream,
+				self.mime_type or "application/octet-stream",
+			)
+		}
 
-            endpoint = f"{self.url}/v1alpha/convert/file"
-            r = requests.post(endpoint, files=files, data=params)
+        params = {
+        	"image_export_mode": "placeholder",
+            "table_mode": "accurate",
+        }
+
+        endpoint = f"{self.url}/v1alpha/convert/file"
+        r = requests.post(endpoint, files=files, data=params)
 
         if r.ok:
             result = r.json()
@@ -172,10 +173,48 @@ class Loader:
         self.kwargs = kwargs
 
     def load(
-        self, filename: str, file_content_type: str, file_path: str
+        self, filename: str, file_content_type: str, file_stream: BinaryIO
     ) -> list[Document]:
-        loader = self._get_loader(filename, file_content_type, file_path)
-        docs = loader.load()
+
+        if self.engine == "tika" and self.kwargs.get("TIKA_SERVER_URL"):
+            log.debug(f"Using Tika loader with server URL: {self.kwargs.get('TIKA_SERVER_URL')}")
+            loader = TikaLoader(
+                url=self.kwargs.get("TIKA_SERVER_URL"),
+                file_stream=file_stream,
+                mime_type=file_content_type,
+            )
+            docs = loader.load()
+
+        elif self.engine == "docling" and self.kwargs.get("DOCLING_API_URL"):
+            log.debug(f"Using Docling loader with server URL: {self.kwargs.get('DOCLING_API_URL')}")
+            loader = DoclingLoader(
+                url=self.kwargs.get("DOCLING_SERVER_URL"),
+                file_name=filename,
+                file_stream=file_stream,
+                mime_type=file_content_type,
+            )
+            docs = loader.load()
+
+        elif (
+            self.engine == "mistral_ocr"
+            and self.kwargs.get("MISTRAL_OCR_API_KEY") != ""
+            and file_ext
+            in ["pdf"]  # Mistral OCR currently only supports PDF and images
+        ):
+            loader = MistralLoader(
+                api_key=self.kwargs.get("MISTRAL_OCR_API_KEY"), file_name=filename, file_stream=file_stream
+            )
+
+        else:
+            log.info(f"Using local file loader for: {filename} with content type: {file_content_type}")
+            file_ext = filename.split(".")[-1].lower()
+            with tempfile.NamedTemporaryFile(delete=True, suffix=f".{file_ext}") as tmp_file:
+                tmp_file.write(file_stream.read())
+                tmp_file.flush()
+                tmp_path = tmp_file.name
+                loader = self._get_loader(filename, file_content_type, tmp_path)
+                docs = loader.load()
+
 
         return [
             Document(
@@ -191,26 +230,8 @@ class Loader:
 
     def _get_loader(self, filename: str, file_content_type: str, file_path: str):
         file_ext = filename.split(".")[-1].lower()
-
-        if self.engine == "tika" and self.kwargs.get("TIKA_SERVER_URL"):
-            if self._is_text_file(file_ext, file_content_type):
-                loader = TextLoader(file_path, autodetect_encoding=True)
-            else:
-                loader = TikaLoader(
-                    url=self.kwargs.get("TIKA_SERVER_URL"),
-                    file_path=file_path,
-                    mime_type=file_content_type,
-                )
-        elif self.engine == "docling" and self.kwargs.get("DOCLING_SERVER_URL"):
-            if self._is_text_file(file_ext, file_content_type):
-                loader = TextLoader(file_path, autodetect_encoding=True)
-            else:
-                loader = DoclingLoader(
-                    url=self.kwargs.get("DOCLING_SERVER_URL"),
-                    file_path=file_path,
-                    mime_type=file_content_type,
-                )
-        elif (
+        
+        if (
             self.engine == "document_intelligence"
             and self.kwargs.get("DOCUMENT_INTELLIGENCE_ENDPOINT") != ""
             and self.kwargs.get("DOCUMENT_INTELLIGENCE_KEY") != ""
@@ -231,53 +252,43 @@ class Loader:
                 api_endpoint=self.kwargs.get("DOCUMENT_INTELLIGENCE_ENDPOINT"),
                 api_key=self.kwargs.get("DOCUMENT_INTELLIGENCE_KEY"),
             )
-        elif (
-            self.engine == "mistral_ocr"
-            and self.kwargs.get("MISTRAL_OCR_API_KEY") != ""
-            and file_ext
-            in ["pdf"]  # Mistral OCR currently only supports PDF and images
-        ):
-            loader = MistralLoader(
-                api_key=self.kwargs.get("MISTRAL_OCR_API_KEY"), file_path=file_path
+        elif file_ext == "pdf":
+            loader = PyPDFLoader(
+                file_path, extract_images=self.kwargs.get("PDF_EXTRACT_IMAGES")
             )
+        elif file_ext == "csv":
+            loader = CSVLoader(file_path, autodetect_encoding=True)
+        elif file_ext == "rst":
+            loader = UnstructuredRSTLoader(file_path, mode="elements")
+        elif file_ext == "xml":
+            loader = UnstructuredXMLLoader(file_path)
+        elif file_ext in ["htm", "html"]:
+            loader = BSHTMLLoader(file_path, open_encoding="unicode_escape")
+        elif file_ext == "md":
+            loader = TextLoader(file_path, autodetect_encoding=True)
+        elif file_content_type == "application/epub+zip":
+            loader = UnstructuredEPubLoader(file_path)
+        elif (
+            file_content_type
+            == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            or file_ext == "docx"
+        ):
+            loader = Docx2txtLoader(file_path)
+        elif file_content_type in [
+            "application/vnd.ms-excel",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        ] or file_ext in ["xls", "xlsx"]:
+            loader = UnstructuredExcelLoader(file_path)
+        elif file_content_type in [
+            "application/vnd.ms-powerpoint",
+            "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        ] or file_ext in ["ppt", "pptx"]:
+            loader = UnstructuredPowerPointLoader(file_path)
+        elif file_ext == "msg":
+            loader = OutlookMessageLoader(file_path)
+        elif self._is_text_file(file_ext, file_content_type):
+            loader = TextLoader(file_path, autodetect_encoding=True)
         else:
-            if file_ext == "pdf":
-                loader = PyPDFLoader(
-                    file_path, extract_images=self.kwargs.get("PDF_EXTRACT_IMAGES")
-                )
-            elif file_ext == "csv":
-                loader = CSVLoader(file_path, autodetect_encoding=True)
-            elif file_ext == "rst":
-                loader = UnstructuredRSTLoader(file_path, mode="elements")
-            elif file_ext == "xml":
-                loader = UnstructuredXMLLoader(file_path)
-            elif file_ext in ["htm", "html"]:
-                loader = BSHTMLLoader(file_path, open_encoding="unicode_escape")
-            elif file_ext == "md":
-                loader = TextLoader(file_path, autodetect_encoding=True)
-            elif file_content_type == "application/epub+zip":
-                loader = UnstructuredEPubLoader(file_path)
-            elif (
-                file_content_type
-                == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                or file_ext == "docx"
-            ):
-                loader = Docx2txtLoader(file_path)
-            elif file_content_type in [
-                "application/vnd.ms-excel",
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            ] or file_ext in ["xls", "xlsx"]:
-                loader = UnstructuredExcelLoader(file_path)
-            elif file_content_type in [
-                "application/vnd.ms-powerpoint",
-                "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-            ] or file_ext in ["ppt", "pptx"]:
-                loader = UnstructuredPowerPointLoader(file_path)
-            elif file_ext == "msg":
-                loader = OutlookMessageLoader(file_path)
-            elif self._is_text_file(file_ext, file_content_type):
-                loader = TextLoader(file_path, autodetect_encoding=True)
-            else:
-                loader = TextLoader(file_path, autodetect_encoding=True)
+            loader = TextLoader(file_path, autodetect_encoding=True)
 
         return loader

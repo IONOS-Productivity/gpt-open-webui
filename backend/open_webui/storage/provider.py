@@ -37,14 +37,35 @@ from open_webui.env import SRC_LOG_LEVELS
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["MAIN"])
 
+# --- Custom Exception Classes ---
+
+class StorageError(Exception):
+    """Base class for storage-related errors."""
+    pass
+
+class FileNotFoundError(StorageError):
+    """Raised when a file is not found in the storage."""
+    pass
+
+class FileUploadError(StorageError):
+    """Raised when a file upload fails."""
+    pass
+
+class FileDeletionError(StorageError):
+    """Raised when a file deletion fails."""
+    pass
+
+class ConfigurationError(StorageError):
+    """Raised for configuration-related issues."""
+    pass
 
 class StorageProvider(ABC):
     @abstractmethod
-    def get_file(self, file_path: str) -> str:
+    def get_file(self, file_path: str) -> BinaryIO:
         pass
 
     @abstractmethod
-    def upload_file(self, file: BinaryIO, filename: str) -> Tuple[bytes, str]:
+    def upload_file(self, file: BinaryIO, filename: str) -> Tuple[int, str]:
         pass
 
     @abstractmethod
@@ -57,23 +78,56 @@ class StorageProvider(ABC):
 
 
 class LocalStorageProvider(StorageProvider):
-    @staticmethod
-    def upload_file(file: BinaryIO, filename: str) -> Tuple[bytes, str]:
-        contents = file.read()
-        if not contents:
-            raise ValueError(ERROR_MESSAGES.EMPTY_CONTENT)
-        file_path = f"{UPLOAD_DIR}/{filename}"
-        with open(file_path, "wb") as f:
-            f.write(contents)
-        return contents, file_path
 
-    @staticmethod
-    def get_file(file_path: str) -> str:
-        """Handles downloading of the file from local storage."""
-        return file_path
+    def upload_file(self, file: BinaryIO, filename: str) -> Tuple[int, str]:
+        """
+        Saves a binary stream to the local filesystem.
 
-    @staticmethod
-    def delete_file(file_path: str) -> None:
+        Args:
+            file: The binary file stream to save.
+            filename: The name of the file to save.
+
+        Returns:
+            A tuple containing the file size in bytes and the full file path.
+        """
+        try:
+            file.seek(0, os.SEEK_END)
+            size = file.tell()
+            file.seek(0)
+            if size == 0:
+                raise FileUploadError("Cannot upload an empty file.")
+            if ".." in filename or filename.startswith("/"):
+                raise ValueError("Invalid filename.")
+            file_path = os.path.join(UPLOAD_DIR, filename)
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
+            with open(file_path, "wb") as f:
+                shutil.copyfileobj(file, f)
+            return size, file_path
+
+        except (IOError, OSError) as e:
+            raise FileUploadError(f"Error saving file to local storage: {e}") from e
+
+    def get_file(self, file_path: str) -> BinaryIO:
+        """
+        Retrieves a file from local storage as a binary stream.
+
+        Args:
+            file_path: The absolute path to the file.
+
+        Returns:
+            A binary stream (BinaryIO) of the file.
+        """
+        try:
+            if not os.path.abspath(file_path).startswith(os.path.abspath(UPLOAD_DIR)):
+                 raise FileNotFoundError(f"Access denied to file path: {file_path}")
+            return open(file_path, "rb")
+        except FileNotFoundError:
+            raise FileNotFoundError(f"File not found at path: {file_path}")
+        except (IOError, OSError) as e:
+            raise StorageError(f"Error reading file from local storage: {e}") from e
+
+
+    def delete_file(self, file_path: str) -> None:
         """Handles deletion of the file from local storage."""
         filename = file_path.split("/")[-1]
         file_path = f"{UPLOAD_DIR}/{filename}"
@@ -82,8 +136,7 @@ class LocalStorageProvider(StorageProvider):
         else:
             log.warning(f"File {file_path} not found in local storage.")
 
-    @staticmethod
-    def delete_all_files() -> None:
+    def delete_all_files(self) -> None:
         """Handles deletion of all files from local storage."""
         if os.path.exists(UPLOAD_DIR):
             for filename in os.listdir(UPLOAD_DIR):
@@ -131,65 +184,81 @@ class S3StorageProvider(StorageProvider):
         self.bucket_name = S3_BUCKET_NAME
         self.key_prefix = S3_KEY_PREFIX if S3_KEY_PREFIX else ""
 
-    def upload_file(self, file: BinaryIO, filename: str) -> Tuple[bytes, str]:
-        """Handles uploading of the file to S3 storage."""
-        _, file_path = LocalStorageProvider.upload_file(file, filename)
+    def upload_file(self, file: BinaryIO, filename: str) -> Tuple[int, str]:
         try:
-            s3_key = os.path.join(self.key_prefix, filename)
-            self.s3_client.upload_file(file_path, self.bucket_name, s3_key)
-            return (
-                open(file_path, "rb").read(),
-                "s3://" + self.bucket_name + "/" + s3_key,
-            )
-        except ClientError as e:
-            raise RuntimeError(f"Error uploading file to S3: {e}")
+            file.seek(0, os.SEEK_END)
+            size = file.tell()
+            file.seek(0)
+            if size == 0:
+                raise FileUploadError(ERROR_MESSAGES.EMPTY_CONTENT)
 
-    def get_file(self, file_path: str) -> str:
+            s3_key = os.path.join(self.key_prefix, filename)
+            self.s3_client.upload_fileobj(file, self.bucket_name, s3_key)
+            return (size, f"s3://{self.bucket_name}/{filename}")
+        except ClientError as e:
+            raise FileUploadError(f"Error uploading file to S3: {e}") from e
+
+    def get_file(self, file_path: str) -> BinaryIO:
         """Handles downloading of the file from S3 storage."""
         try:
             s3_key = self._extract_s3_key(file_path)
-            local_file_path = self._get_local_file_path(s3_key)
-            self.s3_client.download_file(self.bucket_name, s3_key, local_file_path)
-            return local_file_path
+            response = self.s3_client.get_object(Bucket=self.bucket_name, Key=s3_key)
+            return response['Body']
         except ClientError as e:
-            raise RuntimeError(f"Error downloading file from S3: {e}")
+            if e.response['Error']['Code'] == '404':
+                raise FileNotFoundError(f"File not found in S3: {file_path}") from e
+            raise StorageError(f"Error downloading file from S3: {e}") from e
+        except (IndexError, ValueError):
+            raise ValueError(f"Invalid S3 path format: {file_path}")
 
     def delete_file(self, file_path: str) -> None:
         """Handles deletion of the file from S3 storage."""
+        s3_key = self._extract_s3_key(file_path)
         try:
-            s3_key = self._extract_s3_key(file_path)
             self.s3_client.delete_object(Bucket=self.bucket_name, Key=s3_key)
         except ClientError as e:
-            raise RuntimeError(f"Error deleting file from S3: {e}")
+            raise FileDeletionError(f"Error deleting file from S3: {e}") from e
 
-        # Always delete from local storage
-        LocalStorageProvider.delete_file(file_path)
 
     def delete_all_files(self) -> None:
-        """Handles deletion of all files from S3 storage."""
+        """
+        Deletes all files from the S3 bucket efficiently using batch operations.
+
+        Raises:
+            FileDeletionError: If the deletion process fails.
+        """
         try:
-            response = self.s3_client.list_objects_v2(Bucket=self.bucket_name)
-            if "Contents" in response:
-                for content in response["Contents"]:
-                    # Skip objects that were not uploaded from open-webui in the first place
-                    if not content["Key"].startswith(self.key_prefix):
-                        continue
+            paginator = self.s3_client.get_paginator('list_objects_v2')
+            pages = paginator.paginate(Bucket=self.bucket_name)
 
-                    self.s3_client.delete_object(
-                        Bucket=self.bucket_name, Key=content["Key"]
-                    )
+            objects_to_delete = []
+            for page in pages:
+                if 'Contents' in page:
+                    for obj in page['Contents']:
+                        objects_to_delete.append({'Key': obj['Key']})
+
+                        # S3 delete_objects has a limit of 1000 keys per request
+                        if len(objects_to_delete) == 1000:
+                            self.s3_client.delete_objects(
+                                Bucket=self.bucket_name,
+                                Delete={'Objects': objects_to_delete}
+                            )
+                            objects_to_delete = []
+
+            # Delete any remaining objects
+            if objects_to_delete:
+                self.s3_client.delete_objects(
+                    Bucket=self.bucket_name,
+                    Delete={'Objects': objects_to_delete}
+                )
+
         except ClientError as e:
-            raise RuntimeError(f"Error deleting all files from S3: {e}")
+            raise FileDeletionError(f"Error deleting all files from S3: {e}") from e
 
-        # Always delete from local storage
-        LocalStorageProvider.delete_all_files()
 
     # The s3 key is the name assigned to an object. It excludes the bucket name, but includes the internal path and the file name.
     def _extract_s3_key(self, full_file_path: str) -> str:
         return "/".join(full_file_path.split("//")[1].split("/")[1:])
-
-    def _get_local_file_path(self, s3_key: str) -> str:
-        return f"{UPLOAD_DIR}/{s3_key.split('/')[-1]}"
 
 
 class GCSStorageProvider(StorageProvider):
@@ -207,27 +276,61 @@ class GCSStorageProvider(StorageProvider):
             self.gcs_client = storage.Client()
         self.bucket = self.gcs_client.bucket(GCS_BUCKET_NAME)
 
-    def upload_file(self, file: BinaryIO, filename: str) -> Tuple[bytes, str]:
-        """Handles uploading of the file to GCS storage."""
-        contents, file_path = LocalStorageProvider.upload_file(file, filename)
+    def upload_file(self, file: BinaryIO, filename: str) -> Tuple[int, str]:
+        """Handles uploading of a file stream to GCS storage.
+
+        Args:
+            file: The binary file stream to upload.
+            filename: The destination object name in the GCS bucket.
+
+        Returns:
+            A tuple containing the file size in bytes and the GCS URI.
+
+        Raises:
+            FileUploadError: If the file stream is empty or a cloud error occurs.
+        """
         try:
+            # Get the size of the stream by seeking to the end, and then rewind
+            file.seek(0, os.SEEK_END)
+            size = file.tell()
+            file.seek(0)
+            if size == 0:
+                raise FileUploadError(ERROR_MESSAGES.EMPTY_CONTENT)
             blob = self.bucket.blob(filename)
-            blob.upload_from_filename(file_path)
-            return contents, "gs://" + self.bucket_name + "/" + filename
+            # Use upload_from_file to upload the stream directly
+            blob.upload_from_file(file)
+            # Return the size and the GCS URI
+            return size, f"gs://{self.bucket_name}/{filename}"
         except GoogleCloudError as e:
-            raise RuntimeError(f"Error uploading file to GCS: {e}")
+            raise FileUploadError(f"Error uploading file to GCS: {e}") from e
 
-    def get_file(self, file_path: str) -> str:
-        """Handles downloading of the file from GCS storage."""
+    def get_file(self, file_path: str) -> BinaryIO:
+        """
+        Downloads a file from GCS storage as an in-memory binary stream.
+
+        Args:
+            file_path: The full GCS URI of the file (e.g., 'gs://bucket/file.txt').
+
+        Returns:
+            An in-memory binary stream (io.BytesIO) of the file's content.
+
+        Raises:
+            FileNotFoundError: If the file does not exist in GCS.
+            StorageError: For other download-related failures.
+        """
         try:
-            filename = file_path.removeprefix("gs://").split("/")[1]
-            local_file_path = f"{UPLOAD_DIR}/{filename}"
-            blob = self.bucket.get_blob(filename)
-            blob.download_to_filename(local_file_path)
-
-            return local_file_path
-        except NotFound as e:
-            raise RuntimeError(f"Error downloading file from GCS: {e}")
+            # Robustly parse the blob name from the full GCS URI
+            prefix = f"gs://{self.bucket_name}/"
+            if not file_path.startswith(prefix):
+                raise ValueError(f"Invalid GCS URI format. Must start with '{prefix}'.")
+            blob_name = file_path.removeprefix(prefix)
+            blob = self.bucket.blob(blob_name)
+            file_bytes = blob.download_as_bytes()
+            return io.BytesIO(file_bytes)
+        except NotFound:
+            raise FileNotFoundError(f"File not found at GCS path: {file_path}")
+        except Exception as e:
+            raise StorageError(f"Failed to get file from GCS: {e}") from e
 
     def delete_file(self, file_path: str) -> None:
         """Handles deletion of the file from GCS storage."""
@@ -237,9 +340,6 @@ class GCSStorageProvider(StorageProvider):
             blob.delete()
         except NotFound as e:
             raise RuntimeError(f"Error deleting file from GCS: {e}")
-
-        # Always delete from local storage
-        LocalStorageProvider.delete_file(file_path)
 
     def delete_all_files(self) -> None:
         """Handles deletion of all files from GCS storage."""
@@ -251,9 +351,6 @@ class GCSStorageProvider(StorageProvider):
 
         except NotFound as e:
             raise RuntimeError(f"Error deleting all files from GCS: {e}")
-
-        # Always delete from local storage
-        LocalStorageProvider.delete_all_files()
 
 
 class AzureStorageProvider(StorageProvider):
@@ -277,27 +374,51 @@ class AzureStorageProvider(StorageProvider):
             self.container_name
         )
 
-    def upload_file(self, file: BinaryIO, filename: str) -> Tuple[bytes, str]:
-        """Handles uploading of the file to Azure Blob Storage."""
-        contents, file_path = LocalStorageProvider.upload_file(file, filename)
-        try:
-            blob_client = self.container_client.get_blob_client(filename)
-            blob_client.upload_blob(contents, overwrite=True)
-            return contents, f"{self.endpoint}/{self.container_name}/{filename}"
-        except Exception as e:
-            raise RuntimeError(f"Error uploading file to Azure Blob Storage: {e}")
+    def upload_file(self, file: BinaryIO, filename: str) -> Tuple[int, str]:
+        """
+        Handles uploading of a file stream to Azure Blob Storage.
 
-    def get_file(self, file_path: str) -> str:
-        """Handles downloading of the file from Azure Blob Storage."""
+        Args:
+            file: The binary file stream to upload.
+            filename: The destination blob name in the container.
+
+        Returns:
+            A tuple containing the file size in bytes and the blob URL.
+        """
+        try:
+            # Get the size of the stream and then rewind it
+            file.seek(0, os.SEEK_END)
+            size = file.tell()
+            file.seek(0)
+            if size == 0:
+                raise FileUploadError("Cannot upload an empty file.")
+            blob_client = self.container_client.get_blob_client(filename)
+            # Upload the stream directly, overwriting if the blob exists
+            blob_client.upload_blob(file, overwrite=True)
+            return size, f"{self.endpoint}/{self.container_name}/{filename}"
+        except AzureError as e:
+            raise FileUploadError(f"Error uploading file to Azure: {e}") from e
+
+    def get_file(self, file_path: str) -> BinaryIO:
+        """
+        Downloads a file from Azure Blob Storage as an in-memory binary stream.
+
+        Args:
+            file_path: The full URL of the blob.
+
+        Returns:
+            An in-memory binary stream (io.BytesIO) of the file's content.
+        """
         try:
             filename = file_path.split("/")[-1]
-            local_file_path = f"{UPLOAD_DIR}/{filename}"
             blob_client = self.container_client.get_blob_client(filename)
-            with open(local_file_path, "wb") as download_file:
-                download_file.write(blob_client.download_blob().readall())
-            return local_file_path
-        except ResourceNotFoundError as e:
-            raise RuntimeError(f"Error downloading file from Azure Blob Storage: {e}")
+            downloader = blob_client.download_blob()
+            file_bytes = downloader.readall()
+            return io.BytesIO(file_bytes)
+        except ResourceNotFoundError:
+            raise FileNotFoundError(f"File not found at Azure path: {filename}")
+        except AzureError as e:
+            raise StorageError(f"Failed to get file from Azure: {e}") from e
 
     def delete_file(self, file_path: str) -> None:
         """Handles deletion of the file from Azure Blob Storage."""
@@ -308,9 +429,6 @@ class AzureStorageProvider(StorageProvider):
         except ResourceNotFoundError as e:
             raise RuntimeError(f"Error deleting file from Azure Blob Storage: {e}")
 
-        # Always delete from local storage
-        LocalStorageProvider.delete_file(file_path)
-
     def delete_all_files(self) -> None:
         """Handles deletion of all files from Azure Blob Storage."""
         try:
@@ -319,9 +437,6 @@ class AzureStorageProvider(StorageProvider):
                 self.container_client.delete_blob(blob.name)
         except Exception as e:
             raise RuntimeError(f"Error deleting all files from Azure Blob Storage: {e}")
-
-        # Always delete from local storage
-        LocalStorageProvider.delete_all_files()
 
 
 def get_storage_provider(storage_provider: str):
