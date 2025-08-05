@@ -3,13 +3,15 @@
 	import type { Readable } from 'svelte/store';
 	import type { I18Next } from '$lib/IONOS/i18next.d.ts';
 	import { getContext } from 'svelte';
-	import { models, settings } from '$lib/stores';
+	import { models, settings, mobile } from '$lib/stores';
 	import { updateUserSettings } from '$lib/apis/users';
 	import Button, { ButtonType } from '$lib/IONOS/components/common/Button.svelte'
 	import { flyAndScale } from '$lib/utils/transitions';
 	import { agents, type Agent } from '$lib/IONOS/stores/agents';
 	import Checkmark from '$lib/IONOS/components/icons/Checkmark.svelte';
 	import Ellipsis from '$lib/IONOS/components/icons/Ellipsis.svelte';
+	import Dialog from '$lib/IONOS/components/common/Dialog.svelte';
+	import DialogHeader from '$lib/IONOS/components/common/DialogHeader.svelte';
 
 	const i18n = getContext<Readable<I18Next>>('i18n');
 
@@ -29,10 +31,12 @@
 	const select = (id: string) => {
 		selectedModels = [id];
 		save();
+		show = false;
 	}
 	let show: boolean = false;
 </script>
 
+{#if !$mobile}
 <DropdownMenu.Root
 	bind:open={show}
 >
@@ -85,3 +89,59 @@
 		</div>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>
+{:else}
+
+<Button
+	className="flex flex-row items-center gap-1"
+	type={ButtonType.secondary}
+	pressable={true}
+	on:click={() => {
+		show = !show;
+	}}
+>
+	<span class="ml-1 text-nowrap">
+		{$agents.length > 0 ? $agents.find((a) => a.id === selectedModels[0])?.name || $agents[0]?.name : $i18n.t('Select a specialist', { ns: 'ionos' })}
+	</span>
+	<Ellipsis />
+</Button>
+<Dialog
+	dialogId="settings"
+	{show}
+	mobileCover={false}
+	class="p-0 md:min-h-[400px] md:min-w-[750px] md:max-w-[750px] {show ? 'max-md:translate-y-[0]' : 'max-md:translate-y-[100dvh]'}"
+>
+	<DialogHeader
+		slot="header"
+		title={$i18n.t('Select a specialist', { ns: 'ionos' })}
+		dialogId="settings"
+		class="p-[30px] text-left border-b border-gray-200"
+		closable={false}
+	/>
+
+	<div class="relative" slot="content">
+		<div class="flex flex-col md:flex-row md:flex-wrap justify-between align-center items-stretch max-h-[375px] max-md:w-[353px] overflow-y-scroll divide-y divide-gray-200">
+			{#each $agents as { id, name, subtitle }}
+					<div
+						on:click={() => select(id)}
+						class="flex flex-row justify-between content-center h-[80px] py-5 px-[30px] rounded-sm cursor-pointer {id == selectedModels[0] ? 'text-purple-700' : 'text-blue-800'}  hover:bg-gray-50 dark:hover:bg-gray-800"
+						aria-pressed={id === selectedModels[0]}
+						role="button"
+					>
+						<div class="font-semibold text-start text-xs grow" title="{name} - {subtitle}">
+							<p>
+								{name}
+							</p>
+							<p class="font-normal text-wrap truncate">
+								{subtitle}
+							</p>
+						</div>
+						{#if id === selectedModels[0]}
+							<Checkmark className="self-center" />
+						{/if}
+					</div>
+			{/each}
+		</div>
+		<div class="absolute bottom-0 left-0 right-0 h-[70px] bg-gradient-to-t from-white to-transparent pointer-events-none rounded-b-2xl"></div>
+	</div>
+</Dialog>
+{/if}
