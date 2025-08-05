@@ -4,10 +4,12 @@
 	import type { I18Next } from '$lib/IONOS/i18next.d.ts';
 	import { getContext } from 'svelte';
 	import Link from '$lib/IONOS/components/common/Link.svelte';
+	import XMark from '$lib/IONOS/components/icons/XMark.svelte';
 	import { createEventDispatcher } from 'svelte';
 	import { flyAndScale } from '$lib/utils/transitions';
 	import ArrowUpRightFromSquare from '$lib/IONOS/components/icons/ArrowUpRightFromSquare.svelte';
 	import { URLS } from '$lib/IONOS/urls';
+	import { mobile } from '$lib/stores'
 
 	export let show: boolean;
 	export let className: string = '';
@@ -60,9 +62,26 @@
 	</DropdownMenu.Trigger>
 
 	<DropdownMenu.Content
-		class="rounded-2xl px-2 py-3 text-blue-800 text-xs font-semibold border-gray-300/30 dark:border-gray-700/50 z-50 bg-white dark:bg-gray-850 dark:text-white shadow-sm"
-		sideOffset={15}
-		alignOffset={-8}
+		class="absolute top-0! left-0! z-40 w-screen h-screen bg-black/75 md:hidden"
+		sideOffset={0}
+		alignOffset={0}
+		side="top"
+		align="start"
+	>
+		<div class="w-screen h-screen " on:click|stopPropagation>
+			<button
+				class="absolute rounded-3xl bottom-[375px]! right-1/2 text-white  hover:text-gray-300 transition-colors"
+				on:click|stopPropagation={() => dispatch('close')}
+			>
+				<XMark />
+			</button>
+		</div>
+	</DropdownMenu.Content>
+
+	<DropdownMenu.Content
+		class="{$mobile ? 'absolute right-[25px]! left-[25px]!' : ''} rounded-2xl px-2 py-3 text-blue-800 text-xs font-semibold border-gray-300/30 dark:border-gray-700/50 z-50 bg-white dark:bg-gray-850 dark:text-white shadow-sm"
+		sideOffset={$mobile ? -40 : 15}
+		alignOffset={$mobile ? 0 : -8}
 		side="top"
 		align="start"
 		transition={flyAndScale}
