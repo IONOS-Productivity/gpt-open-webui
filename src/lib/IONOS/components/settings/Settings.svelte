@@ -48,7 +48,7 @@
 	{show}
 	{animationDuration}
 	{showTranslate}
-	class="p-0 h-[80dvh] w-screen  overflow-y-scroll transition-transform duration-[4000ms] ease-out"
+	class="p-0 h-[80dvh] w-screen  overflow-y-scroll transition-transform duration-[4000ms] ease-out {showTranslate ? 'translate-y-[0vh]' : 'translate-y-[99vh]'}"
 >
 	<DialogHeader
 		slot="header"
