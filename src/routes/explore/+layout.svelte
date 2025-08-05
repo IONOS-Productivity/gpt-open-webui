@@ -42,7 +42,7 @@
 						</a>
 					</div>
 
-					{#if !$mobile }
+					{#if !$mobile || $mobile && !$user }
 						<PrivacySlogan />
 					{/if}
 
