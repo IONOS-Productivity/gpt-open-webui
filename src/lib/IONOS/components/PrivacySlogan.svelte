@@ -7,7 +7,7 @@
 	const i18n = getContext<Readable<I18Next>>('i18n');
 </script>
 
-<div class="flex flex-row mx-10 items-center">
+<div class="flex flex-row md:mx-10 items-center">
 	<a
 		href="https://www.ionos.de/ionos-gpt-datenschutz-manifest#digitale-loesungen"
 		target="_blank"
@@ -15,7 +15,7 @@
 	>
 		<Shield className={"h-6 w-6 inline-block mr-2 fill-purple-700"} />
 
-		<span class="text-purple-700">
+		<span class="text-purple-700 md:inline-block hidden">
 			{$i18n.t('Privacy by Design!', { ns: 'ionos' })}
 		</span>
 	</a>
