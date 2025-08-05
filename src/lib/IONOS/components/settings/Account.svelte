@@ -8,7 +8,8 @@
 	import ChevronRight from '$lib/IONOS/components/icons/ChevronRight.svelte';
 	import LoadingCover from '$lib/IONOS/components/common/LoadingCover.svelte';
 	import { config, user } from '$lib/stores';
-	import { resetPassword, deleteAccount } from '$lib/IONOS/services/account';
+	import { resetPassword, deleteAccount } from '$lib/IONOS/services/account'
+	import { buildSurveyUrl } from '$lib/IONOS/services/survey';
 	import SubSettingPage from './SubSettingPage.svelte';
 	import SettingInfo from './SettingInfo.svelte';
 	import DialogHeader from '$lib/IONOS/components/common/DialogHeader.svelte';
@@ -19,6 +20,7 @@
 	let confirmAccountDeletion = false;
 	let showSecuritySubsettings = false;
 	let loading = false;
+	const surveyUrl = buildSurveyUrl($user!);
 
 	async function onDeleteAccountConfirmed() {
 		try {
@@ -123,8 +125,15 @@
 			</div>
 			<GarbageBin />
 		</div>
-		<SettingInfo>
-			{$i18n.t('We’d really prefer you didn’t delete your account. Instead, help us get better→ Share your feedback here.', { ns: 'ionos' })}
-		</SettingInfo>
+		{#if surveyUrl}
+			<SettingInfo>
+				<span>
+					{$i18n.t('We’d really prefer you didn’t delete your account. Instead, help us get better →', { ns: 'ionos' })}
+					<a class="font-semibold underline" href={surveyUrl} target="_blank" rel="noopener noreferrer">
+						{$i18n.t('Share your feedback here', { ns: 'ionos' })}
+					</a>
+				</span>
+			</SettingInfo>
+		{/if}
 	</div>
 </SubSettingPage>
