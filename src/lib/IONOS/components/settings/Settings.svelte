@@ -24,16 +24,30 @@
 
 	export let show = false;
 
+	let showTranslate = false;
+
 	let section = 'general';
-	let animationDuration = 200;
+	let animationDuration = 4000;
 	const surveyUrl = buildSurveyUrl($user!);
+
+	$: if (show) {
+		console.log('Settings: defer translate');
+		setTimeout(() => {
+			console.log('Settings: translate: NOW');
+			// DEBUG: Disabled to not change translate
+			// showTranslate = true;
+		}, 2000);
+	} else {
+		console.log('Settings: untranslate immediately');
+		showTranslate = false;
+	}
 </script>
 
 <Dialog
 	dialogId="settings"
 	{show}
 	{animationDuration}
-	class="p-0 md:min-h-[400px] h-screen w-screen md:max-h-fit md:min-w-[750px] md:max-w-[750px] overflow-y-scroll transition-transform duration-[{animationDuration}ms] ease-out {show ? 'translate-y-0' : 'translate-y-[90dvh]'}"
+	class="p-0 h-[80dvh] w-screen  overflow-y-scroll transition-transform duration-[4000ms] ease-out {showTranslate ? 'translate-y-[0dvh]' : 'translate-y-[99dvh]'}"
 >
 	<DialogHeader
 		slot="header"

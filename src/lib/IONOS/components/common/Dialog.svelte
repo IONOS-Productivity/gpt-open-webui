@@ -7,20 +7,22 @@
 	export let animationDuration = 200;
 
 	$: if (show) {
-		el?.classList.add('flex');
+		console.log("Dialog: show, flex immediately")
 		el?.showModal();
+		el?.classList.add('flex');
 	} else {
+		console.log("Dialog: hide, defer unflex+close deferred")
 		setTimeout(() => {
+			console.log("Dialog: hide, defer unflex+close NOW")
 			el?.close();
 			el?.classList.remove('flex');
-		}, animationDuration);
+		}, animationDuration + 1000);
 	}
 </script>
 
 <dialog
 	bind:this={el}
-	class="fixed top-0 right-0 left-0 bottom-0 m-0 bg-black/75 h-screen max-w-[100vw] w-[100vw] max-h-[100dvh] justify-center items-center z-[99999999] overflow-hidden overscroll-contain {positioning}"
->
+	class="fixed top-0 right-0 left-0 bottom-0 m-0 bg-black/75 h-screen max-w-[100vw] w-[100vw] max-h-[100dvh] justify-center items-center z-[99999999] overflow-hidden overscroll-contain {positioning}">
 	<div
 		data-id={`dialog-${dialogId}`}
 		class="{$$props.class ?? 'p-[30px]'} flex flex-col bg-white relative shadow-xl rounded-2xl md:translate-none"
