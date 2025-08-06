@@ -35,7 +35,7 @@
 		setTimeout(() => {
 			console.log('Settings: translate: NOW');
 			// DEBUG: Disabled to not change translate
-			// showTranslate = true;
+			showTranslate = true;
 		}, 2000);
 	} else {
 		console.log('Settings: untranslate immediately');
@@ -48,7 +48,7 @@
 	{show}
 	{animationDuration}
 	{showTranslate}
-	class="p-0 h-[80dvh] w-screen  overflow-y-scroll transition-transform duration-[4000ms] ease-out {showTranslate ? 'translate-y-[0vh]' : 'translate-y-[99vh]'}"
+	class="p-0 h-[80dvh] w-screen  overflow-y-scroll transition-transform duration-[4000ms] ease-out {showTranslate ? 'translate-y-0' : 'translate-y-[99vh]'}"
 >
 	<DialogHeader
 		slot="header"
