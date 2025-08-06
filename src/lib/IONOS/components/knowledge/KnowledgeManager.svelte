@@ -91,6 +91,7 @@
 <Dialog
 	dialogId="knowledge-manager"
 	show={$knowledgeManager}
+	on:close={() => { showKnowlegeManager(false); } }
 	class="max-w-[800px] min-h-[300px] max-h-[436px] w-full"
 >
 	<DialogHeader
