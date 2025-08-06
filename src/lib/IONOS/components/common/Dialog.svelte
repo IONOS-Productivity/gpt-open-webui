@@ -24,12 +24,11 @@
 <dialog
 	on:toggle={onToggle}
 	bind:this={el}
-	class="fixed top-0 right-0 left-0 bottom-0 m-0 bg-black/25 h-screen max-w-[100vw] w-[100vw] max-h-[100dvh] justify-center items-center z-[99999999] overflow-hidden overscroll-contain"
-	class:flex={show}
+	class="fixed top-0 right-0 left-0 bottom-0 m-auto bg-white z-[99999999] overflow-hidden overscroll-contain shadow-xl rounded-2xl {$$props.class ?? 'p-[30px]'}"
 >
 	<div
 		data-id={`dialog-${dialogId}`}
-		class="flex flex-col bg-white relative shadow-xl rounded-2xl {$$props.class ?? 'p-[30px]'}"
+		class="flex flex-col bg-white relative"
 	>
 		<slot name="header" />
 
@@ -41,3 +40,9 @@
 		</div>
 	</div>
 </dialog>
+
+<style>
+	dialog::backdrop {
+		background-color: rgba(0, 0, 0, 0.75);
+	}
+</style>
