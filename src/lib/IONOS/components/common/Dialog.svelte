@@ -24,7 +24,7 @@
 <dialog
 	on:toggle={onToggle}
 	bind:this={el}
-	class="fixed top-0 right-0 left-0 bottom-0 m-auto bg-white z-[99999999] overflow-hidden overscroll-contain shadow-xl rounded-2xl {$$props.class ?? 'p-[30px]'}"
+	class="fixed top-0 right-0 left-0 bottom-0 m-auto bg-white z-[99999999] overflow-hidden overscroll-contain shadow-xl rounded-2xl {$$props.class ?? 'p-[30px]'} max-md:w-full max-md:h-full transition-transform duration-[4000ms] ease-out {show ? 'translate-y-0' : 'translate-y-[99dvh]'}"
 >
 	<div
 		data-id={`dialog-${dialogId}`}
