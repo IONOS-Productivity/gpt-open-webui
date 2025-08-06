@@ -27,7 +27,7 @@
 	let showTranslate = false;
 
 	let section = 'general';
-	let animationDuration = 4000;
+	let animationDuration = 500;
 	const surveyUrl = buildSurveyUrl($user!);
 
 	$: if (show) {
@@ -36,7 +36,7 @@
 			console.log('Settings: translate: NOW');
 			// DEBUG: Disabled to not change translate
 			showTranslate = true;
-		}, 2000);
+		}, 100);
 	} else {
 		console.log('Settings: untranslate immediately');
 		showTranslate = false;
@@ -48,7 +48,7 @@
 	{show}
 	{animationDuration}
 	{showTranslate}
-	class="p-0 h-[80dvh] w-screen  overflow-y-scroll transition-transform duration-[4000ms] ease-out {showTranslate ? 'translate-y-0' : 'translate-y-[99vh]'}"
+	class="p-0 h-[80dvh] w-screen  overflow-y-scroll transition-transform duration-[500ms] ease-out {showTranslate ? 'translate-y-0' : 'translate-y-[99vh]'}"
 >
 	<DialogHeader
 		slot="header"
