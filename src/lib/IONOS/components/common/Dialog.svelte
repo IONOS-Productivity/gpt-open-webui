@@ -33,7 +33,7 @@
 >
 	<div
 		data-id={`dialog-${dialogId}`}
-		class="flex flex-col relative"
+		class="flex flex-col"
 	>
 		<slot name="header" />
 
