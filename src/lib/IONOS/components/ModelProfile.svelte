@@ -1,6 +1,6 @@
 <script lang="ts">
 	import DOMPurify from 'dompurify';
-	import type { Model } from '$lib/stores';
+	import {mobile, type Model } from '$lib/stores';
 	import Tooltip from '$lib/components/common/Tooltip.svelte';
 	import ProfileImage from '$lib/components/chat/Messages/ProfileImage.svelte';
 
@@ -26,7 +26,7 @@
 	placement="left"
 	tippyOptions={tippyOptions}
 	allowHTML={true}
-	content={`<div class="flex flex-row rounded-2xl px-px py-[5px] text-blue-800">
+	content={`<div class="hidden md:flex flex-row rounded-2xl px-px py-[5px] text-blue-800">
 				<div class="shrink-0 pr-4">
 					<img class="w-[120px] h-[120px] object-cover rounded-full" src=${model?.info?.meta?.profile_image_url} alt="Model avatar image">
 				</div>
