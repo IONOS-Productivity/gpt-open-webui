@@ -399,7 +399,15 @@
 							class="flex-1 flex flex-col relative w-full rounded-2xl max-w-3xl bg-gray-100 dark:bg-gray-400/5 dark:text-gray-100 "
 							dir={$settings?.chatDirection ?? 'LTR'}
 						>
-							<div class="flex flex-col justify-between h-[105px]">
+							<div class="flex flex-col justify-between gap-[30px] md:gap-0 md:h-[105px]">
+								<div class="flex flex-col">
+									{#if files.length > 0}
+										<div class="md:hidden px-2 pt-4">
+											<SelectedFileBadges
+												{files}
+											/>
+										</div>
+									{/if}
 								<textarea
 									id="chat-input"
 									lang="de"
@@ -592,8 +600,9 @@
 										}
 									}}
 								/>
+								</div>
 
-								<div class="flex flex-row">
+								<div class="flex flex-row justify-between">
 									<div class="ml-1 self-end mb-1.5 flex space-x-1">
 										<InputMenu
 											bind:webSearchEnabled
@@ -647,7 +656,7 @@
 										{/if}
 									</div>
 
-									<div class="grow">
+									<div class="hidden md:block grow">
 										{#if files.length > 0}
 											<SelectedFileBadges
 												{files}
