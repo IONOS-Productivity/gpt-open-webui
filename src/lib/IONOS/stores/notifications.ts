@@ -6,6 +6,7 @@ export enum NotificationType {
 	ERROR = 'bg-red-100 text-blue-800',
 	WARNING = 'warning',
 	FEEDBACK = NotificationType.INFO,
+	PWA_INSTALL = NotificationType.INFO,
 }
 
 export type NotificationActionBase = {
