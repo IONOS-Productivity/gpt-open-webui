@@ -139,18 +139,15 @@
 	</div>
 </Dialog>
 
-{#if knowledgeBeingEdited}
-	<EditKnowledge
-		knowledge={knowledgeBeingEdited}
-		on:deleted={onKnowledgeDeleted}
-		on:close={onEditClose}
-	/>
-{/if}
+<EditKnowledge
+	show={!!knowledgeBeingEdited}
+	knowledge={knowledgeBeingEdited ?? {}}
+	on:deleted={onKnowledgeDeleted}
+	on:close={onEditClose}
+/>
 
-{#if create}
-	<CreateKnowledge
-		show={true}
-		on:created={onKnowledgeCreated}
-		on:close={onCloseManager}
-	/>
-{/if}
+<CreateKnowledge
+	show={!!create}
+	on:created={onKnowledgeCreated}
+	on:close={onCloseManager}
+/>

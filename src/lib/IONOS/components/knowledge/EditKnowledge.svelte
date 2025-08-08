@@ -25,7 +25,10 @@
 	const i18n = getContext<Readable<I18Next>>('i18n');
 	const dispatch = createEventDispatcher();
 
-	export let knowledge: Knowledge;
+	export let show = false;
+	// Can be null as the Dialog can be rendered with show = false,
+	// when no data-to-be-edited is known yet
+	export let knowledge: Knowledge|null = null;
 
 	let confirmKnowledgeDeletion = false;
 	let uploadRunning = false;
@@ -91,74 +94,76 @@
 		}
 	}
 
-	$: initFiles(knowledge.files ?? []);
+	$: initFiles(knowledge?.files ?? []);
 </script>
 
 <svelte:head>
 	<title>
-		{$i18n.t('Editing Knowledge "{{name}}"', { ns: 'ionos', name: knowledge.name })} | {$WEBUI_NAME}
+		{$i18n.t('Editing Knowledge "{{name}}"', { ns: 'ionos', name: knowledge?.name })} | {$WEBUI_NAME}
 	</title>
 </svelte:head>
 
 <Dialog
 	dialogId="knowledge-editor"
-	show={true}
+	{show}
 	class="p-0"
 >
 	<DialogHeader
 		slot="header"
-		title={knowledge.name}
+		title={knowledge?.name}
 		on:close={() => { dispatch('close'); }}
 		dialogId="knowledge-editor"
 		class="p-[30px]"
 	/>
 
 	<div slot="content" class="flex flex-col min-w-[500px] min-h-[200px] relative p-5 text-blue-800">
-		<div class="flex justify-end items-end pb-5 border-gray-200 border-b cursor-default" class:grow={$files.length === 0}>
-			<Button
-				on:click={() => { confirmKnowledgeDeletion = true; }}
-				type={ButtonType.caution}
-			>
-				{$i18n.t('Delete knowledge base', { ns: 'ionos' })}
-			</Button>
-		</div>
-
-		<DropUploadZone
-			onDrop={onDrop}
-		>
-			<div class="flex flex-col justify-center py-5 border-b border-gray-200 cursor-default" class:grow={$files.length === 0}>
-				<p class="block text-center">
-					{$i18n.t('Drop your files here, or', { ns: 'ionos' })}
-					<Filepicker on:selected={onFilesSelected}>
-						<span class="underline">
-							{$i18n.t('browse', { ns: 'ionos' })}
-						</span>
-					</Filepicker>
-				</p>
-				<p class="block text-sm text-gray-500 text-center">
-					{$i18n.t('Supports {{list}}', { ns: 'ionos', list: SUPPORTED_FILE_FORMATS.join(', ') })}
-				</p>
+		{#if knowledge}
+			<div class="flex justify-end items-end pb-5 border-gray-200 border-b cursor-default" class:grow={$files.length === 0}>
+				<Button
+					on:click={() => { confirmKnowledgeDeletion = true; }}
+					type={ButtonType.caution}
+				>
+					{$i18n.t('Delete knowledge base', { ns: 'ionos' })}
+				</Button>
 			</div>
 
-			{#if $files.length > 0}
-				<div class="overflow-y-scroll h-[300px]">
-					<KnowledgeFileList
-						items={$files}
-						on:delete={deleteFile}
-					/>
+			<DropUploadZone
+				onDrop={onDrop}
+			>
+				<div class="flex flex-col justify-center py-5 border-b border-gray-200 cursor-default" class:grow={$files.length === 0}>
+					<p class="block text-center">
+						{$i18n.t('Drop your files here, or', { ns: 'ionos' })}
+						<Filepicker on:selected={onFilesSelected}>
+							<span class="underline">
+								{$i18n.t('browse', { ns: 'ionos' })}
+							</span>
+						</Filepicker>
+					</p>
+					<p class="block text-sm text-gray-500 text-center">
+						{$i18n.t('Supports {{list}}', { ns: 'ionos', list: SUPPORTED_FILE_FORMATS.join(', ') })}
+					</p>
 				</div>
-			{:else}
-				<div class="flex justify-center items-center overflow-y-scroll min-h-[150px]">
-					{$i18n.t('You have no files in your collection', { ns: 'ionos' })}
-				</div>
-			{/if}
 
-			{#if uploadRunning}
-				<div class="absolute top-0 left-0 right-0 bottom-0 w-full h-full flex justify-center items-center bg-white/10">
-					<Spinner />
-				</div>
-			{/if}
-		</DropUploadZone>
+				{#if $files.length > 0}
+					<div class="overflow-y-scroll h-[300px]">
+						<KnowledgeFileList
+							items={$files}
+							on:delete={deleteFile}
+						/>
+					</div>
+				{:else}
+					<div class="flex justify-center items-center overflow-y-scroll min-h-[150px]">
+						{$i18n.t('You have no files in your collection', { ns: 'ionos' })}
+					</div>
+				{/if}
+
+				{#if uploadRunning}
+					<div class="absolute top-0 left-0 right-0 bottom-0 w-full h-full flex justify-center items-center bg-white/10">
+						<Spinner />
+					</div>
+				{/if}
+			</DropUploadZone>
+		{/if}
 	</div>
 </Dialog>
 
