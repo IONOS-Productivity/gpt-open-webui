@@ -1,22 +1,51 @@
 <script lang="ts">
 	import { fly } from 'svelte/transition';
+	import type { Readable } from 'svelte/store';
+	import type { I18Next } from '$lib/IONOS/i18next.d.ts';
 	import Heart from '$lib/IONOS/components/icons/Heart.svelte';
 	import XMark from '$lib/IONOS/components/icons/XMark.svelte';
 	import EmojiSad from '$lib/IONOS/components/icons/EmojiSad.svelte';
+	import Touch from '$lib/IONOS/components/icons/Touch.svelte';
 	import Link from '$lib/IONOS/components/common/Link.svelte';
 	import { NotificationType, type Notification } from '$lib/IONOS/stores/notifications';
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, getContext } from 'svelte';
+	import { isIOSDevice, isSafari } from '$lib/IONOS/services/pwa';
+
 	const dispatch = createEventDispatcher();
+	const i18n = getContext<Readable<I18Next>>('i18n');
 
 	export let notification: Notification;
+	export let deferredPrompt: any = null;
+
+	const showIOSInstructions = isIOSDevice() && isSafari();
+
+
+	const handlePWAInstall = () => {
+		if (showIOSInstructions) {
+			// For iOS, show instructions dialog
+			dispatch('showDialog');
+		} else if (deferredPrompt) {
+			// For browsers that support beforeinstallprompt
+			deferredPrompt.prompt();
+			deferredPrompt.userChoice.then((choiceResult: any) => {
+				if (choiceResult.outcome === 'accepted') {
+				}
+				dispatch('dismiss', { notification });
+			});
+		}
+	};
 </script>
 
+
+	<!-- Standard Notification Banner -->
 <div transition:fly={{ y: -200, duration: 50 }} class="ease-in-out w-full p-4 sm:p-5 flex items-center justify-start text-sm gap-2 {notification.type}">
 	<div id="notification-icon" class="self-start pt-0.5 sm:pt-0">
 		{#if notification.type === NotificationType.FEEDBACK}
 			<Heart />
 		{:else if notification.type === NotificationType.ERROR}
 			<EmojiSad className="text-red-500"/>
+		{:else if notification.type === NotificationType.INFO}
+			<Touch />
 		{/if}
 	</div>
 	<div class="flex flex-col md:flex-row gap-2.5 items-start">

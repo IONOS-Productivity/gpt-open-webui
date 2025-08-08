@@ -2,6 +2,7 @@
 	import { createEventDispatcher } from 'svelte';
 	import { slideDuration } from '$lib/IONOS/components/constants';
 	import { mobile } from '$lib/stores';
+	import XMark from '$lib/IONOS/components/icons/XMark.svelte';
 
 	const dispatch = createEventDispatcher();
 
@@ -11,12 +12,17 @@
 	 */
 	export let mobileCover = true;
 	export let dialogId = 'dialog';
+	export let externalClose = false;
+
 	let el: HTMLDialogElement|null = null;
+	let closeButton: HTMLDialogElement|null = null;
 
 	$: if (show) {
 		el?.showModal();
+		closeButton?.showModal();
 	} else if (!show && !$mobile) {
 		el?.close();
+		closeButton?.close();
 	}
 
 	/**
@@ -27,6 +33,7 @@
 	function onTransitionEnd(e) {
 		if (e.target == el && e.propertyName === 'translate' && !show) {
 			el?.close();
+			closeButton?.close();
 		}
 	}
 
@@ -49,7 +56,7 @@
 	}}
 	on:transitionend={onTransitionEnd}
 	bind:this={el}
-	closedby="any"
+	closedby='any'
 	style:--slide-duration="{slideDuration}ms"
 	class="fixed top-0 right-0 left-0 bottom-0 m-auto bg-white backdrop:bg-black/75 z-[99999999] overflow-hidden overscroll-contain shadow-xl rounded-2xl {mobileCover ? 'max-md:h-full max-md:max-h-dvh max-md:w-dvw max-md:max-w-dvw max-md:m-0' : ''} max-md:transition-transform duration-(--slide-duration)  ease-out {$$props.class ?? 'p-[30px]'}"
 >
