@@ -114,7 +114,7 @@
 		title={knowledge?.name}
 		on:close={() => { dispatch('close'); }}
 		dialogId="knowledge-editor"
-		class="p-[30px]"
+		class="p-[30px] border-b border-gray-200"
 		{submenu}
 	/>
 
