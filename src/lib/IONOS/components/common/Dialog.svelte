@@ -51,13 +51,13 @@
 >
 	<div
 		data-id={`dialog-${dialogId}`}
-		class="flex flex-col"
+		class="h-full flex flex-col"
 	>
 		<slot name="header" />
 
 		<div
 			data-id={`dialog-content-${dialogId}`}
-			class=""
+			class="flex flex-col flex-1"
 		>
 			<slot name="content"/>
 		</div>
