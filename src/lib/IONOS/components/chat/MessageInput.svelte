@@ -61,6 +61,7 @@
 	export let webSearchEnabled = false;
 
 	export let showAgentSelector = false;
+	let showAgentSelectorDialog = false;
 
 	$: onChange({
 		prompt,
@@ -650,8 +651,15 @@
 
 										{#if showAgentSelector}
 											<SmallAgentSelector
+												show={showAgentSelectorDialog}
 												bind:selectedModels={selectedModels}
 												anchorElement={chatInputElement}
+												on:click={() => {
+													showAgentSelectorDialog = true;
+												}}
+												on:close={() => {
+													showAgentSelectorDialog = false;
+												}}
 											/>
 										{/if}
 									</div>
