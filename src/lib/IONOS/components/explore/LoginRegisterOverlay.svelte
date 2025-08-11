@@ -16,28 +16,31 @@
 
 <Dialog
 	dialogId="register-login"
+	mobileCover={false}
+	class="p-[30px] mb-[25px] md:mb-auto {show ? 'max-md:translate-y-0' : 'max-md:translate-y-[100dvh]'}"
 	{show}
+	on:close={() => dispatch('close')}
 >
 	<div class="flex justify-between" slot="header">
-		<h1 class="text-[28px] leading-9 font-overpass p-2.5 text-blue-800">
+		<h1 class="text-lg sm:text-[28px] sm:leading-9 font-overpass sm:p-2.5 text-blue-800">
 			{$i18n.t('Your AI Experts Are Ready', { ns: 'ionos' })}
 		</h1>
 		<button class="justify-self-end" on:click={() => dispatch('close')}>
 			<XMark />
 		</button>
 	</div>
-	<content slot="content" class="p-2.5 block flex flex-col gap-5">
+	<content slot="content" class="sm:p-2.5 block flex flex-col gap-5">
 
 		<ul class="text-base text-gray-700">
-			<li class="flex items-center my-4">
+			<li class="flex items-center mt-4">
 				<BulletCheckmarkOnLight className="inline size-6 mr-2"/>
 				{$i18n.t('Chat, write, design, and code with expert AI assistants', { ns: 'ionos' })}
 			</li>
-			<li class="flex items-center my-4">
+			<li class="flex items-center mt-4">
 				<BulletCheckmarkOnLight className="inline size-6 mr-2"/>
 				{$i18n.t('Get tailored answers and generate content effortlessly', { ns: 'ionos' })}
 			</li>
-			<li class="flex items-center my-4">
+			<li class="flex items-center mt-4">
 				<BulletCheckmarkOnLight className="inline size-6 mr-2"/>
 				{$i18n.t('Upload files for context-aware insights and solutions', { ns: 'ionos' })}
 			</li>
