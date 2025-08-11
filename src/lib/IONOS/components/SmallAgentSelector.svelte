@@ -33,7 +33,9 @@
 		save();
 		show = false;
 	}
-	let show: boolean = false;
+	export let show: boolean = false;
+
+	$: console.log('show', show);
 </script>
 
 {#if !$mobile}
@@ -95,9 +97,7 @@
 	className="flex flex-row items-center gap-1"
 	type={ButtonType.secondary}
 	pressable={true}
-	on:click={() => {
-		show = !show;
-	}}
+	on:click
 >
 	<span class="ml-1 text-nowrap">
 		{$agents.length > 0 ? $agents.find((a) => a.id === selectedModels[0])?.name || $agents[0]?.name : $i18n.t('Select a specialist', { ns: 'ionos' })}
@@ -109,6 +109,7 @@
 	{show}
 	mobileCover={false}
 	class="p-0 md:min-h-[400px] md:min-w-[750px] md:max-w-[750px] {show ? 'max-md:translate-y-[0]' : 'max-md:translate-y-[100dvh]'}"
+	on:close
 >
 	<DialogHeader
 		slot="header"

@@ -43,11 +43,15 @@
 
 <dialog
 	on:toggle={onToggle}
+	on:close={() => {
+		show = false;
+		dispatch('close');
+	}}
 	on:transitionend={onTransitionEnd}
 	bind:this={el}
 	closedby="any"
 	style:--slide-duration="{slideDuration}ms"
-	class="fixed top-0 right-0 left-0 bottom-0 m-auto bg-white backdrop:bg-black/25 z-[99999999] overflow-hidden overscroll-contain shadow-xl rounded-2xl {mobileCover ? 'max-md:h-full max-md:max-h-dvh max-md:w-dvw max-md:max-w-dvw max-md:m-0' : ''} max-md:transition-transform duration-(--slide-duration)  ease-out {$$props.class ?? 'p-[30px]'}"
+	class="fixed top-0 right-0 left-0 bottom-0 m-auto bg-white backdrop:bg-black/75 z-[99999999] overflow-hidden overscroll-contain shadow-xl rounded-2xl {mobileCover ? 'max-md:h-full max-md:max-h-dvh max-md:w-dvw max-md:max-w-dvw max-md:m-0' : ''} max-md:transition-transform duration-(--slide-duration)  ease-out {$$props.class ?? 'p-[30px]'}"
 >
 	<div
 		data-id={`dialog-${dialogId}`}
