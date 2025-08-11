@@ -107,7 +107,7 @@
 <Dialog
 	dialogId="knowledge-editor"
 	{show}
-	class="p-0 h-screen w-screen md:max-w-fit md:max-h-fit overflow-y-scroll {show ? 'max-md:translate-x-0' : 'max-md:translate-x-[100dvw]'}"
+	class="p-0 h-screen w-screen md:max-w-fit md:max-h-[600px] overflow-y-scroll {show ? 'max-md:translate-x-0' : 'max-md:translate-x-[100dvw]'}"
 >
 	<DialogHeader
 		slot="header"
@@ -118,7 +118,7 @@
 		{submenu}
 	/>
 
-	<div slot="content" class="flex flex-col md:min-w-[500px] min-h-[200px] relative p-5 text-blue-800">
+	<div slot="content" class="p-5 h-full flex flex-col flex-1 basis-0 min-h-0 md:min-w-[500px] min-h-[200px] relative p-5 text-blue-800">
 		{#if knowledge}
 			<div class="hidden md:flex justify-end items-end pb-5 border-gray-200 border-b cursor-default" class:grow={$files.length === 0}>
 				<Button
@@ -130,6 +130,7 @@
 			</div>
 
 			<DropUploadZone
+				class="flex-1 basis-0 min-h-0 flex flex-col"
 				onDrop={onDrop}
 			>
 				<div class="flex flex-col justify-center py-5 border-b border-gray-200 cursor-default" class:grow={$files.length === 0}>
@@ -147,7 +148,7 @@
 				</div>
 
 				{#if $files.length > 0}
-					<div class="overflow-y-scroll h-[300px]">
+					<div class="flex-1 basis-1 overflow-y-scroll max-md:h-[300px]">
 						<KnowledgeFileList
 							items={$files}
 							on:delete={deleteFile}
