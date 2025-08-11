@@ -18,7 +18,7 @@
 
 <Dialog
 	dialogId="confirmation-dialog"
-	class="p-[30px] items-end md:items-center pb-[25px] px-[25px] md:pb-0 md:px-0 max-md:mb-0 {show ? 'max-md:translate-y-[-5dvh]' : 'max-md:translate-y-[50dvh]'}"
+	class="p-[30px] items-end md:items-center pb-[25px] px-[25px] max-md:mb-0 {show ? 'max-md:translate-y-[-5dvh]' : 'max-md:translate-y-[50dvh]'}"
 	{show}
 	mobileCover={false}
 >
