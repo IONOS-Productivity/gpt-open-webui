@@ -102,11 +102,11 @@
 		title={$i18n.t("Knowledge Management", { ns: 'ionos' })}
 		on:close={() => { showKnowlegeManager(false); }}
 		dialogId="knowledge-manager"
-		class="p-[30px] border-b border-gray-200 overflow-x-scroll"
+		class="p-[30px] shrink-0 basis-auto border-b border-gray-200 overflow-x-scroll"
 		submenu={$mobile ? true : false}
 	/>
 
-	<div slot="content" class="p-5 flex flex-col">
+	<div slot="content" class="p-5 h-full flex flex-col flex-1 basis-0 min-h-0">
 		{#if loaded}
 			<div class="flex pb-5 gap-2.5 border-gray-200 border-b md:min-w-[500px]">
 				<div class="flex grow rounded-lg p-3 text-sm bg-gray-100 outline-hidden text-blue-800 placeholder:text-gray-400">
@@ -128,7 +128,7 @@
 					</Button>
 				</div>
 			</div>
-			<div class="overflow-y-scroll max-h-[190px] h-full" >
+			<div class="md:max-h-[190px] flex-1 min-h-[0] overflow-y-scroll" >
 				<KnowledgeList
 					items={filteredItems}
 					on:select={select}
