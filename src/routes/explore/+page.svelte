@@ -20,6 +20,8 @@
 	let selectedAgent: string|null = null;
 	let selectedPrompt: number|null = null;
 
+	$: showLoginDialog = selectedAgent !== null || selectedPrompt !== null;
+
 	function selectAgentInternal(agentId: string) {
 		if (!$user) {
 			selectedAgent = agentId;
@@ -102,8 +104,8 @@
 <LoginRegisterOverlay
 	on:login={login}
 	on:signup={signup}
-	on:close={() => { selectedAgent = null; selectedPrompt = null; }}
-	show={selectedAgent !== null || selectedPrompt !== null}
+	on:close={() => {selectedAgent = null; selectedPrompt = null;}}
+	show={showLoginDialog}
 />
 
 <style>
