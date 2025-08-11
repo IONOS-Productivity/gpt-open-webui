@@ -61,13 +61,13 @@
 <AnimatedBackground />
 
 <content class="flex flex-col items-center text-blue-800 w-full md:px-8">
-		<h1 class="my-5 text-5xl leading-[56px] font-overpass text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-700">
+		<h1 class="my-5 text-5xl leading-[56px] font-overpass text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-700 max-md:mx-12">
 			{$i18n.t('Welcome to IONOS GPT,', { ns: 'ionos' })}
 			<br>
 			{$i18n.t('Where AI becomes your ultimate team of experts!', { ns: 'ionos' })}
 		</h1>
 
-	<p class="max-w-3xl mb-4 text-lg leading-[26px] text-center text-blue-800">
+	<p class="max-w-3xl mb-4 text-lg leading-[26px] text-center text-blue-800 max-md:mx-12">
 		{$i18n.t('From ideas to execution, our virtual team is here to help — from writing and design to coding, they handle the details so you can focus on what matters. Get to know them and see how they can support your projects.', { ns: 'ionos' })}
 	</p>
 
@@ -82,11 +82,11 @@
 		<AgentSelector on:select={({ detail: id }) => selectAgentInternal(id)} />
 	</div>
 
-	<h1 class="my-4 text-center text-[32px] leading-[40px] text-blue-800">
+	<h1 class="my-4 text-center text-[32px] leading-[40px] text-blue-800 max-md:mx-12">
 		{$i18n.t('Bringing your ideas to life is easy with our AI specialists', { ns: 'ionos' })}
 	</h1>
 
-	<p class="max-w-2xl text-center text-lg leading-[26px] text-blue-800">
+	<p class="max-w-2xl text-center text-lg leading-[26px] text-blue-800 max-md:mx-12">
 		{$i18n.t('Whether you need great content, eye-catching designs, or clean code, your virtual team is here to help every step of the way.', { ns: 'ionos' })}
 	</p>
 
