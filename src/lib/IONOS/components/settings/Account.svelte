@@ -110,7 +110,7 @@
 	/>
 
 	<div slot="content" class="p-5  text-blue-800 text-sm">
-		<div class="flex flex-row items-center h-[60px] border-b border-gray-200">
+		<div class="flex flex-row items-center h-[60px] border-b border-gray-200" on:click={() => resetPassword()} role="button">
 			<div class="flex-grow">
 				{$i18n.t('Reset password', { ns: 'ionos' })}
 			</div>
@@ -119,7 +119,7 @@
 		<SettingInfo>
 			{$i18n.t('When you reset your password, you will be redirected to an external site to complete the process.', { ns: 'ionos' })}
 		</SettingInfo>
-		<div class="flex flex-row items-center h-[60px] border-b border-gray-200">
+		<div class="flex flex-row items-center h-[60px] border-b border-gray-200" on:click={() => { confirmAccountDeletion = true;}} role="button">
 			<div class="flex-grow">
 				{$i18n.t('Delete account', { ns: 'ionos' })}
 			</div>
