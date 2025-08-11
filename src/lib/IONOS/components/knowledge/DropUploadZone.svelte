@@ -66,7 +66,7 @@
 	role="form"
 	data-id="drop-zone"
 	data-state={draggedOver ? 'dragged-over' : ''}
-	class="border-2 border-transparent rounded-md border-dashed relative after:absolute after:block after:left-0 after:top-0 after:right-0 after:bottom-0 after:bg-white/75 after:pointer-events-none"
+	class="border-2 border-transparent rounded-md border-dashed relative after:absolute after:block after:left-0 after:top-0 after:right-0 after:bottom-0 after:bg-white/75 after:pointer-events-none {$$props.class}"
 	class:border-gray-300={draggedOver}
 	class:after:absolute={draggedOver}
 	on:dragover={onDragOver}
