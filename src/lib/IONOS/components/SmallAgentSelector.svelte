@@ -105,7 +105,7 @@
 	<Ellipsis />
 </Button>
 <Dialog
-	dialogId="settings"
+	dialogId="small-agent-selector"
 	{show}
 	mobileCover={false}
 	class="p-0 md:min-h-[400px] md:min-w-[750px] md:max-w-[750px] {show ? 'max-md:translate-y-[0]' : 'max-md:translate-y-[100dvh]'}"
@@ -141,7 +141,7 @@
 					</div>
 			{/each}
 		</div>
-		<div class="absolute bottom-0 left-0 right-0 h-[70px] bg-gradient-to-t from-white to-transparent pointer-events-none rounded-b-2xl"></div>
+		<div class="absolute bottom-0 left-0 right-0 h-[70px] bg-gradient-to-t from-white to-transparent pointer-events-none rounded-b-2xl" />
 	</div>
 </Dialog>
 {/if}
