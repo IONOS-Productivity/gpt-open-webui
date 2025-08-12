@@ -4,6 +4,3 @@
 
 	let chat: Chat;
 </script>
-
-<Sidebar on:new-chat={() => chat?.newChat()} />
-<Chat bind:this={chat} />

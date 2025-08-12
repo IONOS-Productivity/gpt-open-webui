@@ -15,7 +15,6 @@
 	import { notifications } from '$lib/IONOS/stores/notifications';
 </script>
 
-<NotificationManager />
 <div class="flex flex-row w-full justify-between bg-gray-100/50">
 	{#if $user !== undefined}
 		<Sidebar />
