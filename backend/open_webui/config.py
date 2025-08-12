@@ -30,7 +30,8 @@ from open_webui.env import (
     log,
 )
 from open_webui.internal.db import Base, get_db
-from open_webui.utils.redis import get_redis_connection
+from open_webui.utils.redis import get_redis_connection, get_sentinels_from_env
+from open_webui.utils.custom_resource_loader import start_sync
 
 
 class EndpointFilter(logging.Filter):
@@ -48,7 +49,7 @@ logging.getLogger("uvicorn.access").addFilter(EndpointFilter())
 
 # Function to run the alembic migrations
 def run_migrations():
-    log.info("Running migrations")
+    print("Running migrations")
     try:
         from alembic import command
         from alembic.config import Config
@@ -65,8 +66,32 @@ def run_migrations():
 
 
 
+def get_redis_conn():
+    """Get a Redis connection."""
+    if REDIS_URL:
+        return get_redis_connection(REDIS_URL, None, decode_responses=True)
+    elif REDIS_SENTINEL_HOSTS and REDIS_SENTINEL_PORT:
+        return get_redis_connection(
+            None, get_sentinels_from_env(REDIS_SENTINEL_HOSTS, REDIS_SENTINEL_PORT), decode_responses=True
+        )
+    else:
+        return None
+
+
 if os.getenv("RUN_MIGRATIONS", "true").lower() == "true":
-    run_migrations()
+    redisConn = get_redis_conn()
+    if redisConn is not None:
+        try:
+            with redisConn.lock('migrate_lock', timeout=60):
+                run_migrations()
+                start_sync()
+        except Exception as e:
+            log.exception(f"Error connecting to Redis: {e}")
+    else:
+        run_migrations()
+        start_sync()
+else:
+    print("Skipping migrations as RUN_MIGRATIONS is set to false.")
 
 
 class Config(Base):

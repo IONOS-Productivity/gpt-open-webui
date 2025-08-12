@@ -3,6 +3,9 @@ import json
 import os
 import base64
 
+
+from open_webui.env import log
+
 from open_webui.models.models import (
     ModelForm,
     ModelMeta,
@@ -17,13 +20,12 @@ from open_webui.models.auths import (
     Auths,
 )
 
-from open_webui.models.users import Users
-
 from open_webui.utils.auth import (
     get_password_hash,
 )
 
-DEFAULT_RESOURCES_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'custom_resources')
+PROJECT_ROOT = os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+DEFAULT_RESOURCES_PATH = os.path.join(PROJECT_ROOT, 'custom_resources')
 
 # Will be set in check_required_env_vars()
 resources_path = None
@@ -34,10 +36,10 @@ def load_json_file(file_path: str):
             data = json.load(file)
             return data
     except FileNotFoundError:
-        print(f"Error: File '{file_path}' not found.")
+        log.info(f"Error: File '{file_path}' not found.")
         return None
     except json.JSONDecodeError:
-        print(f"Error: Unable to parse JSON in file '{file_path}'.")
+        log.info(f"Error: Unable to parse JSON in file '{file_path}'.")
         return None
 
 def load_image_file_base64_string(file_path: str):
@@ -48,10 +50,10 @@ def load_image_file_base64_string(file_path: str):
                 base64_image_string = base64.b64encode(icon_data).decode('utf-8')
                 return f'data:image/png;base64,{base64_image_string}'
             else:
-                print(f"Error reading icon file '{file_path}'.")
+                log.info(f"Error reading icon file '{file_path}'.")
                 return None
     except FileNotFoundError:
-        print(f"Error: File '{file_path}' not found.")
+        log.info(f"Error: File '{file_path}' not found.")
         return None
 
 def load_db_models():
@@ -88,9 +90,9 @@ def handle_model_update(admin_user_id, db_models, json_models):
                 meta_data['profile_image_url'] = icon_data
                 model['meta'] = meta_data
             else:
-                print(f"Error reading icon file '{icon_path}'.")
+                log.info(f"Error reading icon file '{icon_path}'.")
         else:
-            print(f"Icon path not found in meta data.")
+            log.info(f"Icon path not found in meta data.")
 
 
     # Get Set of model which in exist in database but not in json
@@ -100,33 +102,33 @@ def handle_model_update(admin_user_id, db_models, json_models):
     # Get Set of model which in exist in both database and json
     model_update_set = db_model_id_set.intersection(json_model_id_set)
 
-    print(f"Found {len(model_delete_set)} model{'s' if len(model_delete_set) != 1 else ''} in the database that do{'es' if len(model_delete_set) == 1 else ''} not exist in the JSON file.")
+    log.info(f"Found {len(model_delete_set)} model{'s' if len(model_delete_set) != 1 else ''} in the database that do{'es' if len(model_delete_set) == 1 else ''} not exist in the JSON file.")
     for model_id in model_delete_set:
         result = delete_model_by_id(model_id)
         if result:
-            print(f"Model with id '{model_id}' deleted successfully.")
+            log.info(f"Model with id '{model_id}' deleted successfully.")
         else:
-            print(f"Error deleting model with id '{model_id}'.")
+            log.info(f"Error deleting model with id '{model_id}'.")
 
-    print(f"Found {len(model_create_set)} model{'s' if len(model_create_set) != 1 else ''} in the JSON file that do{'es' if len(model_create_set) == 1 else ''} not exist in the database.")
+    log.info(f"Found {len(model_create_set)} model{'s' if len(model_create_set) != 1 else ''} in the JSON file that do{'es' if len(model_create_set) == 1 else ''} not exist in the database.")
     for model in json_models:
         if model['id'] in model_create_set:
             form_data = getModelForm(model)
             result = Models.insert_new_model(form_data, admin_user_id)
             if result:
-                print(f"Model with id '{model['id']}' created successfully.")
+                log.info(f"Model with id '{model['id']}' created successfully.")
             else:
-                print(f"Error creating model with id '{model['id']}'.")
+                log.info(f"Error creating model with id '{model['id']}'.")
 
-    print(f"Found {len(model_update_set)} model{'s' if len(model_update_set) != 1 else ''} that exist in both the database and the JSON file.")
+    log.info(f"Found {len(model_update_set)} model{'s' if len(model_update_set) != 1 else ''} that exist in both the database and the JSON file.")
     for model in json_models:
         if model['id'] in model_update_set:
             form_data = getModelForm(model)
             result = update_model_by_id(model['id'], form_data)
             if result:
-                print(f"Model with id '{model['id']}' updated successfully.")
+                log.info(f"Model with id '{model['id']}' updated successfully.")
             else:
-                print(f"Error updating model with id '{model['id']}'.")
+                log.info(f"Error updating model with id '{model['id']}'.")
 
 
 def getModelForm(model_data: dict[str, any]):
@@ -193,18 +195,19 @@ def sync_admin_user() -> str:
     admin_email = os.getenv('ADMIN_EMAIL').lower()
     admin_password = os.getenv('ADMIN_PASSWORD')
 
+    from open_webui.models.users import Users
     admin = Users.get_user_by_email(admin_email)
     if admin:
         if not update_password(admin, admin_password):
             raise RuntimeError("Error updating admin user password.")
-        print("Admin user password updated successfully.")
+        log.info("Admin user password updated successfully.")
         return admin.id
     else:
         print("Admin user not found. Creating new admin user...")
         user_id = create_admin_user(admin_email, admin_password)
         if not user_id:
             raise RuntimeError("Error creating new admin user.")
-        print(f"Admin user created with id: {user_id}")
+        log.info(f"Admin user created with id: {user_id}")
         return user_id
 
 def check_required_env_vars() -> bool:
@@ -215,40 +218,37 @@ def check_required_env_vars() -> bool:
     admin_password = os.getenv('ADMIN_PASSWORD')
 
     if not admin_email:
-        print("Admin email (ADMIN_EMAIL) environment variable not set.")
+        log.info("Admin email (ADMIN_EMAIL) environment variable not set.")
         return False
 
     if not admin_password:
-        print("Admin password (ADMIN_PASSWORD) environment variable not set.")
+        log.info("Admin password (ADMIN_PASSWORD) environment variable not set.")
         return False
 
     # Use this if defined, otherwise fall back to default
     custom_resources_path_from_env = os.getenv('CUSTOM_RESOURCE_PATH')
 
     if custom_resources_path_from_env and os.path.exists(custom_resources_path_from_env):
-        print("Custom resource path set per environment variable.")
+        log.info("Custom resource path set per environment variable.")
         resources_path = custom_resources_path_from_env
     elif os.path.exists(DEFAULT_RESOURCES_PATH):
-        print("Using default custom resources path %s" % (DEFAULT_RESOURCES_PATH))
+        log.info("Using default custom resources path %s" % (DEFAULT_RESOURCES_PATH))
         resources_path = DEFAULT_RESOURCES_PATH
     else:
-        print("Nor per-environment not default custom resource path '%s' exist." % (DEFAULT_RESOURCES_PATH))
+        log.info("Neither per-environment nor default custom resource path '%s' exist." % (DEFAULT_RESOURCES_PATH))
         return False
 
-    print(f"Admin email: {admin_email}")
-    print(f"Admin password: {'*' * len(admin_password)}")
-    print(f"Custom resource path: {resources_path}")
+    log.info(f"Admin email: {admin_email}")
+    log.info(f"Admin password: {'*' * len(admin_password)}")
+
+    log.info(f"Custom resource path: {resources_path}")
     return True
 
-def main():
+def start_sync():
 
     if not check_required_env_vars():
-        print("Required environment variables not set. Skip syncing resources.")
+        log.info("Required environment variables not set. Skip syncing resources.")
         return
 
     admin_id = sync_admin_user()
     sync_models(admin_id)
-
-
-if __name__ == "__main__":
-    main()

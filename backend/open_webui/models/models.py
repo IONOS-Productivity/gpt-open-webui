@@ -15,9 +15,6 @@ from sqlalchemy.dialects import postgresql, sqlite
 from sqlalchemy import BigInteger, Column, Text, JSON, Boolean
 
 
-from open_webui.utils.access_control import has_access
-
-
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["MODELS"])
 
@@ -198,6 +195,7 @@ class ModelsTable:
     def get_models_by_user_id(
         self, user_id: str, permission: str = "write"
     ) -> list[ModelUserResponse]:
+        from open_webui.utils.access_control import has_access
         models = self.get_models()
         return [
             model
