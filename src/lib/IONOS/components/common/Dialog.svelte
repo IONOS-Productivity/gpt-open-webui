@@ -55,7 +55,7 @@
 >
 	<div
 		data-id={`dialog-${dialogId}`}
-		class="h-full flex flex-col"
+		class="min-h-full flex flex-col"
 	>
 		<slot name="header" />
 
