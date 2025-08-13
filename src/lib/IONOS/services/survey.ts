@@ -2,14 +2,14 @@ import { get } from 'svelte/store';
 import type { SessionUser } from '$lib/stores';
 import { config } from '$lib/stores';
 
-export const buildSurveyUrl = (user: SessionUser): string|null => {
+export const buildSurveyUrl = (user: SessionUser|null): string|null => {
 	const surveyUrl = get(config)?.features?.ionos_survey_new_users_url ?? null;
 
 	if (surveyUrl === null) {
 		return null;
 	}
 
-	if (!user.pseudonymized_user_id) {
+	if (!user?.pseudonymized_user_id) {
 		return null;
 	}
 
