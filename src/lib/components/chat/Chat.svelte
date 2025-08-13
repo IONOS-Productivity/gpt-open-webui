@@ -99,6 +99,11 @@
 
 	let loading = false;
 
+	export function newChat() {
+		chatId.set('');
+		initNewChat();
+	}
+
 	const eventTarget = new EventTarget();
 	let controlPane;
 	let controlPaneComponent;
