@@ -53,6 +53,10 @@ describe('suvey', () => {
 			expect(buildSurveyUrl(user)).toBe(`${surveyUrl}?urlVar01=DE&urlVar02=${userId}&urlVar03=Product`);
 		});
 
+		it('should return null if the user is null', async () => {
+			expect(buildSurveyUrl(null)).toBe(null);
+		});
+
 		it('should return null if the survey URL is null', async () => {
 			surveyUrl = null;
 			expect(buildSurveyUrl(user)).toBe(null);
