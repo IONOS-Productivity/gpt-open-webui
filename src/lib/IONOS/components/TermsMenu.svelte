@@ -66,7 +66,7 @@
 		side="top"
 		align="start"
 	>
-		<div class="w-screen h-screen " on:click|stopPropagation>
+		<div class="w-screen h-screen ">
 			<button
 				class="absolute rounded-3xl bottom-[375px]! right-1/2 text-white  hover:text-gray-300 transition-colors"
 				on:click|stopPropagation={() => dispatch('close')}
