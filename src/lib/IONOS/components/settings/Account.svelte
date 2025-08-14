@@ -7,7 +7,7 @@
 	import Confirm from '$lib/IONOS/components/common/Confirm.svelte';
 	import ChevronRight from '$lib/IONOS/components/icons/ChevronRight.svelte';
 	import LoadingCover from '$lib/IONOS/components/common/LoadingCover.svelte';
-	import { config, user } from '$lib/stores';
+	import { user } from '$lib/stores';
 	import { resetPassword, deleteAccount } from '$lib/IONOS/services/account'
 	import { buildSurveyUrl } from '$lib/IONOS/services/survey';
 	import SubSettingPage from './SubSettingPage.svelte';
