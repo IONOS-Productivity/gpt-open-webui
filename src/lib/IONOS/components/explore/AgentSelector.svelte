@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Readable, Writable } from 'svelte/store';
+	import type { Readable } from 'svelte/store';
 	import type { I18Next } from '$lib/IONOS/i18next.d.ts';
 	import { createEventDispatcher, getContext } from 'svelte';
 	import { showSidebar } from '$lib/stores';
