@@ -32,7 +32,7 @@ describe('suvey', () => {
 			pseudonymized_user_id: userId,
 		});
 
-		let surveyUrl;
+		let surveyUrl: string|null = null;
 
 		beforeEach(() => {
 			surveyUrl = 'https://acmesurvey.com/foo47';
