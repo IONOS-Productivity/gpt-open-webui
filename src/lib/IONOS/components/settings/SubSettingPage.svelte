@@ -1,10 +1,5 @@
 <script lang="ts">
-	import type { Readable } from 'svelte/store';
-	import type { I18Next } from '$lib/IONOS/i18next.d.ts';
-	import { getContext } from 'svelte';
 	import Dialog from '$lib/IONOS/components/common/Dialog.svelte';
-
-	const i18n = getContext<Readable<I18Next>>('i18n');
 
 	export let show: boolean = false;
 </script>
