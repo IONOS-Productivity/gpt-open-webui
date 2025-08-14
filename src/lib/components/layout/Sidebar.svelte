@@ -532,7 +532,10 @@
 				class="{$showSidebar ? 'flex-grow' : ''} flex space-x-3 rounded-sm p-2.5 bg-transparent text-blue-800 hover:bg-gray-200 dark:hover:bg-gray-900 transition no-drag-region"
 				href="/explore"
 				draggable="false"
-				on:click={async () => { await goto('/explore'); }}
+				on:click={async () => {
+					showSidebar.set(false);
+					await goto('/explore');
+				}}
 			>
 				<div class="self-center">
 					<Sparkles filled={false} className="size-5 inline-block" />
