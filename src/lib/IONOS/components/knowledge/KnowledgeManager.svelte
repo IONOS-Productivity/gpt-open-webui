@@ -154,7 +154,7 @@
 
 <EditKnowledge
 	show={!!knowledgeBeingEdited}
-	knowledge={knowledgeBeingEdited ?? {}}
+	knowledge={knowledgeBeingEdited}
 	on:deleted={onKnowledgeDeleted}
 	on:close={onEditClose}
 	submenu={$mobile ? true : false}

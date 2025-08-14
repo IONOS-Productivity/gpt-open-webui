@@ -36,10 +36,10 @@
 
 	async function onKnowledgeDeletionConfirmed(): Promise<void> {
 		try {
-			await remove(knowledge.id);
+			await remove(knowledge?.id);
 			toast.success($i18n.t('Knowledge removed successfully.', { ns: 'ionos' }));
 		} catch (e) {
-			console.error(`Error deleting knowledge ${knowledge.id}`, e);
+			console.error(`Error deleting knowledge ${knowledge?.id}`, e);
 			toast.error($i18n.t('Error deleting knowledge', { ns: 'ionos' }));
 		}
 
@@ -49,7 +49,7 @@
 
 	async function deleteFile({ detail: fileId }: { detail: KnowledgeFileId }): Promise<void> {
 		try {
-			await removeFile(knowledge.id, fileId);
+			await removeFile(knowledge?.id, fileId);
 			toast.success($i18n.t('File removed successfully.', { ns: 'ionos' }));
 			files.update((files: KnowledgeFile[]) => {
 				return files.filter((file) => file.id !== fileId);
@@ -63,7 +63,7 @@
 	async function onFilesSelected({ detail: files }: { detail: File[] }): Promise<void> {
 		uploadRunning = true;
 		try {
-			await upload(knowledge.id, files);
+			await upload(knowledge?.id, files);
 			toast.success($i18n.t('{{count}} file(s) uploaded successfully', { count: files.length, ns: 'ionos' }));
 		} catch {
 			toast.error($i18n.t('Error uploading files', { count: files.length, ns: 'ionos' }));
@@ -86,7 +86,7 @@
 
 		uploadRunning = true;
 		try {
-			await upload(knowledge.id, files);
+			await upload(knowledge?.id, files);
 			toast.success($i18n.t('{{count}} file(s) uploaded successfully', { count: files.length, ns: 'ionos' }));
 		} catch {
 			toast.error($i18n.t('Error uploading files', { count: files.length, ns: 'ionos' }));
