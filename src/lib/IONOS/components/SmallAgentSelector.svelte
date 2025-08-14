@@ -16,7 +16,6 @@
 	const i18n = getContext<Readable<I18Next>>('i18n');
 
 	export let selectedModels = [''];
-	export let anchorElement: HTMLElement | null = null;
 
 	// Custom models obey have the convention of using only characters
 	// This excludes stock models.
