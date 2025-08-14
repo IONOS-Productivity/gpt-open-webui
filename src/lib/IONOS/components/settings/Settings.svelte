@@ -92,8 +92,7 @@
 							{$i18n.t('Knowledge Management', { ns: 'ionos' })}
 						</span>
 					</div>
-					<div class="flex flex-row gap-2.5 py-5 border-b border-gray-200"
-						role="button"
+					<button class="w-full text-left flex flex-row gap-2.5 py-5 border-b border-gray-200"
 						on:click={() => {
 							showKnowlegeManager(true);
 					}}>
@@ -101,7 +100,7 @@
 							{$i18n.t('Manage knowledge bases', { ns: 'ionos' })}
 						</span>
 						<ChevronRight />
-					</div>
+					</button>
 				</div>
 				<div>
 					<div class="flex flex-row gap-2.5 mb-5 mt-2.5">
