@@ -3,11 +3,11 @@
 	import type { Readable } from 'svelte/store';
 	import type { I18Next } from '$lib/IONOS/i18next.d.ts';
 	import { getContext } from 'svelte';
-	import { models, settings, mobile } from '$lib/stores';
+	import { settings, mobile } from '$lib/stores';
 	import { updateUserSettings } from '$lib/apis/users';
 	import Button, { ButtonType } from '$lib/IONOS/components/common/Button.svelte'
 	import { flyAndScale } from '$lib/utils/transitions';
-	import { agents, type Agent } from '$lib/IONOS/stores/agents';
+	import { agents } from '$lib/IONOS/stores/agents';
 	import Checkmark from '$lib/IONOS/components/icons/Checkmark.svelte';
 	import Ellipsis from '$lib/IONOS/components/icons/Ellipsis.svelte';
 	import Dialog from '$lib/IONOS/components/common/Dialog.svelte';
