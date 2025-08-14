@@ -653,7 +653,6 @@
 											<SmallAgentSelector
 												show={showAgentSelectorDialog}
 												bind:selectedModels={selectedModels}
-												anchorElement={chatInputElement}
 												on:click={() => {
 													showAgentSelectorDialog = true;
 												}}
