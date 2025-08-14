@@ -4,7 +4,7 @@
 
 	import { DropdownMenu } from 'bits-ui';
 	import { flyAndScale } from '$lib/utils/transitions';
-	import { getContext, tick, createEventDispatcher } from 'svelte';
+	import { getContext, createEventDispatcher } from 'svelte';
 
 	import Dropdown from '$lib/components/common/Dropdown.svelte';
 	import Tooltip from '$lib/components/common/Tooltip.svelte';
