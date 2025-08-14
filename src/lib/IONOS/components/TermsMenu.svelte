@@ -3,7 +3,6 @@
 	import type { Readable } from 'svelte/store';
 	import type { I18Next } from '$lib/IONOS/i18next.d.ts';
 	import { getContext } from 'svelte';
-	import Link from '$lib/IONOS/components/common/Link.svelte';
 	import XMark from '$lib/IONOS/components/icons/XMark.svelte';
 	import { createEventDispatcher } from 'svelte';
 	import { flyAndScale } from '$lib/utils/transitions';
@@ -12,7 +11,6 @@
 	import { mobile } from '$lib/stores'
 
 	export let show: boolean;
-	export let className: string = '';
 
 	let dispatch = createEventDispatcher();
 
