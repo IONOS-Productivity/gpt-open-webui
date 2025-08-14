@@ -62,11 +62,10 @@
 		<div class="flex flex-col md:flex-row md:flex-wrap justify-between align-center items-stretch gap-2.5">
 		{#each $agents as { id, name, subtitle }}
 			<DropdownMenu.Item>
-				<div
+				<button
 					on:click={() => select(id)}
 					class="flex flex-row justify-between content-center w-[160px] h-[80px] py-2 px-3 rounded-sm cursor-pointer {id == selectedModels[0] ? 'text-purple-700' : 'text-blue-800'}  hover:bg-gray-50 dark:hover:bg-gray-800"
 					aria-pressed={id === selectedModels[0]}
-					role="button"
 				>
 					<div class="text-start text-xs" title="{name} - {subtitle}">
 						<p>
@@ -79,7 +78,7 @@
 					{#if id === selectedModels[0]}
 						<Checkmark className="self-center" />
 					{/if}
-				</div>
+				</button>
 			</DropdownMenu.Item>
 		{/each}
 		</div>
@@ -116,11 +115,10 @@
 	<div class="relative" slot="content">
 		<div class="flex flex-col md:flex-row md:flex-wrap justify-between align-center items-stretch max-h-[375px] max-md:w-[353px] overflow-y-scroll divide-y divide-gray-200">
 			{#each $agents as { id, name, subtitle }}
-					<div
+					<button
 						on:click={() => select(id)}
 						class="flex flex-row justify-between content-center h-[80px] py-5 px-[30px] rounded-sm cursor-pointer {id == selectedModels[0] ? 'text-purple-700' : 'text-blue-800'}  hover:bg-gray-50 dark:hover:bg-gray-800"
 						aria-pressed={id === selectedModels[0]}
-						role="button"
 					>
 						<div class="font-semibold text-start text-xs grow" title="{name} - {subtitle}">
 							<p>
@@ -133,7 +131,7 @@
 						{#if id === selectedModels[0]}
 							<Checkmark className="self-center" />
 						{/if}
-					</div>
+					</button>
 			{/each}
 		</div>
 		<div class="absolute bottom-0 left-0 right-0 h-[70px] bg-gradient-to-t from-white to-transparent pointer-events-none rounded-b-2xl" />
