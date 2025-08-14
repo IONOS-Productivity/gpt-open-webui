@@ -17,11 +17,6 @@
 
 	export let selectedModels = [''];
 
-	// Custom models obey have the convention of using only characters
-	// This excludes stock models.
-	// This can later be changed to testing for a marker tag in info.meta.tags
-	const onlyCustomModels = ({ id }: { id: string }) => /^[a-z]+$/.test(id);
-
 	const save = async () => {
 		settings.set({ ...$settings, models: selectedModels });
 		await updateUserSettings(localStorage.token, { ui: $settings });
