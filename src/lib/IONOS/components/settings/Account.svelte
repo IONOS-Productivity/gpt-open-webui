@@ -66,15 +66,14 @@
 			</Button>
 		</div>
 	</div>
-	<div class="md:hidden flex flex-row gap-2.5 h-[60px] items-center border-b border-gray-200"
-		role="button"
+	<button class="md:hidden text-left flex flex-row gap-2.5 h-[60px] items-center border-b border-gray-200"
 		on:click={() => { showSecuritySubsettings = true; }}
 	>
 		<span class="text-sm grow">
 			{$i18n.t('Security', { ns: 'ionos' })}
 		</span>
 		<ChevronRight />
-	</div>
+	</button>
 </div>
 
 {#if loading}
@@ -110,21 +109,21 @@
 	/>
 
 	<div slot="content" class="p-5  text-blue-800 text-sm">
-		<div class="flex flex-row items-center h-[60px] border-b border-gray-200" on:click={() => resetPassword()} role="button">
+		<button class="text-left w-full flex flex-row items-center h-[60px] border-b border-gray-200" on:click={() => resetPassword()}>
 			<div class="flex-grow">
 				{$i18n.t('Reset password', { ns: 'ionos' })}
 			</div>
 			<ArrowsRotate />
-		</div>
+		</button>
 		<SettingInfo>
 			{$i18n.t('When you reset your password, you will be redirected to an external site to complete the process.', { ns: 'ionos' })}
 		</SettingInfo>
-		<div class="flex flex-row items-center h-[60px] border-b border-gray-200" on:click={() => { confirmAccountDeletion = true;}} role="button">
+		<button class="text-left w-full flex flex-row items-center h-[60px] border-b border-gray-200" on:click={() => { confirmAccountDeletion = true;}}>
 			<div class="flex-grow">
 				{$i18n.t('Delete account', { ns: 'ionos' })}
 			</div>
 			<GarbageBin />
-		</div>
+		</button>
 		{#if surveyUrl}
 			<SettingInfo>
 				<span>

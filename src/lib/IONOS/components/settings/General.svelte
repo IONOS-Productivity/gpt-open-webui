@@ -51,15 +51,14 @@
 		</div>
 	</div>
 
-	<div class="md:hidden flex flex-row h-[60px] py-5 border-b border-gray-200"
+	<button class="md:hidden text-left flex flex-row h-[60px] py-5 border-b border-gray-200"
 		on:click={onExportChats}
-		role="button"
 	>
 		<span class="grow">{$i18n.t('Export all chats', { ns: 'ionos' })}</span>
 		<div class="md:hidden block">
 			<DatabaseExport />
 		</div>
-	</div>
+	</button>
 	<div class="block md:hidden">
 		<SettingInfo>
 			{$i18n.t('When you export your chats, they’re saved in a .json file. You can open this file with any app that supports JSON format.', { ns: 'ionos' })}
@@ -78,15 +77,14 @@
 			</Button>
 		</div>
 	</div>
-	<div class="md:hidden flex flex-row h-[60px] py-5 border-b border-gray-200"
+	<button class="md:hidden text-left flex flex-row h-[60px] py-5 border-b border-gray-200"
 		on:click={onDeleteAllChats}
-		role="button"
 	>
 		<span class="grow">{$i18n.t('Delete all chats', { ns: 'ionos' })}</span>
 		<div class="md:hidden block">
 			<GarbageBin />
 		</div>
-	</div>
+	</button>
 </div>
 
 <Confirm
