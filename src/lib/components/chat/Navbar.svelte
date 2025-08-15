@@ -177,16 +177,19 @@
 
 				{#if $user !== undefined && $user !== null}
 					{#if $mobile}
-						<a
+						<button
 							id="sidebar-new-chat-button"
 							class="{$showSidebar ? 'flex-grow' : ''} flex space-x-3 rounded-sm p-2.5 bg-transparent text-blue-800 hover:bg-gray-200 dark:hover:bg-gray-900 transition no-drag-region"
-							href="/"
+							on:click={async () => {
+								await goto('/');
+								initNewChat();
+							}}
 							draggable="false"
 						>
 							<div class="self-center">
 								<PenSquare />
 							</div>
-						</a>
+						</button>
 					{:else}
 						<UserMenu
 							className="max-w-[200px]"
