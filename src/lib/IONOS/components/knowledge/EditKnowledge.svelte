@@ -118,9 +118,9 @@
 		{submenu}
 	/>
 
-	<div slot="content" class="p-5 h-full flex flex-col flex-1 basis-0 min-h-0 md:min-w-[500px] min-h-[200px] relative p-5 text-blue-800">
+	<div slot="content" class="p-5 h-full flex flex-col justify-start basis-0 md:min-w-[500px] min-h-[200px] relative p-5 text-blue-800 {$files.length === 0 ? '' : 'min-h-0 flex-1'}">
 		{#if knowledge}
-			<div class="hidden md:flex justify-end items-end pb-5 border-gray-200 border-b cursor-default" class:grow={$files.length === 0}>
+			<div class="hidden md:flex justify-end items-end pb-5 border-gray-200 border-b cursor-default">
 				<Button
 					on:click={() => { confirmKnowledgeDeletion = true; }}
 					type={ButtonType.caution}
@@ -130,10 +130,10 @@
 			</div>
 
 			<DropUploadZone
-				class="flex-1 basis-0 min-h-0 flex flex-col"
+				class="basis-0 flex flex-col  {$files.length === 0 ? '' : 'flex-1 min-h-0'}"
 				onDrop={onDrop}
 			>
-				<div class="flex flex-col justify-center py-5 border-b border-gray-200 cursor-default" class:grow={$files.length === 0}>
+				<div class="flex flex-col justify-center py-5 border-b border-gray-200 cursor-default">
 					<p class="block text-center">
 						{$i18n.t('Drop your files here, or', { ns: 'ionos' })}
 						<Filepicker on:selected={onFilesSelected}>
@@ -166,7 +166,7 @@
 					</div>
 				{/if}
 			</DropUploadZone>
-			<div class="flex md:hidden justify-center items-end pb-5 cursor-default" class:grow={$files.length === 0}>
+			<div class="flex md:hidden justify-center items-end pb-5 cursor-default">
 				<Button
 					on:click={() => { confirmKnowledgeDeletion = true; }}
 					type={ButtonType.caution}
