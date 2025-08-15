@@ -498,8 +498,9 @@ async def delete_chat_by_id(request: Request, id: str, user=Depends(get_verified
 
         for file in chat.chat.get("files", []):
             file_id = file.get("id", None)
+            file_type = file.get("type", None)
             collection = file.get("collection",None)
-            if file_id and not collection:
+            if file_id and (collection is None and file_type != "collection"):
                 result = await delete_file_by_id(file_id,user)
                 if not result:
                     raise HTTPException(
