@@ -1482,8 +1482,6 @@
 					scrollToBottom();
 
 					await sendPromptSocket(_history, model, responseMessageId, _chatId);
-
-					if (chatEventEmitter) clearInterval(chatEventEmitter);
 				} else {
 					toast.error($i18n.t(`Model {{modelId}} not found`, { modelId }));
 				}
