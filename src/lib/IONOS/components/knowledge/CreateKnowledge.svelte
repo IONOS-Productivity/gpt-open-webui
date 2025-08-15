@@ -44,7 +44,7 @@
 <Dialog
 	dialogId="knowledge-create"
 	show={show}
-	class="p-0 h-screen w-screen md:max-w-fit md:max-h-fit {show ? 'max-md:translate-x-0' : 'max-md:translate-x-[100dvw]'}"
+	class="p-0 max-md:h-screen w-screen md:max-w-fit md:max-h-fit {show ? 'max-md:translate-x-0' : 'max-md:translate-x-[100dvw]'}"
 >
 	<DialogHeader
 			slot="header"
