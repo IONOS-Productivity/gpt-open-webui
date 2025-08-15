@@ -16,7 +16,9 @@
 
 	const i18n = getContext<Readable<I18Next>>('i18n');
 
-	let links: {label: string, url: string}[] = [
+	let links: {label: string, url: string}[] = [];
+
+	$: links = [
 		{
 			label: $i18n.t('bflUsePolicyLinkText', { ns: 'ionos' }),
 			url: $i18n.t('bflUsePolicyLinkUrl', { ns: 'ionos' })
