@@ -138,7 +138,7 @@
 			{/if}
 
 			<a
-				class="flex rounded-md p-2.5 w-full text-blue-800 hover:bg-gray-200 dark:hover:bg-gray-800 transition hidden" href="https://www.ionos.de/hilfe/"
+				class="flex rounded-md p-2.5 w-full text-blue-800 hover:bg-gray-200 dark:hover:bg-gray-800 transition hidden" href="https://www.ionos.de/hilfe/index.php?id=25241"
 				>
 				<div class=" self-center mr-3">
 					<LifeRing />

@@ -119,7 +119,7 @@
 						</span>
 					</div>
 					<a class="flex flex-row gap-2.5 py-5 border-b border-gray-200"
-						href="https://www.ionos.de/hilfe/" target="_blank">
+						href="https://www.ionos.de/hilfe/index.php?id=25241" target="_blank">
 						<span class="grow text-sm">
 							{$i18n.t('Help & FAQ', { ns: 'ionos' })}
 						</span>
