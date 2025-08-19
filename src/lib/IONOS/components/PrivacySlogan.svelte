@@ -9,7 +9,7 @@
 
 <div class="flex flex-row mx-10 max-xs:mx-5 items-center">
 	<a
-		href="https://www.ionos.de/ionos-gpt-datenschutz-manifest#digitale-loesungen"
+		href="https://www.ionos.de/ionos-gpt-datenschutz-manifest"
 		target="_blank"
 		aria-label={$i18n.t('Privacy by Design!', { ns: 'ionos' })}
 	>
