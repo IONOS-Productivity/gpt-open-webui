@@ -375,6 +375,7 @@
 						bind:this={filesInputElement}
 						bind:files={inputFiles}
 						type="file"
+						accept="application/*,text/*"
 						hidden
 						multiple
 						on:change={async () => {
