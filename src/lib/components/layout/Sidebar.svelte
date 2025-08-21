@@ -479,7 +479,7 @@
 	data-state={$showSidebar}
 >
 	<div
-		class="pt-[30px] max-h-[100vh] pb-5 my-auto flex flex-col overflow-x-hidden z-50 gap-2.5 {$showSidebar
+		class="pt-[30px] h-full max-h-[100vh] pb-5 my-auto flex flex-col overflow-x-hidden z-50 gap-2.5 {$showSidebar
 			? 'justify-between sm:w-[260px] w-[290px]'
 			: 'justify-start sm:w-[60px] w-0 px-2.5'}"
 	>
@@ -620,7 +620,7 @@
 
 		{#if $showSidebar}
 		<div
-			class="relative flex flex-col shrink sm:flex-1 overflow-y-scroll sm:overflow-y-auto overflow-x-hidden {$temporaryChatEnabled
+			class="relative flex flex-col grow sm:flex-1 overflow-y-scroll sm:overflow-y-auto overflow-x-hidden {$temporaryChatEnabled
 				? 'opacity-20'
 				: ''}"
 		>
