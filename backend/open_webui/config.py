@@ -4,6 +4,7 @@ import os
 import shutil
 import base64
 import redis
+import traceback
 
 from datetime import datetime
 from pathlib import Path
@@ -62,8 +63,9 @@ def run_migrations():
 
         command.upgrade(alembic_cfg, "head")
     except Exception as e:
-        log.exception(f"Error running migrations: {e}")
-
+        print(f"ERROR: Error running migrations: {e}")
+        traceback.print_exc()
+        raise e
 
 
 def get_redis_conn():
@@ -78,20 +80,83 @@ def get_redis_conn():
         return None
 
 
-if os.getenv("RUN_MIGRATIONS", "true").lower() == "true":
-    redisConn = get_redis_conn()
-    if redisConn is not None:
-        try:
-            with redisConn.lock('migrate_lock', timeout=60):
-                run_migrations()
+def _run_migrations_with_lock(redis_conn):
+    """Handles the blocking lock logic specifically for migrations."""
+    print("Waiting to acquire blocking lock for migrations...")
+    try:
+        with redis_conn.lock('migrate_lock', timeout=300):
+            print("Acquired migration lock. Running migrations...")
+            run_migrations()
+            print("Migrations completed.")
+            return True
+    except Exception as e:
+        print(f"ERROR: An error occurred during the blocking migration process: {e}")
+        traceback.print_exc()
+        return False
+
+def _start_sync_with_lock(redis_conn):
+    """Handles the non-blocking lock logic specifically for the sync task."""
+    print("Attempting to acquire non-blocking lock for sync task...")
+    try:
+        sync_lock = redis_conn.lock('sync_lock', blocking=False, timeout=60)
+        if sync_lock.acquire():
+            print("Acquired sync lock. Starting sync process...")
+            try:
                 start_sync()
-        except Exception as e:
-            log.exception(f"Error connecting to Redis: {e}")
-    else:
+                print("Sync process started successfully.")
+            finally:
+                sync_lock.release()
+        else:
+            print("Sync lock is already held by another pod. Skipping on this instance.")
+    except Exception as e:
+        print(f"ERROR: An error occurred during the non-blocking sync process: {e}")
+        traceback.print_exc()
+
+def _run_tasks_without_redis():
+    """Runs tasks directly when Redis isn't available"""
+    print("WARNING: Redis not configured. Running all startup tasks directly without locks.")
+    try:
         run_migrations()
+    except Exception:
+        print("WARNING: Migrations failed. Skipping sync task.")
+        return
+    try:
         start_sync()
-else:
-    print("Skipping migrations as RUN_MIGRATIONS is set to false.")
+        print("Startup tasks completed successfully in single-instance mode.")
+    except Exception as e:
+        print(f"ERROR: An error occurred during startup tasks in single-instance mode: {e}")
+        traceback.print_exc()
+
+def run_startup_tasks_safely():
+    """
+    Main entrypoint for running startup tasks.
+    Orchestrates using Redis locks if available, or runs directly if not.
+    """
+    if os.getenv("RUN_MIGRATIONS", "true").lower() != "true":
+        print("Skipping startup tasks: RUN_MIGRATIONS is not 'true'.")
+        return
+
+    redis_conn = None
+    try:
+        redis_conn = get_redis_conn()
+    except Exception as e:
+        print("ERROR: Could not connect to the configured Redis instance.")
+        print("       To prevent potential race conditions, all migration and sync tasks will be skipped.")
+        print(f"       Underlying Error: {e}")
+        traceback.print_exc()
+        return
+
+    if redis_conn:
+        migrations_succeeded = _run_migrations_with_lock(redis_conn)
+        if migrations_succeeded:
+            _start_sync_with_lock(redis_conn)
+        else:
+            print("WARNING: Migrations failed. Skipping sync task to prevent further errors.")
+    else:
+        _run_tasks_without_redis()
+
+run_startup_tasks_safely()
+
 
 
 class Config(Base):
