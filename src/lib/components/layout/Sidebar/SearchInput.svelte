@@ -4,6 +4,7 @@
 	import { getContext, createEventDispatcher, onMount, onDestroy, tick } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import MagnifyingGlass from '$lib/IONOS/components/icons/MagnifyingGlass.svelte';
+	import XMark from '$lib/IONOS/components/icons/XMark.svelte';
 
 	const dispatch = createEventDispatcher();
 	const i18n = getContext('i18n');
