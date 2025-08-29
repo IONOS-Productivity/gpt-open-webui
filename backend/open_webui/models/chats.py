@@ -619,7 +619,7 @@ class ChatTable:
                     )
 
             elif dialect_name == "postgresql":
-                # PostgreSQL relies on proper JSON query for search
+                # PostgreSQL relies on proper JSONB query for search
                 query = query.filter(
                     (
                         Chat.title.ilike(
@@ -644,7 +644,7 @@ class ChatTable:
                             """
                             NOT EXISTS (
                                 SELECT 1
-                                FROM jsonb_array_elements_text(Chat.meta->'tags') AS tag
+                                FROM json_array_elements_text(Chat.meta->'tags') AS tag
                             )
                             """
                         )
@@ -657,7 +657,7 @@ class ChatTable:
                                     f"""
                                     EXISTS (
                                         SELECT 1
-                                        FROM jsonb_array_elements_text(Chat.meta->'tags') AS tag
+                                        FROM json_array_elements_text(Chat.meta->'tags') AS tag
                                         WHERE tag = :tag_id_{tag_idx}
                                     )
                                     """
@@ -747,7 +747,7 @@ class ChatTable:
                 # PostgreSQL JSON query for tags within the meta JSON field (for `json` type)
                 query = query.filter(
                     text(
-                        "EXISTS (SELECT 1 FROM jsonb_array_elements_text(Chat.meta->'tags') elem WHERE elem = :tag_id)"
+                        "EXISTS (SELECT 1 FROM json_array_elements_text(Chat.meta->'tags') elem WHERE elem = :tag_id)"
                     )
                 ).params(tag_id=tag_id)
             else:
@@ -798,10 +798,10 @@ class ChatTable:
                 ).params(tag_id=tag_id)
 
             elif db.bind.dialect.name == "postgresql":
-                # PostgreSQL JSONB support for querying the tags inside the `meta` JSON field
+                # PostgreSQL JSON support for querying the tags inside the `meta` JSON field
                 query = query.filter(
                     text(
-                        "EXISTS (SELECT 1 FROM jsonb_array_elements_text(Chat.meta->'tags') elem WHERE elem = :tag_id)"
+                        "EXISTS (SELECT 1 FROM json_array_elements_text(Chat.meta->'tags') elem WHERE elem = :tag_id)"
                     )
                 ).params(tag_id=tag_id)
 
