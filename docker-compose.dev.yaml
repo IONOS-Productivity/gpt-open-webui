@@ -59,6 +59,10 @@ services:
     environment:
       - ENV=dev
       - RUN_MIGRATIONS=true
+    depends_on:
+      - chromadb
+      - storage
+    network_mode: host
     ports:
       - "8080:8080"
     extra_hosts:
@@ -69,28 +73,54 @@ services:
     depends_on:
       - backend-migrate  # wartet auf Migrationen
 
-#  tika:
-#    image: apache/tika:2.5.0.2-full
-#    ports:
-#      - "9998:9998"
-#    environment:
-#      - TIKA_LOG_LEVEL=INFO
 
 
-#  keycloak:
-#    image: quay.io/keycloak/keycloak:26.0.7-0
-#    command: ["start-dev", "--http-enabled=true", "--http-port=8079", "--log-level=info", "--import-realm"]
-#    volumes:
-#      - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json
-#    environment:
-#      # Needed to create a config from scratch. Causing errors when using --import-realm
-#      # - KC_BOOTSTRAP_ADMIN_USERNAME=admin
-#      # - KC_BOOTSTRAP_ADMIN_PASSWORD=admin
-#      - KC_FEATURES=persistent-user-sessions
-#    network_mode: host
-#    ports:
-#      - "8079:8079"
+  tika:
+    image: apache/tika:2.5.0.2-full
+    network_mode: host
+    ports:
+      - "9998:9998"
+    environment:
+      - TIKA_LOG_LEVEL=INFO
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0.7-0
+    command: ["start-dev", "--http-enabled=true", "--http-port=8079", "--log-level=info", "--import-realm"]
+    volumes:
+      - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json
+    environment:
+      # Needed to create a config from scratch. Causing errors when using --import-realm
+      # - KC_BOOTSTRAP_ADMIN_USERNAME=admin
+      # - KC_BOOTSTRAP_ADMIN_PASSWORD=admin
+      - KC_FEATURES=persistent-user-sessions
+    network_mode: host
+    ports:
+      - "8079:8079"
+
+  storage:
+    image: quay.io/minio/minio:RELEASE.2025-06-13T11-33-47Z
+    command: ["server", "/data", "--address", ":19000", "--console-address", ":8078"]
+    environment:
+      MINIO_ROOT_USER: "root"
+      MINIO_ROOT_PASSWORD: "toortoor"
+    network_mode: host
+    volumes:
+      - minio:/data
+
+  chromadb:
+    image: chromadb/chroma:0.6.3
+    volumes:
+      - ./backend/data/chromadb:/chroma/chroma
+    environment:
+      - CHROMA_HOST_ADDR=127.0.0.1
+      - IS_PERSISTENT=TRUE
+      - PERSIST_DIRECTORY=/chroma/chroma
+      - ANONYMIZED_TELEMETRY=FALSE
+    network_mode: host
+    ports:
+      - "8000:8000"
  
 volumes:
   data: {}
   pgdata: {}
+  minio: {}
