@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	import XMark from '$lib/IONOS/components/icons/XMark.svelte';
-	import ChevronLeft from '$lib/IONOS/components/icons//ChevronLeft.svelte';
+	import ChevronLeft from '$lib/IONOS/components/icons/ChevronLeft.svelte';
 
 	const dispatch = createEventDispatcher();
 
