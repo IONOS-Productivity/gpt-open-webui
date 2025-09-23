@@ -44,8 +44,7 @@ ENV ENV=prod \
     USE_RERANKING_MODEL_DOCKER=${USE_RERANKING_MODEL}
 
 ## Basis URL Config ##
-ENV OLLAMA_BASE_URL="/ollama" \
-    OPENAI_API_BASE_URL=""
+ENV OPENAI_API_BASE_URL=""
 
 ## API Key and Security Config ##
 ENV OPENAI_API_KEY="" \
