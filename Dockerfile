@@ -1,12 +1,6 @@
 # syntax=docker/dockerfile:1
 # Initialize device type args
 # use build args in the docker build command with --build-arg="BUILDARG=true"
-# any sentence transformer model; models to use can be found at https://huggingface.co/models?library=sentence-transformers
-# Leaderboard: https://huggingface.co/spaces/mteb/leaderboard 
-# for better performance and multilangauge support use "intfloat/multilingual-e5-large" (~2.5GB) or "intfloat/multilingual-e5-base" (~1.5GB)
-# IMPORTANT: If you change the embedding model (sentence-transformers/all-MiniLM-L6-v2) and vice versa, you aren't able to use RAG Chat with your previous documents loaded in the WebUI! You need to re-embed them.
-ARG USE_EMBEDDING_MODEL=sentence-transformers/all-MiniLM-L6-v2
-ARG USE_RERANKING_MODEL=""
 
 ARG BUILD_HASH=dev-build
 # Override at your own risk - non-root configurations are untested
@@ -30,18 +24,12 @@ RUN npm run build
 ######## WebUI backend ########
 FROM python:3.11-slim-bookworm AS base
 
-# Use args
-ARG USE_EMBEDDING_MODEL
-ARG USE_RERANKING_MODEL
 ARG UID
 ARG GID
 
 ## Basis ##
 ENV ENV=prod \
-    PORT=8080 \
-    # pass build args to the build
-    USE_EMBEDDING_MODEL_DOCKER=${USE_EMBEDDING_MODEL} \
-    USE_RERANKING_MODEL_DOCKER=${USE_RERANKING_MODEL}
+    PORT=8080
 
 ## Basis URL Config ##
 ENV OPENAI_API_BASE_URL=""
@@ -59,8 +47,8 @@ ENV WHISPER_MODEL="base" \
     WHISPER_MODEL_DIR="/app/backend/data/cache/whisper/models"
 
 ## RAG Embedding model settings ##
-ENV RAG_EMBEDDING_MODEL="$USE_EMBEDDING_MODEL_DOCKER" \
-    RAG_RERANKING_MODEL="$USE_RERANKING_MODEL_DOCKER" \
+ENV RAG_EMBEDDING_MODEL="sentence-transformers/all-MiniLM-L6-v2" \
+    RAG_RERANKING_MODEL="" \
     SENTENCE_TRANSFORMERS_HOME="/app/backend/data/cache/embedding/models"
 
 ## Tiktoken model settings ##
