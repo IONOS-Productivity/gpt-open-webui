@@ -39,14 +39,16 @@
 			dispatch('close');
 		}
 	}
+
+	function close() {
+		show = false;
+		dispatch('close');
+	}
 </script>
 
 <dialog
 	on:toggle={onToggle}
-	on:close={() => {
-		show = false;
-		dispatch('close');
-	}}
+	on:close={close}
 	on:transitionend={onTransitionEnd}
 	bind:this={el}
 	closedby="any"
