@@ -12,9 +12,6 @@ ARG USE_CUDA_VER=cu121
 ARG USE_EMBEDDING_MODEL=sentence-transformers/all-MiniLM-L6-v2
 ARG USE_RERANKING_MODEL=""
 
-# Tiktoken encoding name; models to use can be found at https://huggingface.co/models?library=tiktoken
-ARG USE_TIKTOKEN_ENCODING_NAME="cl100k_base"
-
 ARG BUILD_HASH=dev-build
 # Override at your own risk - non-root configurations are untested
 ARG UID=0
