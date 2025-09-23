@@ -31,11 +31,6 @@ if test "$WEBUI_SECRET_KEY $WEBUI_JWT_SECRET_KEY" = " "; then
   WEBUI_SECRET_KEY=$(cat "$KEY_FILE")
 fi
 
-if [[ "${USE_CUDA_DOCKER,,}" == "true" ]]; then
-  echo "CUDA is enabled, appending LD_LIBRARY_PATH to include torch/cudnn & cublas libraries."
-  export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/lib/python3.11/site-packages/torch/lib:/usr/local/lib/python3.11/site-packages/nvidia/cudnn/lib"
-fi
-
 # Check if SPACE_ID is set, if so, configure for space
 if [ -n "$SPACE_ID" ]; then
   echo "Configuring for HuggingFace Space deployment"
