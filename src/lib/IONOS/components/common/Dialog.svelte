@@ -58,19 +58,26 @@
 	bind:this={el}
 	closedby='any'
 	style:--slide-duration="{slideDuration}ms"
-	class="fixed top-0 right-0 left-0 bottom-0 m-auto bg-white backdrop:bg-black/75 z-[99999999] overflow-hidden overscroll-contain shadow-xl rounded-2xl {mobileCover ? 'max-md:h-full max-md:max-h-dvh max-md:w-dvw max-md:max-w-dvw max-md:m-0' : ''} max-md:transition-transform duration-(--slide-duration)  ease-out {$$props.class ?? 'p-[30px]'}"
 >
-	<div
-		data-id={`dialog-${dialogId}`}
-		class="min-h-full flex flex-col"
-	>
-		<slot name="header" />
+
+	<div class="fixed top-0 right-0 left-0 bottom-0 m-auto bg-white backdrop:bg-black/25 z-[99999999] overscroll-contain shadow-xl rounded-2xl {mobileCover ? 'max-md:h-full max-md:max-h-dvh max-md:w-dvw max-md:max-w-dvw max-md:m-0' : 'max-h-fit'} max-md:transition-transform duration-(--slide-duration)  ease-out {$$props.class ?? 'p-[30px]'}">
+
+		<button on:click={() => close()} class="absolute -top-[45px] right-1/2 left-1/2 bg-transparent ">
+			<XMark />
+		</button>
 
 		<div
-			data-id={`dialog-content-${dialogId}`}
-			class="flex flex-col flex-1"
+			data-id={`dialog-${dialogId}`}
+			class="flex flex-col"
 		>
-			<slot name="content"/>
+			<slot name="header" />
+
+			<div
+				data-id={`dialog-content-${dialogId}`}
+				class="flex flex-col flex-1"
+			>
+				<slot name="content"/>
+			</div>
 		</div>
 	</div>
 </dialog>

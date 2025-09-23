@@ -35,7 +35,7 @@
 	animationDuration={150}
 	mobileCover={false}
 >
-	<DialogHeader closable={true} slot="header" on:close={handleLater} />
+	<DialogHeader closable={false} slot="header" />
 	<div slot="content" class="w-full ">
 		{#if showIOSInstructions}
 			<!-- iOS Installation Instructions -->
