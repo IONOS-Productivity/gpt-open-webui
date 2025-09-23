@@ -46,32 +46,6 @@ def serve(
         typer.echo(f"Loading WEBUI_SECRET_KEY from {KEY_FILE}")
         os.environ["WEBUI_SECRET_KEY"] = KEY_FILE.read_text()
 
-    if os.getenv("USE_CUDA_DOCKER", "false") == "true":
-        typer.echo(
-            "CUDA is enabled, appending LD_LIBRARY_PATH to include torch/cudnn & cublas libraries."
-        )
-        LD_LIBRARY_PATH = os.getenv("LD_LIBRARY_PATH", "").split(":")
-        os.environ["LD_LIBRARY_PATH"] = ":".join(
-            LD_LIBRARY_PATH
-            + [
-                "/usr/local/lib/python3.11/site-packages/torch/lib",
-                "/usr/local/lib/python3.11/site-packages/nvidia/cudnn/lib",
-            ]
-        )
-        try:
-            import torch
-
-            assert torch.cuda.is_available(), "CUDA not available"
-            typer.echo("CUDA seems to be working")
-        except Exception as e:
-            typer.echo(
-                "Error when testing CUDA but USE_CUDA_DOCKER is true. "
-                "Resetting USE_CUDA_DOCKER to false and removing "
-                f"LD_LIBRARY_PATH modifications: {e}"
-            )
-            os.environ["USE_CUDA_DOCKER"] = "false"
-            os.environ["LD_LIBRARY_PATH"] = ":".join(LD_LIBRARY_PATH)
-
     import open_webui.main  # we need set environment variables before importing main
     from open_webui.env import UVICORN_WORKERS  # Import the workers setting
 
