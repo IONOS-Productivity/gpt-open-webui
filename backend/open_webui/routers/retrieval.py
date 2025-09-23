@@ -89,7 +89,6 @@ from open_webui.config import (
 from open_webui.env import (
     SRC_LOG_LEVELS,
     DEVICE_TYPE,
-    DOCKER,
 )
 from open_webui.constants import ERROR_MESSAGES
 
@@ -136,7 +135,8 @@ def get_rf(
 
                 rf = ColBERT(
                     get_model_path(reranking_model, auto_update),
-                    env="docker" if DOCKER else None,
+                    # Set to "docker" if running in Docker
+                    env=None,
                 )
 
             except Exception as e:
