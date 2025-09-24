@@ -395,6 +395,13 @@ logging.basicConfig(stream=sys.stdout, level=GLOBAL_LOG_LEVEL)
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["MAIN"])
 
+if os.environ.get("DEBUGGER_LISTEN", "False").lower() == "true":
+    log.info(f"### Trying to start debugger ...")
+    try:
+        import pydevd_pycharm
+        pydevd_pycharm.settrace('127.0.0.1', port=64999, stdoutToServer=True, stderrToServer=True)
+    except Exception as e:
+        log.warning(f"### Failed to start debugger", e)
 
 class SPAStaticFiles(StaticFiles):
     async def get_response(self, path: str, scope):
