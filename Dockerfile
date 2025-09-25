@@ -25,7 +25,7 @@ FROM python:3.11-slim-bookworm AS base
 ENV ENV=prod \
     PORT=8080
 
-## API Key and Security Config ##
+# Disable tracking by library "unstructrured": SCARF_NO_ANALYTICS, DO_NOT_TRACK
 ENV SCARF_NO_ANALYTICS=true \
     DO_NOT_TRACK=true \
     ANONYMIZED_TELEMETRY=false
