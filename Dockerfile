@@ -26,8 +26,7 @@ ENV ENV=prod \
     PORT=8080
 
 ## API Key and Security Config ##
-ENV WEBUI_SECRET_KEY="" \
-    SCARF_NO_ANALYTICS=true \
+ENV SCARF_NO_ANALYTICS=true \
     DO_NOT_TRACK=true \
     ANONYMIZED_TELEMETRY=false
 
