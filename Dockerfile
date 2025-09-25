@@ -25,12 +25,8 @@ FROM python:3.11-slim-bookworm AS base
 ENV ENV=prod \
     PORT=8080
 
-## Basis URL Config ##
-ENV OPENAI_API_BASE_URL=""
-
 ## API Key and Security Config ##
-ENV OPENAI_API_KEY="" \
-    WEBUI_SECRET_KEY="" \
+ENV WEBUI_SECRET_KEY="" \
     SCARF_NO_ANALYTICS=true \
     DO_NOT_TRACK=true \
     ANONYMIZED_TELEMETRY=false
