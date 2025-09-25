@@ -27,8 +27,7 @@ ENV ENV=prod \
 
 # Disable tracking by library "unstructrured": SCARF_NO_ANALYTICS, DO_NOT_TRACK
 ENV SCARF_NO_ANALYTICS=true \
-    DO_NOT_TRACK=true \
-    ANONYMIZED_TELEMETRY=false
+    DO_NOT_TRACK=true
 
 #### Other models #########################################################
 ## whisper TTS model settings ##
