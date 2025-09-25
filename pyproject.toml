@@ -173,7 +173,6 @@ exclude = [
     "dev.sh",
     "requirements.txt",
     "start.sh",
-    "start_windows.bat",
     "webui.db",
     "chroma.sqlite3",
 ]
