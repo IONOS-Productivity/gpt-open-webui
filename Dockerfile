@@ -3,9 +3,6 @@
 # use build args in the docker build command with --build-arg="BUILDARG=true"
 
 ARG BUILD_HASH=dev-build
-# Override at your own risk - non-root configurations are untested
-ARG UID=0
-ARG GID=0
 
 ######## WebUI frontend ########
 FROM --platform=$BUILDPLATFORM node:22-alpine3.20 AS build
@@ -23,9 +20,6 @@ RUN npm run build
 
 ######## WebUI backend ########
 FROM python:3.11-slim-bookworm AS base
-
-ARG UID
-ARG GID
 
 ## Basis ##
 ENV ENV=prod \
@@ -63,19 +57,9 @@ ENV HF_HOME="/app/backend/data/cache/embedding/models"
 WORKDIR /app/backend
 
 ENV HOME=/root
-# Create user and group if not root
-RUN if [ $UID -ne 0 ]; then \
-    if [ $GID -ne 0 ]; then \
-    addgroup --gid $GID app; \
-    fi; \
-    adduser --uid $UID --gid $GID --home $HOME --disabled-password --no-create-home app; \
-    fi
 
 RUN mkdir -p $HOME/.cache/chroma
 RUN echo -n 00000000-0000-0000-0000-000000000000 > $HOME/.cache/chroma/telemetry_user_id
-
-# Make sure the user has access to the app and root directory
-RUN chown -R $UID:$GID /app $HOME
 
 RUN apt-get update && \
     # Install pandoc, netcat and gcc
@@ -87,29 +71,26 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*;
 
 # install python dependencies
-COPY --chown=$UID:$GID ./backend/requirements.txt ./requirements.txt
+COPY ./backend/requirements.txt ./requirements.txt
 
 RUN pip3 install --no-cache-dir uv && \
     pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu --no-cache-dir && \
     uv pip install --system -r requirements.txt --no-cache-dir && \
     python -c "import os; from sentence_transformers import SentenceTransformer; SentenceTransformer(os.environ['RAG_EMBEDDING_MODEL'], device='cpu')" && \
     python -c "import os; from faster_whisper import WhisperModel; WhisperModel(os.environ['WHISPER_MODEL'], device='cpu', compute_type='int8', download_root=os.environ['WHISPER_MODEL_DIR'])"; \
-    python -c "import os; import tiktoken; tiktoken.get_encoding(os.environ['TIKTOKEN_ENCODING_NAME'])"; \
-    chown -R $UID:$GID /app/backend/data/
+    python -c "import os; import tiktoken; tiktoken.get_encoding(os.environ['TIKTOKEN_ENCODING_NAME'])";
 
 # copy built frontend files
-COPY --chown=$UID:$GID --from=build /app/build /app/build
-COPY --chown=$UID:$GID --from=build /app/CHANGELOG.md /app/CHANGELOG.md
-COPY --chown=$UID:$GID --from=build /app/package.json /app/package.json
+COPY --from=build /app/build /app/build
+COPY --from=build /app/CHANGELOG.md /app/CHANGELOG.md
+COPY --from=build /app/package.json /app/package.json
 
 # copy backend files
-COPY --chown=$UID:$GID ./backend .
+COPY ./backend .
 
 EXPOSE 8080
 
 HEALTHCHECK CMD curl --silent --fail http://localhost:${PORT:-8080}/health | jq -ne 'input.status == true' || exit 1
-
-USER $UID:$GID
 
 ARG BUILD_HASH
 ENV WEBUI_BUILD_VERSION=${BUILD_HASH}
