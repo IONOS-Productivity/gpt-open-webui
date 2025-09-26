@@ -160,6 +160,9 @@ classifiers = [
 [project.scripts]
 open-webui = "open_webui:app"
 
+[tool.uv]
+package = true
+
 [tool.uv.sources]
 torch = { index = "pytorch" }
 torchvision = { index = "pytorch" }
