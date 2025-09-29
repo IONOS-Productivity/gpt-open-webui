@@ -55,6 +55,7 @@
   "Help us improve": "Ihre Meinung zählt - helfen Sie uns, besser zu werden. ",
   "I'm {{agentName}},": "Ich bin {{agentName}},",
   "Imprint": "Impressum",
+  "Install": "Installieren",
   "Install IONOS GPT": "IONOS GPT installieren",
   "IONOS GPT can make mistakes.": "IONOS GPT kann Fehler machen.",
   "IONOS GPT is based on the [modelHubInfoLink], which provides the Llama model. By using it, you agree to the [modelLicenseLink] and [modelUsePolicyLink]": "IONOS GPT basiert auf dem [modelLicenseLink], der das Llama-Modell bereitstellt. Durch die Nutzung stimmen Sie der [modelLicenseLink] und den [modelUsePolicyLink] zu.",
