@@ -55,6 +55,7 @@
   "Help us improve": "Help us improve",
   "I'm {{agentName}},": "I'm {{agentName}},",
   "Imprint": "Imprint",
+  "Install": "Install",
   "Install IONOS GPT": "Install IONOS GPT",
   "IONOS GPT can make mistakes.": "IONOS GPT can make mistakes.",
   "IONOS GPT is based on the [modelHubInfoLink], which provides the Llama model. By using it, you agree to the [modelLicenseLink] and [modelUsePolicyLink]": "IONOS GPT is based on the [modelHubInfoLink], which provides the Llama model. By using it, you agree to the [modelLicenseLink] and [modelUsePolicyLink]",
