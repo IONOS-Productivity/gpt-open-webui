@@ -66,9 +66,7 @@ from open_webui.retrieval.utils import (
     get_embedding_function,
     get_model_path,
     query_collection,
-    query_collection_with_hybrid_search,
     query_doc,
-    query_doc_with_hybrid_search,
 )
 from open_webui.utils.misc import (
     calculate_sha256_string,
@@ -298,7 +296,6 @@ async def update_reranking_config(
             )
         except Exception as e:
             log.error(f"Error loading reranking model: {e}")
-            request.app.state.config.ENABLE_RAG_HYBRID_SEARCH = False
 
         return {
             "status": True,
@@ -321,10 +318,6 @@ async def get_rag_config(request: Request, user=Depends(get_admin_user)):
         "TOP_K": request.app.state.config.TOP_K,
         "BYPASS_EMBEDDING_AND_RETRIEVAL": request.app.state.config.BYPASS_EMBEDDING_AND_RETRIEVAL,
         "RAG_FULL_CONTEXT": request.app.state.config.RAG_FULL_CONTEXT,
-        # Hybrid search settings
-        "ENABLE_RAG_HYBRID_SEARCH": request.app.state.config.ENABLE_RAG_HYBRID_SEARCH,
-        "TOP_K_RERANKER": request.app.state.config.TOP_K_RERANKER,
-        "RELEVANCE_THRESHOLD": request.app.state.config.RELEVANCE_THRESHOLD,
         # Content extraction settings
         "CONTENT_EXTRACTION_ENGINE": request.app.state.config.CONTENT_EXTRACTION_ENGINE,
         "PDF_EXTRACT_IMAGES": request.app.state.config.PDF_EXTRACT_IMAGES,
@@ -439,11 +432,6 @@ class ConfigForm(BaseModel):
     BYPASS_EMBEDDING_AND_RETRIEVAL: Optional[bool] = None
     RAG_FULL_CONTEXT: Optional[bool] = None
 
-    # Hybrid search settings
-    ENABLE_RAG_HYBRID_SEARCH: Optional[bool] = None
-    TOP_K_RERANKER: Optional[int] = None
-    RELEVANCE_THRESHOLD: Optional[float] = None
-
     # Content extraction settings
     CONTENT_EXTRACTION_ENGINE: Optional[str] = None
     PDF_EXTRACT_IMAGES: Optional[bool] = None
@@ -494,27 +482,6 @@ async def update_rag_config(
         form_data.RAG_FULL_CONTEXT
         if form_data.RAG_FULL_CONTEXT is not None
         else request.app.state.config.RAG_FULL_CONTEXT
-    )
-
-    # Hybrid search settings
-    request.app.state.config.ENABLE_RAG_HYBRID_SEARCH = (
-        form_data.ENABLE_RAG_HYBRID_SEARCH
-        if form_data.ENABLE_RAG_HYBRID_SEARCH is not None
-        else request.app.state.config.ENABLE_RAG_HYBRID_SEARCH
-    )
-    # Free up memory if hybrid search is disabled
-    if not request.app.state.config.ENABLE_RAG_HYBRID_SEARCH:
-        request.app.state.rf = None
-
-    request.app.state.config.TOP_K_RERANKER = (
-        form_data.TOP_K_RERANKER
-        if form_data.TOP_K_RERANKER is not None
-        else request.app.state.config.TOP_K_RERANKER
-    )
-    request.app.state.config.RELEVANCE_THRESHOLD = (
-        form_data.RELEVANCE_THRESHOLD
-        if form_data.RELEVANCE_THRESHOLD is not None
-        else request.app.state.config.RELEVANCE_THRESHOLD
     )
 
     # Content extraction settings
@@ -1530,38 +1497,14 @@ def query_doc_handler(
     user=Depends(get_verified_user),
 ):
     try:
-        if request.app.state.config.ENABLE_RAG_HYBRID_SEARCH:
-            collection_results = {}
-            collection_results[form_data.collection_name] = VECTOR_DB_CLIENT.get(
-                collection_name=form_data.collection_name
-            )
-            return query_doc_with_hybrid_search(
-                collection_name=form_data.collection_name,
-                collection_result=collection_results[form_data.collection_name],
-                query=form_data.query,
-                embedding_function=lambda query, prefix: request.app.state.EMBEDDING_FUNCTION(
-                    query, prefix=prefix, user=user
-                ),
-                k=form_data.k if form_data.k else request.app.state.config.TOP_K,
-                reranking_function=request.app.state.rf,
-                k_reranker=form_data.k_reranker
-                or request.app.state.config.TOP_K_RERANKER,
-                r=(
-                    form_data.r
-                    if form_data.r
-                    else request.app.state.config.RELEVANCE_THRESHOLD
-                ),
-                user=user,
-            )
-        else:
-            return query_doc(
-                collection_name=form_data.collection_name,
-                query_embedding=request.app.state.EMBEDDING_FUNCTION(
-                    form_data.query, prefix=RAG_EMBEDDING_QUERY_PREFIX, user=user
-                ),
-                k=form_data.k if form_data.k else request.app.state.config.TOP_K,
-                user=user,
-            )
+        return query_doc(
+            collection_name=form_data.collection_name,
+            query_embedding=request.app.state.EMBEDDING_FUNCTION(
+                form_data.query, prefix=RAG_EMBEDDING_QUERY_PREFIX, user=user
+            ),
+            k=form_data.k if form_data.k else request.app.state.config.TOP_K,
+            user=user,
+        )
     except Exception as e:
         log.exception(e)
         raise HTTPException(
@@ -1586,32 +1529,14 @@ def query_collection_handler(
     user=Depends(get_verified_user),
 ):
     try:
-        if request.app.state.config.ENABLE_RAG_HYBRID_SEARCH:
-            return query_collection_with_hybrid_search(
-                collection_names=form_data.collection_names,
-                queries=[form_data.query],
-                embedding_function=lambda query, prefix: request.app.state.EMBEDDING_FUNCTION(
-                    query, prefix=prefix, user=user
-                ),
-                k=form_data.k if form_data.k else request.app.state.config.TOP_K,
-                reranking_function=request.app.state.rf,
-                k_reranker=form_data.k_reranker
-                or request.app.state.config.TOP_K_RERANKER,
-                r=(
-                    form_data.r
-                    if form_data.r
-                    else request.app.state.config.RELEVANCE_THRESHOLD
-                ),
-            )
-        else:
-            return query_collection(
-                collection_names=form_data.collection_names,
-                queries=[form_data.query],
-                embedding_function=lambda query, prefix: request.app.state.EMBEDDING_FUNCTION(
-                    query, prefix=prefix, user=user
-                ),
-                k=form_data.k if form_data.k else request.app.state.config.TOP_K,
-            )
+        return query_collection(
+            collection_names=form_data.collection_names,
+            queries=[form_data.query],
+            embedding_function=lambda query, prefix: request.app.state.EMBEDDING_FUNCTION(
+                query, prefix=prefix, user=user
+            ),
+            k=form_data.k if form_data.k else request.app.state.config.TOP_K,
+        )
 
     except Exception as e:
         log.exception(e)

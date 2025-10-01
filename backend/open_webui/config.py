@@ -1811,22 +1811,6 @@ BYPASS_EMBEDDING_AND_RETRIEVAL = PersistentConfig(
 RAG_TOP_K = PersistentConfig(
     "RAG_TOP_K", "rag.top_k", int(os.environ.get("RAG_TOP_K", "3"))
 )
-RAG_TOP_K_RERANKER = PersistentConfig(
-    "RAG_TOP_K_RERANKER",
-    "rag.top_k_reranker",
-    int(os.environ.get("RAG_TOP_K_RERANKER", "3")),
-)
-RAG_RELEVANCE_THRESHOLD = PersistentConfig(
-    "RAG_RELEVANCE_THRESHOLD",
-    "rag.relevance_threshold",
-    float(os.environ.get("RAG_RELEVANCE_THRESHOLD", "0.0")),
-)
-
-ENABLE_RAG_HYBRID_SEARCH = PersistentConfig(
-    "ENABLE_RAG_HYBRID_SEARCH",
-    "rag.enable_hybrid_search",
-    os.environ.get("ENABLE_RAG_HYBRID_SEARCH", "").lower() == "true",
-)
 
 RAG_FULL_CONTEXT = PersistentConfig(
     "RAG_FULL_CONTEXT",

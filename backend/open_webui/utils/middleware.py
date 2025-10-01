@@ -624,9 +624,6 @@ async def chat_completion_files_handler(
                         ),
                         k=request.app.state.config.TOP_K,
                         reranking_function=request.app.state.rf,
-                        k_reranker=request.app.state.config.TOP_K_RERANKER,
-                        r=request.app.state.config.RELEVANCE_THRESHOLD,
-                        hybrid_search=request.app.state.config.ENABLE_RAG_HYBRID_SEARCH,
                         full_context=request.app.state.config.RAG_FULL_CONTEXT,
                     ),
                 )
@@ -903,13 +900,6 @@ async def process_chat_payload(request, form_data, user, metadata, model):
 
         if prompt is None:
             raise Exception("No user message found")
-        if (
-            request.app.state.config.RELEVANCE_THRESHOLD == 0
-            and context_string.strip() == ""
-        ):
-            log.debug(
-                f"With a 0 relevancy threshold for RAG, the context cannot be empty"
-            )
 
         # Workaround for Ollama 2.0+ system prompt issue
         # TODO: replace with add_or_update_system_message
