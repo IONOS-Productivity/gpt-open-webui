@@ -13,7 +13,9 @@
 	import {
 		shouldShowPWAPrompt,
 		dismissPWAPrompt,
-		triggerPWAInstall
+		triggerPWAInstall,
+		isIOSDevice,
+		isSafari
 	} from '$lib/IONOS/services/pwa';
 	import { deferredPrompt, isPWAInstallable, setupGlobalPWAListener, clearDeferredPrompt } from '$lib/IONOS/stores/pwa-prompt';
 
@@ -99,7 +101,7 @@
 			actions: [{
 				label: $i18n.t('Install', { ns: 'ionos' }),
 				handler: () => {
-					showPWADialog = true;
+					handlePWAInstall();
 				}
 			}],
 			dismissible: true,
@@ -108,6 +110,24 @@
 	};
 
 	const handlePWAInstall = async () => {
+		const showIOSInstructions = isIOSDevice() && isSafari();
+
+		if (showIOSInstructions) {
+			showPWADialog = true;
+		} else if ($deferredPrompt) {
+			const accepted = await triggerPWAInstall($deferredPrompt);
+			if (accepted) {
+				clearDeferredPrompt();
+				removeNotification({ type: NotificationType.PWA_INSTALL } as Notification);
+			}
+		}
+	};
+
+	const handlePWADialogDismiss = () => {
+		showPWADialog = false;
+	};
+
+	const handlePWADialogInstall = async () => {
 		if ($deferredPrompt) {
 			const accepted = await triggerPWAInstall($deferredPrompt);
 			if (accepted) {
@@ -117,25 +137,19 @@
 		showPWADialog = false;
 		removeNotification({ type: NotificationType.PWA_INSTALL } as Notification);
 	};
-
-	const handlePWADialogDismiss = () => {
-		showPWADialog = false;
-	};
 </script>
 
 <div class="sticky top-0 flex flex-col w-full z-50">
 	{#each $notifications as notification }
 		<NotificationBanner
 			{notification}
-			deferredPrompt={$deferredPrompt}
 			on:dismiss={dismissHandler}
-			on:showDialog={showPWADialog = true }
 		/>
 	{/each}
 </div>
 
 <PWAInstallDialog
 	bind:show={showPWADialog}
-	on:install={handlePWAInstall}
+	on:install={handlePWADialogInstall}
 	on:close={handlePWADialogDismiss}
 />

@@ -9,29 +9,11 @@
 	import Link from '$lib/IONOS/components/common/Link.svelte';
 	import { NotificationType, type Notification } from '$lib/IONOS/stores/notifications';
 	import { createEventDispatcher, getContext } from 'svelte';
-	import { isIOSDevice, isSafari } from '$lib/IONOS/services/pwa';
 
 	const dispatch = createEventDispatcher();
 	const i18n = getContext<Readable<I18Next>>('i18n');
 
 	export let notification: Notification;
-	export let deferredPrompt: any = null;
-
-	const showIOSInstructions = isIOSDevice() && isSafari();
-
-
-	const handlePWAInstall = () => {
-		if (showIOSInstructions) {
-			dispatch('showDialog');
-		} else if (deferredPrompt) {
-			deferredPrompt.prompt();
-			deferredPrompt.userChoice.then((choiceResult: any) => {
-				if (choiceResult.outcome === 'accepted') {
-					dispatch('dismiss', { notification });
-				}
-			});
-		}
-	};
 </script>
 
 
