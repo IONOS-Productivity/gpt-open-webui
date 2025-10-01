@@ -78,7 +78,6 @@ from open_webui.utils.auth import get_admin_user, get_verified_user
 from open_webui.config import (
     ENV,
     RAG_EMBEDDING_MODEL_AUTO_UPDATE,
-    RAG_EMBEDDING_MODEL_TRUST_REMOTE_CODE,
     RAG_RERANKING_MODEL_AUTO_UPDATE,
     RAG_RERANKING_MODEL_TRUST_REMOTE_CODE,
     UPLOAD_DIR,
@@ -107,20 +106,10 @@ def get_ef(
     embedding_model: str,
     auto_update: bool = False,
 ):
-    ef = None
     if embedding_model and engine == "":
-        from sentence_transformers import SentenceTransformer
+        log.warn(f"Embedding model configured ({embedding_model}), but no engine configured. This is no longer supported!")
 
-        try:
-            ef = SentenceTransformer(
-                get_model_path(embedding_model, auto_update),
-                device=DEVICE_TYPE,
-                trust_remote_code=RAG_EMBEDDING_MODEL_TRUST_REMOTE_CODE,
-            )
-        except Exception as e:
-            log.debug(f"Error loading SentenceTransformer: {e}")
-
-    return ef
+    return None
 
 
 def get_rf(
