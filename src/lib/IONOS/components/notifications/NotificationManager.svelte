@@ -11,22 +11,15 @@
 	import { getContext, onDestroy, onMount } from 'svelte';
 	import { getUserSettings } from '$lib/apis/users';
 	import {
-		setupPWAEventListeners,
 		shouldShowPWAPrompt,
 		dismissPWAPrompt,
-		trackUserEngagement,
-		triggerPWAInstall,
-		isIOSDevice,
-		isSafari,
-		type BeforeInstallPromptEvent
+		triggerPWAInstall
 	} from '$lib/IONOS/services/pwa';
+	import { deferredPrompt, isPWAInstallable, setupGlobalPWAListener, clearDeferredPrompt } from '$lib/IONOS/stores/pwa-prompt';
 
 	const i18n = getContext<Readable<I18Next>>('i18n');
-
 	const DAYS = 24 * 60 * 60 * 1000;
 
-	// PWA Installation state
-	let deferredPrompt: BeforeInstallPromptEvent | null = null;
 	let showPWADialog = false;
 	let cleanupPWAListeners: (() => void) | null = null;
 
@@ -68,7 +61,7 @@
 		const notification = event.detail.notification;
 
 		if (notification.type === NotificationType.PWA_INSTALL) {
-			handlePWADismiss();
+			dismissPWAPrompt();
 		}
 
 		removeNotification(notification);
@@ -80,34 +73,23 @@
 	});
 
 	onMount(() => {
-		trackUserEngagement();
+		cleanupPWAListeners = setupGlobalPWAListener();
 
-		cleanupPWAListeners = setupPWAEventListeners(
-			(event: BeforeInstallPromptEvent) => {
-				deferredPrompt = event;
-
-				if (shouldShowPWAPrompt(deferredPrompt)) {
-					addPWANotification();
-				}
-			},
-			() => {
-				showPWADialog = false;
-				deferredPrompt = null;
-				notifications.update((currentNotifications: Notification[]) =>
-					currentNotifications.filter(n => n.type !== NotificationType.PWA_INSTALL)
-				);
-			}
-		);
-
-
-		if (isIOSDevice() && isSafari() && shouldShowPWAPrompt()) {
-			setTimeout(() => {
-				if (shouldShowPWAPrompt()) {
-					addPWANotification();
-				}
-			}, 3000); // Show after 3 seconds
+		if (shouldShowPWAPrompt($deferredPrompt)) {
+			addPWANotification();
 		}
 	});
+
+	$: if ($isPWAInstallable && shouldShowPWAPrompt($deferredPrompt)) {
+		addPWANotification();
+	}
+
+	$: if (!$isPWAInstallable && !$deferredPrompt) {
+		showPWADialog = false;
+		notifications.update((currentNotifications: Notification[]) =>
+			currentNotifications.filter(n => n.type !== NotificationType.PWA_INSTALL)
+		);
+	}
 
 	const addPWANotification = () => {
 		const pwaNotification: Notification = {
@@ -117,11 +99,7 @@
 			actions: [{
 				label: $i18n.t('Install', { ns: 'ionos' }),
 				handler: () => {
-					if (isIOSDevice() && isSafari()) {
-						handlePWAShowDialog();
-					} else {
-						handlePWAInstall();
-					}
+					showPWADialog = true;
 				}
 			}],
 			dismissible: true,
@@ -130,19 +108,18 @@
 	};
 
 	const handlePWAInstall = async () => {
-		if (deferredPrompt) {
-			const accepted = await triggerPWAInstall(deferredPrompt);
-			deferredPrompt = null;
+		if ($deferredPrompt) {
+			const accepted = await triggerPWAInstall($deferredPrompt);
+			if (accepted) {
+				clearDeferredPrompt();
+			}
 		}
-	};
-
-	const handlePWADismiss = () => {
-		dismissPWAPrompt();
+		showPWADialog = false;
+		removeNotification({ type: NotificationType.PWA_INSTALL } as Notification);
 	};
 
 	const handlePWADialogDismiss = () => {
 		showPWADialog = false;
-		handlePWADismiss();
 	};
 </script>
 
@@ -150,7 +127,7 @@
 	{#each $notifications as notification }
 		<NotificationBanner
 			{notification}
-			{deferredPrompt}
+			deferredPrompt={$deferredPrompt}
 			on:dismiss={dismissHandler}
 			on:showDialog={showPWADialog = true }
 		/>

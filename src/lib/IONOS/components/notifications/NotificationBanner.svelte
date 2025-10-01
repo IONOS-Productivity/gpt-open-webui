@@ -27,8 +27,8 @@
 			deferredPrompt.prompt();
 			deferredPrompt.userChoice.then((choiceResult: any) => {
 				if (choiceResult.outcome === 'accepted') {
+					dispatch('dismiss', { notification });
 				}
-				dispatch('dismiss', { notification });
 			});
 		}
 	};
