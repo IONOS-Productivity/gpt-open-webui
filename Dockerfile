@@ -29,25 +29,6 @@ ENV ENV=prod \
 ENV SCARF_NO_ANALYTICS=true \
     DO_NOT_TRACK=true
 
-#### Other models #########################################################
-## whisper TTS model settings ##
-ENV WHISPER_MODEL="base" \
-    WHISPER_MODEL_DIR="/app/backend/data/cache/whisper/models"
-
-## RAG Embedding model settings ##
-ENV RAG_EMBEDDING_MODEL="sentence-transformers/all-MiniLM-L6-v2" \
-    RAG_RERANKING_MODEL="" \
-    SENTENCE_TRANSFORMERS_HOME="/app/backend/data/cache/embedding/models"
-
-## Tiktoken model settings ##
-ENV TIKTOKEN_ENCODING_NAME="cl100k_base" \
-    TIKTOKEN_CACHE_DIR="/app/backend/data/cache/tiktoken"
-
-## Hugging Face download cache ##
-ENV HF_HOME="/app/backend/data/cache/embedding/models"
-
-#### Other models ##########################################################
-
 WORKDIR /app/backend
 
 ENV HOME=/root
@@ -69,10 +50,7 @@ COPY uv.lock pyproject.toml .
 ENV UV_PROJECT_ENVIRONMENT=/usr/local
 
 RUN pip3 install --no-cache-dir uv && \
-    uv sync --locked && \
-    python -c "import os; from sentence_transformers import SentenceTransformer; SentenceTransformer(os.environ['RAG_EMBEDDING_MODEL'], device='cpu')" && \
-    python -c "import os; from faster_whisper import WhisperModel; WhisperModel(os.environ['WHISPER_MODEL'], device='cpu', compute_type='int8', download_root=os.environ['WHISPER_MODEL_DIR'])"; \
-    python -c "import os; import tiktoken; tiktoken.get_encoding(os.environ['TIKTOKEN_ENCODING_NAME'])";
+    uv sync --locked
 
 # copy built frontend files
 COPY --from=build /app/build /app/build
