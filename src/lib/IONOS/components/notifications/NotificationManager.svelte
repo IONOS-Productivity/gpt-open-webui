@@ -30,7 +30,6 @@
 	let showPWADialog = false;
 	let cleanupPWAListeners: (() => void) | null = null;
 
-	// Check if the user should be prompted for feedback
 	const unsubscribeChats = chats.subscribe(async (chats: Chat[]|null) => {
 		const userSettings = await getUserSettings(localStorage.token);
 		const userCreatedAt = new Date($user!.created_at * 1000);
@@ -68,7 +67,6 @@
 	const dismissHandler = (event: CustomEvent) => {
 		const notification = event.detail.notification;
 
-		// Handle PWA notification dismissal
 		if (notification.type === NotificationType.PWA_INSTALL) {
 			handlePWADismiss();
 		}
@@ -149,7 +147,6 @@
 </script>
 
 <div class="sticky top-0 flex flex-col w-full z-50">
-	<!-- All Notifications (including PWA) -->
 	{#each $notifications as notification }
 		<NotificationBanner
 			{notification}
@@ -160,7 +157,6 @@
 	{/each}
 </div>
 
-<!-- PWA Installation Dialog -->
 <PWAInstallDialog
 	bind:show={showPWADialog}
 	on:install={handlePWAInstall}
