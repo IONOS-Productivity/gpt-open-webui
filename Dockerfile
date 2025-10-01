@@ -49,8 +49,10 @@ COPY uv.lock pyproject.toml .
 # system packages location, not a virtual environment
 ENV UV_PROJECT_ENVIRONMENT=/usr/local
 
+# /root/.cache contains the download cache
 RUN pip3 install --no-cache-dir uv && \
-    uv sync --locked
+    uv sync --locked && \
+    rm -rf /root/.cache/
 
 # copy built frontend files
 COPY --from=build /app/build /app/build
