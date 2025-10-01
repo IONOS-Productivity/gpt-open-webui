@@ -24,7 +24,7 @@
 	};
 
 	const handleLater = () => {
-		dispatch('dismiss');
+		dispatch('close');
 		show = false;
 	};
 </script>

@@ -164,5 +164,5 @@
 <PWAInstallDialog
 	bind:show={showPWADialog}
 	on:install={handlePWAInstall}
-	on:dismiss={handlePWADialogDismiss}
+	on:close={handlePWADialogDismiss}
 />
