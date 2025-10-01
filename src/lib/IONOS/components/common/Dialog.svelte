@@ -15,14 +15,11 @@
 	export let externalClose = false;
 
 	let el: HTMLDialogElement|null = null;
-	let closeButton: HTMLDialogElement|null = null;
 
 	$: if (show) {
 		el?.showModal();
-		closeButton?.showModal();
 	} else if (!show && !$mobile) {
 		el?.close();
-		closeButton?.close();
 	}
 
 	/**
@@ -31,9 +28,8 @@
 	 * Non-mobile: immediately closed
 	 */
 	function onTransitionEnd(e) {
-		if (e.target == el && e.propertyName === 'translate' && !show) {
+		if ((e.target == el || el?.contains(e.target)) && e.propertyName === 'translate' && !show) {
 			el?.close();
-			closeButton?.close();
 		}
 	}
 
@@ -60,13 +56,19 @@
 	bind:this={el}
 	closedby='any'
 	style:--slide-duration="{slideDuration}ms"
+	class="backdrop:bg-black/75"
 >
 
-	<div class="fixed top-0 right-0 left-0 bottom-0 m-auto bg-white backdrop:bg-black/25 z-[99999999] overscroll-contain shadow-xl rounded-2xl {mobileCover ? 'max-md:h-full max-md:max-h-dvh max-md:w-dvw max-md:max-w-dvw max-md:m-0' : 'max-h-fit'} max-md:transition-transform duration-(--slide-duration)  ease-out {$$props.class ?? 'p-[30px]'}">
+	<div class="fixed top-0 right-0 left-0 bottom-0 m-auto bg-white z-[99999999] overscroll-contain shadow-xl rounded-2xl {mobileCover ? 'max-md:h-full max-md:max-h-dvh max-md:w-dvw max-md:max-w-dvw max-md:m-0' : 'max-h-fit'} max-md:transition-transform duration-(--slide-duration)  ease-out {$$props.class ?? 'p-[30px]'}">
 
-		<button on:click={() => close()} class="absolute -top-[45px] right-1/2 left-1/2 bg-transparent ">
-			<XMark />
-		</button>
+		{#if externalClose}
+			<div class="relative -top-[70px] flex justify-center w-full">
+				<button on:click={() => close()} class="bg-transparent text-white">
+					<XMark />
+				</button>
+			</div>
+
+		{/if}
 
 		<div
 			data-id={`dialog-${dialogId}`}
