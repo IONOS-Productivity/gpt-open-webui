@@ -51,7 +51,7 @@
 				</p>
 			</div>
 
-			<div class="space-y-4 mb-6">
+			<div class="flex flex-col justify-center space-y-4 mb-6">
 				<div class="flex items-start space-x-3">
 					<div class="flex-shrink-0 w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center">
 						<span class="text-white text-sm font-medium">1</span>
