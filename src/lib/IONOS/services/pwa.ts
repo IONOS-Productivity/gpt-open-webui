@@ -87,10 +87,7 @@ export function isPWAInstallSupported(): boolean {
 	return 'BeforeInstallPromptEvent' in window || 'onbeforeinstallprompt' in window;
 }
 
-/**
- * Checks if we should show the PWA install prompt
- */
-export function shouldShowPWAPrompt(deferredPrompt: BeforeInstallPromptEvent | null = null): boolean {
+export function shouldShowPWAPrompt(deferredPrompt?: BeforeInstallPromptEvent | null): boolean {
 	if (isPWAInstalled()) {
 		return false;
 	}
@@ -107,69 +104,31 @@ export function shouldShowPWAPrompt(deferredPrompt: BeforeInstallPromptEvent | n
 		return true;
 	}
 
-	return deferredPrompt !== null;
+	return deferredPrompt !== null && deferredPrompt !== undefined;
 }
 
 export function dismissPWAPrompt(): void {
 	localStorage.setItem('pwa-install-dismissed', 'true');
 }
 
-/**
- * Triggers the native PWA install prompt if available
- */
-export async function triggerPWAInstall(deferredPrompt: BeforeInstallPromptEvent): Promise<boolean> {
-
+export async function triggerPWAInstall(deferredPrompt: BeforeInstallPromptEvent | null): Promise<boolean> {
 	if (!deferredPrompt) {
-		return Promise.resolve(false);
+		return false;
 	}
+
 	try {
 		await deferredPrompt.prompt();
 		const choiceResult = await deferredPrompt.userChoice;
-		return Promise.resolve(choiceResult.outcome === 'accepted');
+		return choiceResult.outcome === 'accepted';
 	} catch (error) {
-		return Promise.resolve(false);
-	}
-}
-
-/**
- * Sets up PWA event listeners and returns cleanup function
- */
-export function setupPWAEventListeners(
-	onBeforeInstallPrompt?: (event: BeforeInstallPromptEvent) => void,
-	onAppInstalled?: () => void
-): () => void {
-	const handleBeforeInstallPrompt = (event: Event) => {
-		event.preventDefault();
-		const installPromptEvent = event as BeforeInstallPromptEvent;
-		onBeforeInstallPrompt?.(installPromptEvent);
-	};
-
-	const handleAppInstalled = () => {
-		onAppInstalled?.();
-	};
-
-	window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-	window.addEventListener('appinstalled', handleAppInstalled);
-
-	return () => {
-		window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-		window.removeEventListener('appinstalled', handleAppInstalled);
-	};
-}
-
-/**
- * Tracks user engagement for PWA install prompt timing
- */
-export function trackUserEngagement(): void {
-	const currentPageViews = parseInt(localStorage.getItem('pwa-page-views') || '0');
-	localStorage.setItem('pwa-page-views', (currentPageViews + 1).toString());
-
-	if (!localStorage.getItem('pwa-first-visit')) {
-		localStorage.setItem('pwa-first-visit', Date.now().toString());
+		console.error('Error triggering PWA install prompt:', error);
+		return false;
 	}
 }
 
 export function getPWADebugInfo(): Record<string, any> {
+	const isSecureContext = location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+
 	return {
 		displayMode: getPWADisplayMode(),
 		platform: getPlatform(),
@@ -180,6 +139,11 @@ export function getPWADebugInfo(): Record<string, any> {
 		firstVisit: localStorage.getItem('pwa-first-visit'),
 		userAgent: navigator.userAgent,
 		standalone: (navigator as any).standalone,
-		referrer: document.referrer
+		referrer: document.referrer,
+		protocol: location.protocol,
+		hostname: location.hostname,
+		isSecureContext: isSecureContext,
+		hasBeforeInstallPrompt: 'BeforeInstallPromptEvent' in window || 'onbeforeinstallprompt' in window,
+		serviceWorkerSupport: 'serviceWorker' in navigator
 	};
 }
