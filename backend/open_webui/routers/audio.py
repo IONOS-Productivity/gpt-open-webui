@@ -40,7 +40,6 @@ from open_webui.env import (
     AIOHTTP_CLIENT_TIMEOUT,
     ENV,
     SRC_LOG_LEVELS,
-    DEVICE_TYPE,
     ENABLE_FORWARD_USER_INFO_HEADERS,
 )
 
@@ -96,29 +95,6 @@ def convert_audio_to_wav(file_path, output_path, conversion_type):
     audio.export(output_path, format="wav")
     log.info(f"Converted {file_path} to {output_path}")
 
-
-def set_faster_whisper_model(model: str, auto_update: bool = False):
-    whisper_model = None
-    if model:
-        from faster_whisper import WhisperModel
-
-        faster_whisper_kwargs = {
-            "model_size_or_path": model,
-            "device": DEVICE_TYPE if DEVICE_TYPE and DEVICE_TYPE == "cuda" else "cpu",
-            "compute_type": "int8",
-            "download_root": WHISPER_MODEL_DIR,
-            "local_files_only": not auto_update,
-        }
-
-        try:
-            whisper_model = WhisperModel(**faster_whisper_kwargs)
-        except Exception:
-            log.warning(
-                "WhisperModel initialization failed, attempting download with local_files_only=False"
-            )
-            faster_whisper_kwargs["local_files_only"] = False
-            whisper_model = WhisperModel(**faster_whisper_kwargs)
-    return whisper_model
 
 
 ##########################################
@@ -210,11 +186,6 @@ async def update_audio_config(
     request.app.state.config.AUDIO_STT_AZURE_API_KEY = form_data.stt.AZURE_API_KEY
     request.app.state.config.AUDIO_STT_AZURE_REGION = form_data.stt.AZURE_REGION
     request.app.state.config.AUDIO_STT_AZURE_LOCALES = form_data.stt.AZURE_LOCALES
-
-    if request.app.state.config.STT_ENGINE == "":
-        request.app.state.faster_whisper_model = set_faster_whisper_model(
-            form_data.stt.WHISPER_MODEL, WHISPER_MODEL_AUTO_UPDATE
-        )
 
     return {
         "tts": {
@@ -500,32 +471,10 @@ def transcribe(request: Request, file_path):
     id = filename.split(".")[0]
 
     if request.app.state.config.STT_ENGINE == "":
-        if request.app.state.faster_whisper_model is None:
-            request.app.state.faster_whisper_model = set_faster_whisper_model(
-                request.app.state.config.WHISPER_MODEL
-            )
-
-        model = request.app.state.faster_whisper_model
-        segments, info = model.transcribe(
-            file_path,
-            beam_size=5,
-            vad_filter=request.app.state.config.WHISPER_VAD_FILTER,
+        raise HTTPException(
+            status_code=503,
+            detail="No speech-to-text (STT) engine configured",
         )
-        log.info(
-            "Detected language '%s' with probability %f"
-            % (info.language, info.language_probability)
-        )
-
-        transcript = "".join([segment.text for segment in list(segments)])
-        data = {"text": transcript.strip()}
-
-        # save the transcript to a json file
-        transcript_file = f"{file_dir}/{id}.json"
-        with open(transcript_file, "w") as f:
-            json.dump(data, f)
-
-        log.debug(data)
-        return data
     elif request.app.state.config.STT_ENGINE == "openai":
         audio_format = get_audio_format(file_path)
         if audio_format:
