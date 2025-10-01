@@ -68,6 +68,8 @@ services:
     volumes:
       - ./backend:/app/backend
       - ./static:/app/build/static
+      - ./pyproject.toml:/app/pyproject.toml
+      - ./uv.lock:/app/uv.lock
       - data:/app/backend/data
     depends_on:
       - backend-migrate  # wartet auf Migrationen
