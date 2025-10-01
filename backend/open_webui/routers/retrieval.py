@@ -79,7 +79,6 @@ from open_webui.config import (
     ENV,
     RAG_EMBEDDING_MODEL_AUTO_UPDATE,
     RAG_RERANKING_MODEL_AUTO_UPDATE,
-    RAG_RERANKING_MODEL_TRUST_REMOTE_CODE,
     UPLOAD_DIR,
     DEFAULT_LOCALE,
     RAG_EMBEDDING_CONTENT_PREFIX,
@@ -87,7 +86,6 @@ from open_webui.config import (
 )
 from open_webui.env import (
     SRC_LOG_LEVELS,
-    DEVICE_TYPE,
 )
 from open_webui.constants import ERROR_MESSAGES
 
@@ -118,17 +116,8 @@ def get_rf(
 ):
     rf = None
     if reranking_model:
-        import sentence_transformers
+        log.warning(f"Reranking model configured ({reranking_model}). This is no longer supported!")
 
-        try:
-            rf = sentence_transformers.CrossEncoder(
-                get_model_path(reranking_model, auto_update),
-                device=DEVICE_TYPE,
-                trust_remote_code=RAG_RERANKING_MODEL_TRUST_REMOTE_CODE,
-            )
-        except Exception as e:
-            log.error(f"CrossEncoder: {e}")
-            raise Exception(ERROR_MESSAGES.DEFAULT("CrossEncoder error"))
     return rf
 
 
