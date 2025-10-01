@@ -129,31 +129,17 @@ def get_rf(
 ):
     rf = None
     if reranking_model:
-        if any(model in reranking_model for model in ["jinaai/jina-colbert-v2"]):
-            try:
-                from open_webui.retrieval.models.colbert import ColBERT
+        import sentence_transformers
 
-                rf = ColBERT(
-                    get_model_path(reranking_model, auto_update),
-                    # Set to "docker" if running in Docker
-                    env=None,
-                )
-
-            except Exception as e:
-                log.error(f"ColBERT: {e}")
-                raise Exception(ERROR_MESSAGES.DEFAULT(e))
-        else:
-            import sentence_transformers
-
-            try:
-                rf = sentence_transformers.CrossEncoder(
-                    get_model_path(reranking_model, auto_update),
-                    device=DEVICE_TYPE,
-                    trust_remote_code=RAG_RERANKING_MODEL_TRUST_REMOTE_CODE,
-                )
-            except Exception as e:
-                log.error(f"CrossEncoder: {e}")
-                raise Exception(ERROR_MESSAGES.DEFAULT("CrossEncoder error"))
+        try:
+            rf = sentence_transformers.CrossEncoder(
+                get_model_path(reranking_model, auto_update),
+                device=DEVICE_TYPE,
+                trust_remote_code=RAG_RERANKING_MODEL_TRUST_REMOTE_CODE,
+            )
+        except Exception as e:
+            log.error(f"CrossEncoder: {e}")
+            raise Exception(ERROR_MESSAGES.DEFAULT("CrossEncoder error"))
     return rf
 
 
