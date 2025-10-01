@@ -22,10 +22,8 @@
 
 	const handlePWAInstall = () => {
 		if (showIOSInstructions) {
-			// For iOS, show instructions dialog
 			dispatch('showDialog');
 		} else if (deferredPrompt) {
-			// For browsers that support beforeinstallprompt
 			deferredPrompt.prompt();
 			deferredPrompt.userChoice.then((choiceResult: any) => {
 				if (choiceResult.outcome === 'accepted') {
@@ -37,7 +35,6 @@
 </script>
 
 
-	<!-- Standard Notification Banner -->
 <div transition:fly={{ y: -200, duration: 50 }} class="ease-in-out w-full p-4 sm:p-5 flex items-center justify-start text-sm gap-2 {notification.type}">
 	<div id="notification-icon" class="self-start pt-0.5 sm:pt-0">
 		{#if notification.type === NotificationType.FEEDBACK}

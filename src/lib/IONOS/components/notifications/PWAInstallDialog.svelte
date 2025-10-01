@@ -39,7 +39,6 @@
 	<DialogHeader closable={false} slot="header" />
 	<div slot="content" class="w-full ">
 		{#if showIOSInstructions}
-			<!-- iOS Installation Instructions -->
 			<div class="text-center mb-6">
 				<div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
 					<Touch className="w-8 h-8 text-blue-600" />
@@ -78,7 +77,6 @@
 				</div>
 			</div>
 		{:else}
-			<!-- Standard PWA Installation -->
 			<div class="text-center mb-6">
 				<div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
 					<Touch className="w-8 h-8 text-blue-600" />

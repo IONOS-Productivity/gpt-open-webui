@@ -48,17 +48,11 @@ export function getPWADisplayMode(): PWADisplayMode {
 	return PWADisplayMode.BROWSER;
 }
 
-/**
- * Checks if the app is currently installed as a PWA
- */
 export function isPWAInstalled(): boolean {
 	const displayMode = getPWADisplayMode();
 	return displayMode === PWADisplayMode.STANDALONE || displayMode === PWADisplayMode.TWA || displayMode === PWADisplayMode.FULLSCREEN;
 }
 
-/**
- * Detects the current platform
- */
 export function getPlatform(): PWAPlatform {
 	const userAgent = navigator.userAgent.toLowerCase();
 
@@ -77,29 +71,19 @@ export function getPlatform(): PWAPlatform {
 	return PWAPlatform.UNKNOWN;
 }
 
-/**
- * Checks if the current browser is Safari
- */
 export function isSafari(): boolean {
 	return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 }
 
-/**
- * Checks if the device is iOS
- */
 export function isIOSDevice(): boolean {
 	return getPlatform() === PWAPlatform.IOS;
 }
 
-/**
- * Checks if PWA installation is supported on the current platform
- */
 export function isPWAInstallSupported(): boolean {
 	if (isIOSDevice() && isSafari()) {
 		return true;
 	}
 
-	// Check if beforeinstallprompt is supported (Chrome, Edge, etc.)
 	return 'BeforeInstallPromptEvent' in window || 'onbeforeinstallprompt' in window;
 }
 
@@ -126,9 +110,6 @@ export function shouldShowPWAPrompt(deferredPrompt: BeforeInstallPromptEvent | n
 	return deferredPrompt !== null;
 }
 
-/**
- * Dismisses the PWA install prompt and stores the dismissal
- */
 export function dismissPWAPrompt(): void {
 	localStorage.setItem('pwa-install-dismissed', 'true');
 }
@@ -188,9 +169,6 @@ export function trackUserEngagement(): void {
 	}
 }
 
-/**
- * Gets PWA-related local storage data for debugging
- */
 export function getPWADebugInfo(): Record<string, any> {
 	return {
 		displayMode: getPWADisplayMode(),
