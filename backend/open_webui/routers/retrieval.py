@@ -347,8 +347,6 @@ async def get_rag_config(request: Request, user=Depends(get_admin_user)):
             "SOUGOU_API_SK": request.app.state.config.SOUGOU_API_SK,
             "WEB_LOADER_ENGINE": request.app.state.config.WEB_LOADER_ENGINE,
             "ENABLE_WEB_LOADER_SSL_VERIFICATION": request.app.state.config.ENABLE_WEB_LOADER_SSL_VERIFICATION,
-            "PLAYWRIGHT_WS_URL": request.app.state.config.PLAYWRIGHT_WS_URL,
-            "PLAYWRIGHT_TIMEOUT": request.app.state.config.PLAYWRIGHT_TIMEOUT,
             "FIRECRAWL_API_KEY": request.app.state.config.FIRECRAWL_API_KEY,
             "FIRECRAWL_API_BASE_URL": request.app.state.config.FIRECRAWL_API_BASE_URL,
             "TAVILY_EXTRACT_DEPTH": request.app.state.config.TAVILY_EXTRACT_DEPTH,
@@ -392,8 +390,6 @@ class WebConfig(BaseModel):
     SOUGOU_API_SK: Optional[str] = None
     WEB_LOADER_ENGINE: Optional[str] = None
     ENABLE_WEB_LOADER_SSL_VERIFICATION: Optional[bool] = None
-    PLAYWRIGHT_WS_URL: Optional[str] = None
-    PLAYWRIGHT_TIMEOUT: Optional[int] = None
     FIRECRAWL_API_KEY: Optional[str] = None
     FIRECRAWL_API_BASE_URL: Optional[str] = None
     TAVILY_EXTRACT_DEPTH: Optional[str] = None
@@ -599,8 +595,6 @@ async def update_rag_config(
         request.app.state.config.ENABLE_WEB_LOADER_SSL_VERIFICATION = (
             form_data.web.ENABLE_WEB_LOADER_SSL_VERIFICATION
         )
-        request.app.state.config.PLAYWRIGHT_WS_URL = form_data.web.PLAYWRIGHT_WS_URL
-        request.app.state.config.PLAYWRIGHT_TIMEOUT = form_data.web.PLAYWRIGHT_TIMEOUT
         request.app.state.config.FIRECRAWL_API_KEY = form_data.web.FIRECRAWL_API_KEY
         request.app.state.config.FIRECRAWL_API_BASE_URL = (
             form_data.web.FIRECRAWL_API_BASE_URL
@@ -1193,7 +1187,6 @@ def search_web(request: Request, engine: str, query: str) -> list[SearchResult]:
         query (str): The query to search for
     """
 
-    # TODO: add playwright to search the web
     if engine == "searxng":
         if request.app.state.config.SEARXNG_QUERY_URL:
             return search_searxng(
