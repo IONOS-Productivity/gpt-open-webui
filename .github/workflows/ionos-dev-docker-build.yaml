@@ -87,6 +87,8 @@ jobs:
                 - name: kaniko
                   image: gcr.io/kaniko-project/executor:latest
                   args:
+                  - --cache=true
+                  - --cache-copy-layers=true
                   - --dockerfile=./Dockerfile
                   - --context=dir:///workspace
                   - --destination=${{ env.REGISTRY_URL }}:${{ github.run_id }}
@@ -95,12 +97,16 @@ jobs:
                   - --git=recurse-submodules=true
                   - --skip-tls-verify
                   volumeMounts:
+                  - name: cache
+                    mountPath: /cache
                   - name: build-context
                     mountPath: /workspace
                   - name: dock-sec
                     mountPath: /kaniko/.docker
                 restartPolicy: Never
                 volumes:
+                - name: cache
+                  emptyDir: {}
                 - name: build-context
                   emptyDir: {}
                 - name: dock-sec
