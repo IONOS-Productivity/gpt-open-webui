@@ -111,6 +111,7 @@ dependencies = [
     "torch",
     "torchvision",
     "torchaudio",
+    "itsdangerous>=2.2.0",
 ]
 readme = "README.md"
 requires-python = ">= 3.11, < 3.13.0a1"
