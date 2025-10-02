@@ -1,10 +1,6 @@
 from open_webui.config import VECTOR_DB
 
-if VECTOR_DB == "milvus":
-    from open_webui.retrieval.vector.dbs.milvus import MilvusClient
-
-    VECTOR_DB_CLIENT = MilvusClient()
-elif VECTOR_DB == "qdrant":
+if VECTOR_DB == "qdrant":
     from open_webui.retrieval.vector.dbs.qdrant import QdrantClient
 
     VECTOR_DB_CLIENT = QdrantClient()
