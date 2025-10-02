@@ -31,17 +31,6 @@ try:
 except ImportError:
     print("dotenv not installed, skipping...")
 
-DEVICE_TYPE = "cpu"
-
-try:
-    import torch
-
-    if torch.backends.mps.is_available() and torch.backends.mps.is_built():
-        # (apple silicon)
-        DEVICE_TYPE = "mps"
-except Exception:
-    pass
-
 ####################################
 # LOGGING
 ####################################
