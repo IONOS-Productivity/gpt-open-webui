@@ -28,8 +28,6 @@ from open_webui.retrieval.loaders.tavily import TavilyLoader
 from open_webui.constants import ERROR_MESSAGES
 from open_webui.config import (
     ENABLE_RAG_LOCAL_WEB_FETCH,
-    PLAYWRIGHT_WS_URL,
-    PLAYWRIGHT_TIMEOUT,
     WEB_LOADER_ENGINE,
     FIRECRAWL_API_BASE_URL,
     FIRECRAWL_API_KEY,
@@ -364,123 +362,6 @@ class SafeTavilyLoader(BaseLoader, RateLimitMixin, URLProcessingMixin):
             else:
                 raise e
 
-
-class SafePlaywrightURLLoader(PlaywrightURLLoader, RateLimitMixin, URLProcessingMixin):
-    """Load HTML pages safely with Playwright, supporting SSL verification, rate limiting, and remote browser connection.
-
-    Attributes:
-        web_paths (List[str]): List of URLs to load.
-        verify_ssl (bool): If True, verify SSL certificates.
-        trust_env (bool): If True, use proxy settings from environment variables.
-        requests_per_second (Optional[float]): Number of requests per second to limit to.
-        continue_on_failure (bool): If True, continue loading other URLs on failure.
-        headless (bool): If True, the browser will run in headless mode.
-        proxy (dict): Proxy override settings for the Playwright session.
-        playwright_ws_url (Optional[str]): WebSocket endpoint URI for remote browser connection.
-        playwright_timeout (Optional[int]): Maximum operation time in milliseconds.
-    """
-
-    def __init__(
-        self,
-        web_paths: List[str],
-        verify_ssl: bool = True,
-        trust_env: bool = False,
-        requests_per_second: Optional[float] = None,
-        continue_on_failure: bool = True,
-        headless: bool = True,
-        remove_selectors: Optional[List[str]] = None,
-        proxy: Optional[Dict[str, str]] = None,
-        playwright_ws_url: Optional[str] = None,
-        playwright_timeout: Optional[int] = 10000,
-    ):
-        """Initialize with additional safety parameters and remote browser support."""
-
-        proxy_server = proxy.get("server") if proxy else None
-        if trust_env and not proxy_server:
-            env_proxies = urllib.request.getproxies()
-            env_proxy_server = env_proxies.get("https") or env_proxies.get("http")
-            if env_proxy_server:
-                if proxy:
-                    proxy["server"] = env_proxy_server
-                else:
-                    proxy = {"server": env_proxy_server}
-
-        # We'll set headless to False if using playwright_ws_url since it's handled by the remote browser
-        super().__init__(
-            urls=web_paths,
-            continue_on_failure=continue_on_failure,
-            headless=headless if playwright_ws_url is None else False,
-            remove_selectors=remove_selectors,
-            proxy=proxy,
-        )
-        self.verify_ssl = verify_ssl
-        self.requests_per_second = requests_per_second
-        self.last_request_time = None
-        self.playwright_ws_url = playwright_ws_url
-        self.trust_env = trust_env
-        self.playwright_timeout = playwright_timeout
-
-    def lazy_load(self) -> Iterator[Document]:
-        """Safely load URLs synchronously with support for remote browser."""
-        from playwright.sync_api import sync_playwright
-
-        with sync_playwright() as p:
-            # Use remote browser if ws_endpoint is provided, otherwise use local browser
-            if self.playwright_ws_url:
-                browser = p.chromium.connect(self.playwright_ws_url)
-            else:
-                browser = p.chromium.launch(headless=self.headless, proxy=self.proxy)
-
-            for url in self.urls:
-                try:
-                    self._safe_process_url_sync(url)
-                    page = browser.new_page()
-                    response = page.goto(url, timeout=self.playwright_timeout)
-                    if response is None:
-                        raise ValueError(f"page.goto() returned None for url {url}")
-
-                    text = self.evaluator.evaluate(page, browser, response)
-                    metadata = {"source": url}
-                    yield Document(page_content=text, metadata=metadata)
-                except Exception as e:
-                    if self.continue_on_failure:
-                        log.exception(f"Error loading {url}: {e}")
-                        continue
-                    raise e
-            browser.close()
-
-    async def alazy_load(self) -> AsyncIterator[Document]:
-        """Safely load URLs asynchronously with support for remote browser."""
-        from playwright.async_api import async_playwright
-
-        async with async_playwright() as p:
-            # Use remote browser if ws_endpoint is provided, otherwise use local browser
-            if self.playwright_ws_url:
-                browser = await p.chromium.connect(self.playwright_ws_url)
-            else:
-                browser = await p.chromium.launch(
-                    headless=self.headless, proxy=self.proxy
-                )
-
-            for url in self.urls:
-                try:
-                    await self._safe_process_url(url)
-                    page = await browser.new_page()
-                    response = await page.goto(url, timeout=self.playwright_timeout)
-                    if response is None:
-                        raise ValueError(f"page.goto() returned None for url {url}")
-
-                    text = await self.evaluator.evaluate_async(page, browser, response)
-                    metadata = {"source": url}
-                    yield Document(page_content=text, metadata=metadata)
-                except Exception as e:
-                    if self.continue_on_failure:
-                        log.exception(f"Error loading {url}: {e}")
-                        continue
-                    raise e
-            await browser.close()
-
-
 class SafeWebBaseLoader(WebBaseLoader):
     """WebBaseLoader with enhanced error handling for URLs."""
 
@@ -603,11 +484,6 @@ def get_web_loader(
 
     if WEB_LOADER_ENGINE.value == "" or WEB_LOADER_ENGINE.value == "safe_web":
         WebLoaderClass = SafeWebBaseLoader
-    if WEB_LOADER_ENGINE.value == "playwright":
-        WebLoaderClass = SafePlaywrightURLLoader
-        web_loader_args["playwright_timeout"] = PLAYWRIGHT_TIMEOUT.value * 1000
-        if PLAYWRIGHT_WS_URL.value:
-            web_loader_args["playwright_ws_url"] = PLAYWRIGHT_WS_URL.value
 
     if WEB_LOADER_ENGINE.value == "firecrawl":
         WebLoaderClass = SafeFireCrawlLoader
@@ -632,5 +508,5 @@ def get_web_loader(
     else:
         raise ValueError(
             f"Invalid WEB_LOADER_ENGINE: {WEB_LOADER_ENGINE.value}. "
-            "Please set it to 'safe_web', 'playwright', 'firecrawl', or 'tavily'."
+            "Please set it to 'safe_web', 'firecrawl', or 'tavily'."
         )

@@ -1216,7 +1216,6 @@ def search_web(request: Request, engine: str, query: str) -> list[SearchResult]:
         query (str): The query to search for
     """
 
-    # TODO: add playwright to search the web
     if engine == "searxng":
         if request.app.state.config.SEARXNG_QUERY_URL:
             return search_searxng(

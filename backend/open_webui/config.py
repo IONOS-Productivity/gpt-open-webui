@@ -2262,18 +2262,6 @@ TAVILY_EXTRACT_DEPTH = PersistentConfig(
     os.getenv("TAVILY_EXTRACT_DEPTH", "basic"),
 )
 
-PLAYWRIGHT_WS_URL = PersistentConfig(
-    "PLAYWRIGHT_WS_URL",
-    "rag.web.loader.playwright_ws_url",
-    os.environ.get("PLAYWRIGHT_WS_URL", ""),
-)
-
-PLAYWRIGHT_TIMEOUT = PersistentConfig(
-    "PLAYWRIGHT_TIMEOUT",
-    "rag.web.loader.playwright_timeout",
-    int(os.environ.get("PLAYWRIGHT_TIMEOUT", "10000")),
-)
-
 FIRECRAWL_API_KEY = PersistentConfig(
     "FIRECRAWL_API_KEY",
     "rag.web.loader.firecrawl_api_key",
