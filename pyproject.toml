@@ -48,7 +48,6 @@ dependencies = [
     "opensearch-py==2.8.0",
     "playwright==1.49.1", # Caution: version must match docker-compose.playwright.yaml
     "elasticsearch==8.17.1",
-    "accelerate",
     "einops==0.8.1",
     "ftfy==6.2.3",
     "pypdf==4.3.1",
@@ -107,9 +106,6 @@ dependencies = [
     "opentelemetry-instrumentation-requests==0.52b1",
     "opentelemetry-instrumentation-sqlalchemy==0.52b1",
     "opentelemetry-sdk==1.31.1",
-    "torch",
-    "torchvision",
-    "torchaudio",
     "itsdangerous>=2.2.0",
 ]
 readme = "README.md"
@@ -130,11 +126,6 @@ open-webui = "open_webui:app"
 
 [tool.uv]
 package = true
-
-[tool.uv.sources]
-torch = { index = "pytorch" }
-torchvision = { index = "pytorch" }
-torchaudio = { index = "pytorch" }
 
 [[tool.uv.index]]
 name = "pytorch"
