@@ -623,7 +623,6 @@ async def chat_completion_files_handler(
                             query, prefix=prefix, user=user
                         ),
                         k=request.app.state.config.TOP_K,
-                        reranking_function=request.app.state.rf,
                         full_context=request.app.state.config.RAG_FULL_CONTEXT,
                     ),
                 )
