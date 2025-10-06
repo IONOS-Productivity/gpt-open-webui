@@ -174,8 +174,6 @@ from open_webui.config import (
     BYPASS_EMBEDDING_AND_RETRIEVAL,
     RAG_EMBEDDING_MODEL,
     RAG_EMBEDDING_MODEL_AUTO_UPDATE,
-    RAG_RERANKING_MODEL,
-    RAG_RERANKING_MODEL_AUTO_UPDATE,
     RAG_EMBEDDING_ENGINE,
     RAG_EMBEDDING_BATCH_SIZE,
     RAG_FILE_MAX_COUNT,
@@ -611,7 +609,6 @@ app.state.config.CHUNK_OVERLAP = CHUNK_OVERLAP
 app.state.config.RAG_EMBEDDING_ENGINE = RAG_EMBEDDING_ENGINE
 app.state.config.RAG_EMBEDDING_MODEL = RAG_EMBEDDING_MODEL
 app.state.config.RAG_EMBEDDING_BATCH_SIZE = RAG_EMBEDDING_BATCH_SIZE
-app.state.config.RAG_RERANKING_MODEL = RAG_RERANKING_MODEL
 app.state.config.RAG_TEMPLATE = RAG_TEMPLATE
 
 app.state.config.RAG_OPENAI_API_BASE_URL = RAG_OPENAI_API_BASE_URL
@@ -682,11 +679,6 @@ try:
         app.state.config.RAG_EMBEDDING_ENGINE,
         app.state.config.RAG_EMBEDDING_MODEL,
         RAG_EMBEDDING_MODEL_AUTO_UPDATE,
-    )
-
-    app.state.rf = get_rf(
-        app.state.config.RAG_RERANKING_MODEL,
-        RAG_RERANKING_MODEL_AUTO_UPDATE,
     )
 except Exception as e:
     log.error(f"Error updating models: {e}")

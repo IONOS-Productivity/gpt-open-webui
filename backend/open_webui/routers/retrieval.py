@@ -76,7 +76,6 @@ from open_webui.utils.auth import get_admin_user, get_verified_user
 from open_webui.config import (
     ENV,
     RAG_EMBEDDING_MODEL_AUTO_UPDATE,
-    RAG_RERANKING_MODEL_AUTO_UPDATE,
     UPLOAD_DIR,
     DEFAULT_LOCALE,
     RAG_EMBEDDING_CONTENT_PREFIX,
@@ -150,7 +149,6 @@ async def get_status(request: Request):
         "template": request.app.state.config.RAG_TEMPLATE,
         "embedding_engine": request.app.state.config.RAG_EMBEDDING_ENGINE,
         "embedding_model": request.app.state.config.RAG_EMBEDDING_MODEL,
-        "reranking_model": request.app.state.config.RAG_RERANKING_MODEL,
         "embedding_batch_size": request.app.state.config.RAG_EMBEDDING_BATCH_SIZE,
     }
 
@@ -175,10 +173,10 @@ async def get_embedding_config(request: Request, user=Depends(get_admin_user)):
 
 @router.get("/reranking")
 async def get_reraanking_config(request: Request, user=Depends(get_admin_user)):
-    return {
-        "status": True,
-        "reranking_model": request.app.state.config.RAG_RERANKING_MODEL,
-    }
+    raise HTTPException(
+        status_code=status.HTTP_501_NOT_IMPLEMENTED,
+        detail="Reranking is not implemented",
+    )
 
 
 class OpenAIConfigForm(BaseModel):
@@ -283,31 +281,10 @@ class RerankingModelUpdateForm(BaseModel):
 async def update_reranking_config(
     request: Request, form_data: RerankingModelUpdateForm, user=Depends(get_admin_user)
 ):
-    log.info(
-        f"Updating reranking model: {request.app.state.config.RAG_RERANKING_MODEL} to {form_data.reranking_model}"
+    raise HTTPException(
+        status_code=status.HTTP_501_NOT_IMPLEMENTED,
+        detail="Reranking is not implemented",
     )
-    try:
-        request.app.state.config.RAG_RERANKING_MODEL = form_data.reranking_model
-
-        try:
-            request.app.state.rf = get_rf(
-                request.app.state.config.RAG_RERANKING_MODEL,
-                True,
-            )
-        except Exception as e:
-            log.error(f"Error loading reranking model: {e}")
-
-        return {
-            "status": True,
-            "reranking_model": request.app.state.config.RAG_RERANKING_MODEL,
-        }
-    except Exception as e:
-        log.exception(f"Problem updating reranking model: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=ERROR_MESSAGES.DEFAULT(e),
-        )
-
 
 @router.get("/config")
 async def get_rag_config(request: Request, user=Depends(get_admin_user)):

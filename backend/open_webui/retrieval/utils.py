@@ -223,11 +223,10 @@ def get_sources_from_files(
     queries,
     embedding_function,
     k,
-    reranking_function,
     full_context=False,
 ):
     log.debug(
-        f"files: {files} {queries} {embedding_function} {reranking_function} {full_context}"
+        f"files: {files} {queries} {embedding_function} {full_context}"
     )
 
     extracted_collections = []
