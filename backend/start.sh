@@ -5,6 +5,8 @@ cd "$SCRIPT_DIR" || exit
 
 KEY_FILE=.webui_secret_key
 
+echo ":)"
+
 PORT="${PORT:-8080}"
 HOST="${HOST:-0.0.0.0}"
 if test -z "$WEBUI_SECRET_KEY"; then
