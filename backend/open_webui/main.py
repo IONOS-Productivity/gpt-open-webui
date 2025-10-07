@@ -316,7 +316,6 @@ from open_webui.config import (
 from open_webui.env import (
     AUDIT_EXCLUDED_PATHS,
     AUDIT_LOG_LEVEL,
-    CHANGELOG,
     REDIS_URL,
     REDIS_SENTINEL_HOSTS,
     REDIS_SENTINEL_PORT,
@@ -1376,11 +1375,6 @@ async def get_app_latest_release_version(user=Depends(get_verified_user)):
     except Exception as e:
         log.debug(e)
         return {"current": VERSION, "latest": VERSION}
-
-
-@app.get("/api/changelog")
-async def get_app_changelog():
-    return {key: CHANGELOG[key] for idx, key in enumerate(CHANGELOG) if idx < 5}
 
 
 ############################
