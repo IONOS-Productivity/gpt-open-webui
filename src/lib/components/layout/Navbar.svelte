@@ -15,7 +15,6 @@
 	} from '$lib/stores';
 
 	import { slide } from 'svelte/transition';
-	import ShareChatModal from '../chat/ShareChatModal.svelte';
 	import ModelSelector from '../chat/ModelSelector.svelte';
 	import Tooltip from '../common/Tooltip.svelte';
 	import Menu from './Navbar/Menu.svelte';
@@ -38,11 +37,8 @@
 	export let selectedModels;
 	export let showModelSelector = true;
 
-	let showShareChatModal = false;
 	let showDownloadChatModal = false;
 </script>
-
-<ShareChatModal bind:show={showShareChatModal} chatId={$chatId} />
 
 <div class="sticky top-0 z-30 w-full px-1.5 py-1.5 -mb-8 flex items-center">
 	<div
@@ -86,9 +82,7 @@
 					<Menu
 						{chat}
 						{shareEnabled}
-						shareHandler={() => {
-							showShareChatModal = !showShareChatModal;
-						}}
+						shareHandler={() => { }}
 						downloadHandler={() => {
 							showDownloadChatModal = !showDownloadChatModal;
 						}}

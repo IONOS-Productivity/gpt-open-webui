@@ -20,7 +20,6 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 
-	import ShareChatModal from '../chat/ShareChatModal.svelte';
 	import ModelSelector from '../chat/ModelSelector.svelte';
 	import Tooltip from '../common/Tooltip.svelte';
 	import Menu from '$lib/components/layout/Navbar/Menu.svelte';
@@ -49,8 +48,6 @@
 	let showShareChatModal = false;
 	let showDownloadChatModal = false;
 </script>
-
-<ShareChatModal bind:show={showShareChatModal} chatId={$chatId} />
 
 <nav class="sticky top-0 z-30 w-full px-1.5 pt-[30px] pb-4 -mb-8 flex items-center drag-region">
 	<div
@@ -114,9 +111,7 @@
 					<Menu
 						{chat}
 						{shareEnabled}
-						shareHandler={() => {
-							showShareChatModal = !showShareChatModal;
-						}}
+						shareHandler={() => { }}
 						downloadHandler={() => {
 							showDownloadChatModal = !showDownloadChatModal;
 						}}
