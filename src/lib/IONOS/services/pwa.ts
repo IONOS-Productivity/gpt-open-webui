@@ -72,7 +72,9 @@ export function getPlatform(): PWAPlatform {
 }
 
 export function isSafari(): boolean {
-	return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+	const userAgent = navigator.userAgent;
+	// Check for Safari but exclude Chrome on iOS (CriOS) and Android Chrome
+	return /safari/i.test(userAgent) && !/crios|chrome|android/i.test(userAgent);
 }
 
 export function isIOSDevice(): boolean {
