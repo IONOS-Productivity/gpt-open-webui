@@ -37,7 +37,6 @@
 		tags,
 		banners,
 		showSettings,
-		showChangelog,
 		temporaryChatEnabled,
 		toolServers
 	} from '$lib/stores';
@@ -45,7 +44,6 @@
 
 	import NotificationManager from '$lib/IONOS/components/notifications/NotificationManager.svelte';
 	import SettingsOverlay from '$lib/IONOS/components/settings/Settings.svelte';
-	import ChangelogModal from '$lib/components/ChangelogModal.svelte';
 	import AccountPending from '$lib/IONOS/components/AccountPending.svelte';
 	import UpdateInfoToast from '$lib/components/layout/UpdateInfoToast.svelte';
 	import { get } from 'svelte/store';
@@ -200,10 +198,6 @@
 				}
 			});
 
-			if ($user?.role === 'admin' && ($settings?.showChangelog ?? true)) {
-				showChangelog.set($settings?.version !== $config.version);
-			}
-
 			if ($user?.permissions?.chat?.temporary ?? true) {
 				if ($page.url.searchParams.get('temporary-chat') === 'true') {
 					temporaryChatEnabled.set(true);
@@ -248,7 +242,6 @@
 <NotificationManager />
 <KnowledgeManager />
 <SettingsOverlay bind:show={$showSettings} />
-<ChangelogModal bind:show={$showChangelog} />
 
 {#if version && compareVersion(version.latest, version.current) && ($settings?.showUpdateToast ?? true)}
 	<div class=" absolute bottom-8 right-8 z-50" in:fade={{ duration: 100 }}>
