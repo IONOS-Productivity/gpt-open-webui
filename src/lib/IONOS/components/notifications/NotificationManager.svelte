@@ -71,20 +71,17 @@
 
 	onDestroy(() => {
 		unsubscribeChats();
-		cleanupPWAListeners?.();
 	});
 
 	onMount(() => {
-		cleanupPWAListeners = setupGlobalPWAListener();
-
-		if (shouldShowPWAPrompt($deferredPrompt)) {
-			addPWANotification();
+		if ("serviceWorker" in navigator) {
+			navigator.serviceWorker.ready.then(() => {
+				if (shouldShowPWAPrompt($deferredPrompt)) {
+					addPWANotification();
+				}
+			});
 		}
 	});
-
-	$: if ($isPWAInstallable && shouldShowPWAPrompt($deferredPrompt)) {
-		addPWANotification();
-	}
 
 	$: if (!$isPWAInstallable && !$deferredPrompt) {
 		showPWADialog = false;
