@@ -15,7 +15,7 @@
 
 	let config = null;
 
-	let engines = ['pyodide', 'jupyter'];
+	let engines = ['jupyter'];
 
 	const submitHandler = async () => {
 		const res = await setCodeExecutionConfig(localStorage.token, config);
