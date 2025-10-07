@@ -14,7 +14,7 @@
 	import Switch from '$lib/components/common/Switch.svelte';
 	import Tooltip from '$lib/components/common/Tooltip.svelte';
 	import { WEBUI_BUILD_HASH, WEBUI_VERSION } from '$lib/constants';
-	import { config, showChangelog } from '$lib/stores';
+	import { config } from '$lib/stores';
 	import { compareVersion } from '$lib/utils';
 	import { onMount, getContext } from 'svelte';
 	import { toast } from 'svelte-sonner';
@@ -146,16 +146,6 @@
 												: $i18n.t('(latest)')}
 									</a>
 								</div>
-
-								<button
-									class=" underline flex items-center space-x-1 text-xs text-gray-500 dark:text-gray-500"
-									type="button"
-									on:click={() => {
-										showChangelog.set(true);
-									}}
-								>
-									<div>{$i18n.t("See what's new")}</div>
-								</button>
 							</div>
 
 							<button
