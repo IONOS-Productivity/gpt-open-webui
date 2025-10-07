@@ -30,7 +30,6 @@
 
 	import ChatMenu from './ChatMenu.svelte';
 	import DeleteConfirmDialog from '$lib/IONOS/components/common/Confirm.svelte';
-	import ShareChatModal from '$lib/components/chat/ShareChatModal.svelte';
 	import GarbageBin from '$lib/components/icons/GarbageBin.svelte';
 	import Tooltip from '$lib/components/common/Tooltip.svelte';
 	import ArchiveBox from '$lib/components/icons/ArchiveBox.svelte';
@@ -63,7 +62,6 @@
 		}
 	};
 
-	let showShareChatModal = false;
 	let confirmEdit = false;
 
 	let chatTitle = title;
@@ -85,27 +83,6 @@
 			await pinnedChats.set(await getPinnedChatList(localStorage.token));
 
 			dispatch('change');
-		}
-	};
-
-	const cloneChatHandler = async (id) => {
-		const res = await cloneChatById(
-			localStorage.token,
-			id,
-			$i18n.t('Clone of {{TITLE}}', {
-				TITLE: title
-			})
-		).catch((error) => {
-			toast.error(`${error}`);
-			return null;
-		});
-
-		if (res) {
-			goto(`/c/${res.id}`);
-
-			currentChatPage.set(1);
-			await chats.set(await getChatList(localStorage.token, $currentChatPage));
-			await pinnedChats.set(await getPinnedChatList(localStorage.token));
 		}
 	};
 
@@ -215,8 +192,6 @@
 		}
 	};
 </script>
-
-<ShareChatModal bind:show={showShareChatModal} chatId={id} />
 
 <DeleteConfirmDialog
 	bind:show={showDeleteConfirm}
@@ -382,12 +357,6 @@
 			<div class="flex self-center space-x-1 z-10">
 				<ChatMenu
 					chatId={id}
-					cloneChatHandler={() => {
-						cloneChatHandler(id);
-					}}
-					shareHandler={() => {
-						showShareChatModal = true;
-					}}
 					archiveChatHandler={() => {
 						archiveChatHandler(id);
 					}}

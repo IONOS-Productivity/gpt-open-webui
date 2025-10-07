@@ -32,8 +32,6 @@
 
 	const i18n = getContext('i18n');
 
-	export const shareHandler: Function = () => {};
-	export const cloneChatHandler: Function = () => {};
 	export const archiveChatHandler: Function = () => {};
 	export let renameHandler: Function;
 	export let deleteHandler: Function;
