@@ -54,7 +54,6 @@ RUN pip3 install --no-cache-dir uv && \
 
 # copy built frontend files
 COPY --from=build /app/build /app/build
-COPY --from=build /app/CHANGELOG.md /app/CHANGELOG.md
 COPY --from=build /app/package.json /app/package.json
 
 # copy backend files
