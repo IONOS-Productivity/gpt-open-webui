@@ -26,12 +26,10 @@ export function setupGlobalPWAListener(): (() => void) | null {
 
 	window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
 	window.addEventListener('appinstalled', handleAppInstalled);
-	window.onbeforeinstallprompt = handleBeforeInstallPrompt;
 
 	cleanupFunction = () => {
 		window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
 		window.removeEventListener('appinstalled', handleAppInstalled);
-		window.onbeforeinstallprompt = null;
 		isSetup = false;
 		cleanupFunction = null;
 	};
