@@ -9,10 +9,12 @@ let cleanupFunction: (() => void) | null = null;
 
 export function setupGlobalPWAListener(): (() => void) | null {
 	if (isSetup || typeof window === 'undefined') {
+		console.log('PWA listener already set up or not in a browser environment.');
 		return cleanupFunction;
 	}
 
 	const handleBeforeInstallPrompt = (event: Event) => {
+		console.log('Received beforeinstallprompt event');
 		event.preventDefault();
 		const installPromptEvent = event as BeforeInstallPromptEvent;
 		deferredPrompt.set(installPromptEvent);
@@ -20,18 +22,18 @@ export function setupGlobalPWAListener(): (() => void) | null {
 	};
 
 	const handleAppInstalled = () => {
+		console.log('PWA was installed');
 		deferredPrompt.set(null);
 		isPWAInstallable.set(false);
 	};
 
 	window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
 	window.addEventListener('appinstalled', handleAppInstalled);
-	window.onbeforeinstallprompt = handleBeforeInstallPrompt;
+	console.log('PWA listeners set up');
 
 	cleanupFunction = () => {
 		window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
 		window.removeEventListener('appinstalled', handleAppInstalled);
-		window.onbeforeinstallprompt = null;
 		isSetup = false;
 		cleanupFunction = null;
 	};
