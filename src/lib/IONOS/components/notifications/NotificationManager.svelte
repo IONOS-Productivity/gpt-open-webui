@@ -117,7 +117,7 @@
 			const accepted = await triggerPWAInstall($deferredPrompt);
 			if (accepted) {
 				clearDeferredPrompt();
-				removeNotification({ type: NotificationType.PWA_INSTALL } as Notification);
+				removeNotification("pwa");
 			}
 		}
 	};
@@ -134,7 +134,7 @@
 			}
 		}
 		showPWADialog = false;
-		removeNotification({ type: NotificationType.PWA_INSTALL } as Notification);
+		removeNotification("pwa");
 	};
 </script>
 
