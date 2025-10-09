@@ -44,6 +44,8 @@ services:
       - ./static/data:/app/static/data
       - ./static/favicon:/app/static/favicon
       - ./static/static:/app/static/static
+      - ./static/manifest:/app/static/manifest
+      - ./static/manifest.json:/app/static/manifest.json
       - ./vite.config.ts:/app/vite.config.ts
       - ./svelte.config.js:/app/svelte.config.js
       - ./tsconfig.json:/app/tsconfig.json

@@ -1,1 +1,24 @@
-{}
+{
+  "name": "IONOS GPT (dev)",
+  "short_name": "IONOS GPT (dev)",
+  "description": "Ihr KI-Dream-Team! (dev)",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#343541",
+  "orientation": "natural",
+  "icons": [
+    {
+      "src": "/manifest/favicon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    }, {
+      "src": "/manifest/favicon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }, {
+      "src": "/favicon.png",
+      "type": "image/png",
+      "sizes": "32x32"
+    }
+  ]
+}
