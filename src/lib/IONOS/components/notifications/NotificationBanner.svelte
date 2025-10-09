@@ -7,38 +7,38 @@
 	import EmojiSad from '$lib/IONOS/components/icons/EmojiSad.svelte';
 	import Touch from '$lib/IONOS/components/icons/Touch.svelte';
 	import Link from '$lib/IONOS/components/common/Link.svelte';
-	import { NotificationType, type Notification } from '$lib/IONOS/stores/notifications';
+	import { NotificationType, type SubscribableNotification } from '$lib/IONOS/stores/notifications';
 	import { createEventDispatcher, getContext } from 'svelte';
 
 	const dispatch = createEventDispatcher();
 	const i18n = getContext<Readable<I18Next>>('i18n');
 
-	export let notification: Notification;
+	export let notification: SubscribableNotification;
 </script>
 
 
-<div transition:fly={{ y: -200, duration: 50 }} class="ease-in-out w-full p-4 sm:p-5 flex items-center justify-start text-sm gap-2 {notification.type}">
+<div transition:fly={{ y: -200, duration: 50 }} class="ease-in-out w-full p-4 sm:p-5 flex items-center justify-start text-sm gap-2 {$notification.type}">
 	<div id="notification-icon" class="self-start pt-0.5 sm:pt-0">
-		{#if notification.type === NotificationType.FEEDBACK}
+		{#if $notification.type === NotificationType.FEEDBACK}
 			<Heart />
-		{:else if notification.type === NotificationType.ERROR}
+		{:else if $notification.type === NotificationType.ERROR}
 			<EmojiSad className="text-red-500"/>
-		{:else if notification.type === NotificationType.INFO}
+		{:else if $notification.type === NotificationType.INFO}
 			<Touch />
 		{/if}
 	</div>
 	<div class="flex flex-col md:flex-row gap-2.5 items-start">
 		<p>
-			<span class="font-semibold">{notification.title}</span>
-		 	{notification.message}
+			<span class="font-semibold">{$notification.title}</span>
+		 	{$notification.message}
 		</p>
-		{#each notification.actions as action}
+		{#each $notification.actions as action}
 			<Link href={action.href ?? ''} className="text-blue-600 underline" on:click={action.handler}>
 				{action.label}
 			</Link>
 		{/each}
 	</div>
-	{#if notification.dismissible}
+	{#if $notification.dismissible}
 		<button class="ml-auto hover:text-red-500 active:text-red-400" on:click={() => dispatch('dismiss', { notification })}>
 			<XMark />
 		</button>
