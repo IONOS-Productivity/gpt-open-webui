@@ -44,7 +44,6 @@
 	import { bestMatchingLanguage } from '$lib/utils';
 	import { getAllTags, getChatList } from '$lib/apis/chats';
 	import NotificationToast from '$lib/components/NotificationToast.svelte';
-	import AppSidebar from '$lib/components/app/AppSidebar.svelte';
 	import { chatCompletion } from '$lib/apis/openai';
 
 	setContext('i18n', i18n);
@@ -590,17 +589,7 @@
 </svelte:head>
 
 {#if loaded}
-	{#if $isApp}
-		<div class="flex flex-row h-screen">
-			<AppSidebar />
-
-			<div class="w-full flex-1 max-w-[calc(100%-4.5rem)]">
-				<slot />
-			</div>
-		</div>
-	{:else}
-		<slot />
-	{/if}
+	<slot />
 {/if}
 
 <Toaster
