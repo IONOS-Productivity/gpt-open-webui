@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Readable } from 'svelte/store';
+	import { type Readable, get } from 'svelte/store';
 	import type { I18Next } from '$lib/IONOS/i18next.d.ts';
 	import type { Chat } from '$lib/apis/chats/types.ts';
 	import NotificationBanner from "$lib/IONOS/components/notifications/NotificationBanner.svelte";
@@ -7,7 +7,7 @@
 	import { chats, user } from '$lib/stores';
 	import { updateSettings } from '$lib/IONOS/services/settings';
 	import { buildSurveyUrl } from '$lib/IONOS/services/survey';
-	import { notifications, addNotification, removeNotification, type Notification, NotificationType } from "$lib/IONOS/stores/notifications";
+	import { notifications, addNotification, removeNotification, type Notification, type SubscribableNotification, NotificationType } from "$lib/IONOS/stores/notifications";
 	import { getContext, onDestroy, onMount } from 'svelte';
 	import { getUserSettings } from '$lib/apis/users';
 	import {
@@ -42,27 +42,34 @@
 			return;
 		}
 
-		const surveyNotification: Notification = {
-			type: NotificationType.FEEDBACK,
-			title: $i18n.t('Love our product?', { ns: 'ionos' }),
-			message: $i18n.t('Help us improve', { ns: 'ionos' }),
-			actions: [{
-				label: $i18n.t('Take Our Quick Survey', { ns: 'ionos' }),
-				handler: () => {
-					window.open(surveyUrl, '_blank', "noopener=yes,noreferrer=yes");
-					updateSettings({
-						ionosProvidedFeedback: true
+		const surveyNotification = {
+			subscribe: (fn: (notification: Notification) => void) => {
+				return i18n.subscribe(() => {
+					fn({
+						id: "survey",
+						type: NotificationType.FEEDBACK,
+						title: $i18n.t('Love our product?', { ns: 'ionos' }),
+						message: $i18n.t('Help us improve', { ns: 'ionos' }),
+						actions: [{
+							label: $i18n.t('Take Our Quick Survey', { ns: 'ionos' }),
+							handler: () => {
+								window.open(surveyUrl, '_blank', "noopener=yes,noreferrer=yes");
+								updateSettings({
+									ionosProvidedFeedback: true
+								});
+							}
+						}],
 					});
-				}
-			}],
-		}
+				});
+			}
+		};
 		addNotification(surveyNotification);
 	};
 
 	const dismissHandler = (event: CustomEvent) => {
 		const notification = event.detail.notification;
 
-		if (notification.type === NotificationType.PWA_INSTALL) {
+		if (get(notification).type === NotificationType.PWA_INSTALL) {
 			dismissPWAPrompt();
 		}
 
@@ -77,6 +84,7 @@
 		if ("serviceWorker" in navigator) {
 			navigator.serviceWorker.ready.then(() => {
 				console.log('NotificationManager:', 'Service Worker is ready');
+
 				if (shouldShowPWAPrompt($deferredPrompt)) {
 					console.log('NotificationManager:', 'PWA is installable, showing prompt');
 					addPWANotification();
@@ -93,18 +101,28 @@
 	}
 
 	const addPWANotification = () => {
-		const pwaNotification: Notification = {
-			type: NotificationType.PWA_INSTALL,
-			title: $i18n.t('Install IONOS GPT', { ns: 'ionos' }),
-			message: $i18n.t('For quick and easy access, you can now install IONOS GPT like an app!', { ns: 'ionos' }),
-			actions: [{
-				label: $i18n.t('Install', { ns: 'ionos' }),
-				handler: () => {
-					handlePWAInstall();
-				}
-			}],
-			dismissible: true,
+
+
+		const pwaNotification = {
+			subscribe: (fn: (notification: Notification) => void) => {
+				return i18n.subscribe(() => {
+					fn({
+						id: "pwa",
+						type: NotificationType.PWA_INSTALL,
+						title: $i18n.t('Install IONOS GPT', { ns: 'ionos' }),
+						message: $i18n.t('For quick and easy access, you can now install IONOS GPT like an app!', { ns: 'ionos' }),
+						actions: [{
+							label: $i18n.t('Install', { ns: 'ionos' }),
+							handler: () => {
+								handlePWAInstall();
+							}
+						}],
+						dismissible: true,
+					});
+				});
+			}
 		};
+
 		addNotification(pwaNotification);
 	};
 
@@ -117,7 +135,7 @@
 			const accepted = await triggerPWAInstall($deferredPrompt);
 			if (accepted) {
 				clearDeferredPrompt();
-				removeNotification({ type: NotificationType.PWA_INSTALL } as Notification);
+				removeNotification("pwa");
 			}
 		}
 	};
@@ -134,7 +152,7 @@
 			}
 		}
 		showPWADialog = false;
-		removeNotification({ type: NotificationType.PWA_INSTALL } as Notification);
+		removeNotification("pwa");
 	};
 </script>
 
