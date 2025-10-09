@@ -739,12 +739,15 @@ load_oauth_providers()
 # Static DIR
 ####################################
 
-STATIC_DIR = Path(os.getenv("STATIC_DIR", OPEN_WEBUI_DIR / "static")).resolve()
+FRONTEND_STATIC_DIR = FRONTEND_BUILD_DIR / "static"
+BACKEND_STATIC_DIR = Path(os.getenv("STATIC_DIR", OPEN_WEBUI_DIR / "static"))
 
-for file_path in (FRONTEND_BUILD_DIR / "static").glob("**/*"):
+STATIC_DIR = BACKEND_STATIC_DIR
+
+for file_path in (FRONTEND_STATIC_DIR).glob("**/*"):
     if file_path.is_file():
-        target_path = STATIC_DIR / file_path.relative_to(
-            (FRONTEND_BUILD_DIR / "static")
+        target_path = BACKEND_STATIC_DIR / file_path.relative_to(
+            (FRONTEND_STATIC_DIR)
         )
         target_path.parent.mkdir(parents=True, exist_ok=True)
         try:
