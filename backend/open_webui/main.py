@@ -1450,16 +1450,18 @@ async def get_manifest_json():
             "orientation": "natural",
             "icons": [
                 {
-                    "src": "/static/logo.png",
+                    "src": "/manifest/favicon-192.png",
                     "type": "image/png",
-                    "sizes": "500x500",
-                    "purpose": "any",
+                    "sizes": "192x192"
+                }, {
+                    "src": "/manifest/favicon-512.png",
+                    "type": "image/png",
+                    "sizes": "512x512"
                 },
                 {
-                    "src": "/static/logo.png",
+                    "src": "/static/favicon.png",
                     "type": "image/png",
-                    "sizes": "500x500",
-                    "purpose": "maskable",
+                    "sizes": "32x32",
                 },
             ],
         }
