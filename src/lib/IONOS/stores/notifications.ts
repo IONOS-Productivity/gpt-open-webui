@@ -30,6 +30,7 @@ export type NotificationActionHref = {
 export type NotificationAction = NotificationActionBase & NotificationActionClickHandler & NotificationActionHref;
 
 export type Notification = {
+	id: string;
 	type: NotificationType;
 	title: string;
 	message: string;
@@ -48,8 +49,8 @@ export const addNotification = (notification: Notification): void => {
 	});
 };
 
-export const removeNotification = (notification: Notification): void => {
+export const removeNotification = (id: string): void => {
 	notifications.update((currentNotifications: Notification[]) =>
-		currentNotifications.filter(n => n !== notification)
+		currentNotifications.filter(n => n.id !== id)
 	);
 };
