@@ -43,6 +43,7 @@
 		}
 
 		const surveyNotification: Notification = {
+			id: "survey",
 			type: NotificationType.FEEDBACK,
 			title: $i18n.t('Love our product?', { ns: 'ionos' }),
 			message: $i18n.t('Help us improve', { ns: 'ionos' }),
@@ -92,6 +93,7 @@
 
 	const addPWANotification = () => {
 		const pwaNotification: Notification = {
+			id: "pwa",
 			type: NotificationType.PWA_INSTALL,
 			title: $i18n.t('Install IONOS GPT', { ns: 'ionos' }),
 			message: $i18n.t('For quick and easy access, you can now install IONOS GPT like an app!', { ns: 'ionos' }),
@@ -115,7 +117,7 @@
 			const accepted = await triggerPWAInstall($deferredPrompt);
 			if (accepted) {
 				clearDeferredPrompt();
-				removeNotification({ type: NotificationType.PWA_INSTALL } as Notification);
+				removeNotification("pwa");
 			}
 		}
 	};
@@ -132,7 +134,7 @@
 			}
 		}
 		showPWADialog = false;
-		removeNotification({ type: NotificationType.PWA_INSTALL } as Notification);
+		removeNotification("pwa");
 	};
 </script>
 
