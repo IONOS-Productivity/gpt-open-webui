@@ -1,4 +1,4 @@
-import { type Writable, writable } from 'svelte/store';
+import { type Writable, writable, type Readable } from 'svelte/store';
 
 export enum NotificationType {
 	INFO = 'bg-blue-100 text-blue-800',
@@ -30,6 +30,7 @@ export type NotificationActionHref = {
 export type NotificationAction = NotificationActionBase & NotificationActionClickHandler & NotificationActionHref;
 
 export type Notification = {
+	id: string;
 	type: NotificationType;
 	title: string;
 	message: string;
@@ -37,19 +38,18 @@ export type Notification = {
 	dismissible?: boolean;
 };
 
-export const notifications: Writable<Notification[]> = writable([]);
+export type SubscribableNotification = Readable<Notification>;
 
-export const addNotification = (notification: Notification): void => {
-	notifications.update((currentNotifications: Notification[]) => {
-		if (currentNotifications.some(n => n.title === notification.title)) {
-			return currentNotifications;
-		}
-	 return [...currentNotifications, notification]
+export const notifications: Writable<SubscribableNotification[]> = writable([]);
+
+export const addNotification = (notification: SubscribableNotification): void => {
+	notifications.update((currentNotifications: SubscribableNotification[]) => {
+		return [...currentNotifications, notification];
 	});
 };
 
-export const removeNotification = (notification: Notification): void => {
+export const removeNotification = (id: string): void => {
 	notifications.update((currentNotifications: Notification[]) =>
-		currentNotifications.filter(n => n !== notification)
+		currentNotifications.filter(n => n.id !== id)
 	);
 };
