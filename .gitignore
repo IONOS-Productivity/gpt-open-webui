@@ -14,6 +14,12 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+backend/open_webui/static/*
+!backend/open_webui/static/assets/pdf-style.css
+!backend/open_webui/static/fonts/
+!backend/open_webui/static/swagger-ui/
+!backend/open_webui/static/user-import.csv
+
 # C extensions
 *.so
 
