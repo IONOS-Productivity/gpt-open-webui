@@ -76,7 +76,9 @@
 	onMount(() => {
 		if ("serviceWorker" in navigator) {
 			navigator.serviceWorker.ready.then(() => {
+				console.log('NotificationManager:', 'Service Worker is ready');
 				if (shouldShowPWAPrompt($deferredPrompt)) {
+					console.log('NotificationManager:', 'PWA is installable, showing prompt');
 					addPWANotification();
 				}
 			});
