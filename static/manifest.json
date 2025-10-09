@@ -1,1 +1,37 @@
-{}
+{
+  "name": "IONOS GPT",
+  "short_name": "IONOS GPT",
+  "description": "Ihr KI-Dream-Team!",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#343541",
+  "orientation": "natural",
+  "screenshots": [
+    {
+      "src": "/assets/screenshots/screenshot.png",
+      "form_factor": "narrow",
+      "sizes": "480x768",
+      "type": "image/png"
+    }, {
+      "src": "/assets/screenshots/screenshot_desktop.png",
+      "form_factor": "wide",
+      "sizes": "1321x855",
+      "type": "image/png"
+    }
+  ],
+  "icons": [
+    {
+      "src": "/static/web-app-manifest-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }, {
+      "src": "/static/web-app-manifest-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }, {
+      "src": "/static/favicon.png",
+      "type": "image/png",
+      "sizes": "32x32"
+    }
+  ]
+}
