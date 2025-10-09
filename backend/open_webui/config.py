@@ -752,30 +752,6 @@ for file_path in (FRONTEND_BUILD_DIR / "static").glob("**/*"):
         except Exception as e:
             logging.error(f"An error occurred: {e}")
 
-frontend_favicon = FRONTEND_BUILD_DIR / "static" / "favicon.png"
-
-if frontend_favicon.exists():
-    try:
-        shutil.copyfile(frontend_favicon, STATIC_DIR / "favicon.png")
-    except Exception as e:
-        logging.error(f"An error occurred: {e}")
-
-frontend_splash = FRONTEND_BUILD_DIR / "static" / "splash.png"
-
-if frontend_splash.exists():
-    try:
-        shutil.copyfile(frontend_splash, STATIC_DIR / "splash.png")
-    except Exception as e:
-        logging.error(f"An error occurred: {e}")
-
-frontend_loader = FRONTEND_BUILD_DIR / "static" / "loader.js"
-
-if frontend_loader.exists():
-    try:
-        shutil.copyfile(frontend_loader, STATIC_DIR / "loader.js")
-    except Exception as e:
-        logging.error(f"An error occurred: {e}")
-
 ####################################
 # LICENSE_KEY
 ####################################
