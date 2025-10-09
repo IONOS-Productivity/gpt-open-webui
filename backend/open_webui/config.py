@@ -744,7 +744,12 @@ BACKEND_STATIC_DIR = Path(os.getenv("STATIC_DIR", OPEN_WEBUI_DIR / "static"))
 
 STATIC_DIR = BACKEND_STATIC_DIR
 
+print(f"Copying static files from frontend directory {FRONTEND_STATIC_DIR} to backend static directory {BACKEND_STATIC_DIR} ...")
+
 for file_path in (FRONTEND_STATIC_DIR).glob("**/*"):
+    if ENV != "prod":
+        print(f"Copy {file_path} ...");
+
     if file_path.is_file():
         target_path = BACKEND_STATIC_DIR / file_path.relative_to(
             (FRONTEND_STATIC_DIR)
@@ -753,7 +758,7 @@ for file_path in (FRONTEND_STATIC_DIR).glob("**/*"):
         try:
             shutil.copyfile(file_path, target_path)
         except Exception as e:
-            logging.error(f"An error occurred: {e}")
+            print(f"Error copying static files frontend directory to backend static directory: {e}")
 
 ####################################
 # LICENSE_KEY
