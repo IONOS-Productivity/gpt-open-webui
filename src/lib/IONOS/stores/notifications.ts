@@ -1,4 +1,4 @@
-import { type Writable, writable, type Readable } from 'svelte/store';
+import { get, writable, type Writable, type Readable } from 'svelte/store';
 
 export enum NotificationType {
 	INFO = 'bg-blue-100 text-blue-800',
@@ -42,10 +42,14 @@ export type SubscribableNotification = Readable<Notification>;
 
 export const notifications: Writable<SubscribableNotification[]> = writable([]);
 
-export const addNotification = (notification: SubscribableNotification): void => {
-	notifications.update((currentNotifications: SubscribableNotification[]) => {
-		return [...currentNotifications, notification];
-	});
+export const addNotification = (newNotificationStore: SubscribableNotification): void => {
+	const newNotification: Notification = get(newNotificationStore);
+	const currentNotifications = get(notifications);
+	const alreadyPresent: boolean = currentNotifications.some(n => get(n).id === newNotification.id);
+
+	if (!alreadyPresent) {
+		notifications.update((current: SubscribableNotification[]) => [...current, newNotificationStore]);
+	}
 };
 
 export const removeNotification = (id: string): void => {
