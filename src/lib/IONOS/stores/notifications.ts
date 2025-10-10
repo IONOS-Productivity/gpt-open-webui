@@ -1,12 +1,12 @@
 import { get, writable, type Writable, type Readable } from 'svelte/store';
 
 export enum NotificationType {
-	INFO = 'bg-blue-100 text-blue-800',
+	INFO = 'bg-blue-100 text-blue-800 info',
 	SUCCESS = 'success',
-	ERROR = 'bg-red-100 text-blue-800',
+	ERROR = 'bg-red-100 text-blue-800 error',
 	WARNING = 'warning',
-	FEEDBACK = NotificationType.INFO,
-	PWA_INSTALL = NotificationType.INFO,
+	FEEDBACK = 'bg-blue-100 text-blue-800 feedback',
+	PWA_INSTALL = 'bg-blue-100 text-blue-800 pwa-install',
 }
 
 export type NotificationActionBase = {
