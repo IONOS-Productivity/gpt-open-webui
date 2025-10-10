@@ -66,7 +66,7 @@
 	};
 
 	const dismissHandler = (event: CustomEvent) => {
-		const notification = event.detail.notification;
+		const notification: SubscribableNotification = event.detail.notification as SubscribableNotification;
 
 		if (get(notification).type === NotificationType.PWA_INSTALL) {
 			dismissPWAPrompt();
