@@ -53,7 +53,7 @@ export const addNotification = (newNotificationStore: SubscribableNotification):
 };
 
 export const removeNotification = (id: string): void => {
-	notifications.update((currentNotifications: Notification[]) =>
-		currentNotifications.filter(n => n.id !== id)
+	notifications.update((currentNotifications: SubscribableNotification[]) =>
+		currentNotifications.filter(n => get(n).id !== id)
 	);
 };
