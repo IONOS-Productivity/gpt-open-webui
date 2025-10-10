@@ -17,13 +17,12 @@
 		isIOSDevice,
 		isSafari
 	} from '$lib/IONOS/services/pwa';
-	import { deferredPrompt, isPWAInstallable, setupGlobalPWAListener, clearDeferredPrompt } from '$lib/IONOS/stores/pwa-prompt';
+	import { deferredPrompt, isPWAInstallable, clearDeferredPrompt } from '$lib/IONOS/stores/pwa-prompt';
 
 	const i18n = getContext<Readable<I18Next>>('i18n');
 	const DAYS = 24 * 60 * 60 * 1000;
 
 	let showPWADialog = false;
-	let cleanupPWAListeners: (() => void) | null = null;
 
 	const unsubscribeChats = chats.subscribe(async (chats: Chat[]|null) => {
 		const userSettings = await getUserSettings(localStorage.token);
