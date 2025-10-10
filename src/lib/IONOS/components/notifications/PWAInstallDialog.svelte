@@ -5,7 +5,7 @@
 	import Touch from '$lib/IONOS/components/icons/Touch.svelte';
 	import Share from '$lib/IONOS/components/icons/Share.svelte';
 	import Button from '$lib/IONOS/components/common/Button.svelte';
-	import { ButtonType } from '$lib/IONOS/components/common/buttons.ts';
+	import { ButtonType } from '$lib/IONOS/components/common/buttons';
 	import { getContext } from 'svelte';
 	import { createEventDispatcher } from 'svelte';
 	import { isIOSDevice, isSafari } from '$lib/IONOS/services/pwa';
