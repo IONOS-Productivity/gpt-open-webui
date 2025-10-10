@@ -91,9 +91,7 @@
 
 	$: if (!$isPWAInstallable && !$deferredPrompt) {
 		showPWADialog = false;
-		notifications.update((currentNotifications: Notification[]) =>
-			currentNotifications.filter(n => n.type !== NotificationType.PWA_INSTALL)
-		);
+		removeNotification("pwa");
 	}
 
 	const addPWANotification = () => {
