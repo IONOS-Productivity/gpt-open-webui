@@ -44,8 +44,8 @@ export const notifications: Writable<SubscribableNotification[]> = writable([]);
 
 export const addNotification = (newNotificationStore: SubscribableNotification): void => {
 	const newNotification: Notification = get(newNotificationStore);
-	const currentNotifications = get(notifications);
-	const alreadyPresent: boolean = currentNotifications.some(n => get(n).id === newNotification.id);
+	const currentNotifications: SubscribableNotification[] = get(notifications);
+	const alreadyPresent = currentNotifications.some(n => get(n).id === newNotification.id);
 
 	if (!alreadyPresent) {
 		notifications.update((current: SubscribableNotification[]) => [...current, newNotificationStore]);
