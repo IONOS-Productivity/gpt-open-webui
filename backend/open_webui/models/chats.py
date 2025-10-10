@@ -266,83 +266,6 @@ class ChatTable:
         chat["history"] = history
         return self.update_chat_by_id(id, chat)
 
-    def insert_shared_chat_by_chat_id(self, chat_id: str) -> Optional[ChatModel]:
-        with get_db() as db:
-            # Get the existing chat to share
-            chat = db.get(Chat, chat_id)
-            # Check if the chat is already shared
-            if chat.share_id:
-                return self.get_chat_by_id_and_user_id(chat.share_id, "shared")
-            # Create a new chat with the same data, but with a new ID
-            shared_chat = ChatModel(
-                **{
-                    "id": str(uuid.uuid4()),
-                    "user_id": f"shared-{chat_id}",
-                    "title": chat.title,
-                    "chat": chat.chat,
-                    "created_at": chat.created_at,
-                    "updated_at": int(time.time()),
-                }
-            )
-            shared_result = Chat(**shared_chat.model_dump())
-            db.add(shared_result)
-            db.commit()
-            db.refresh(shared_result)
-
-            # Update the original chat with the share_id
-            result = (
-                db.query(Chat)
-                .filter_by(id=chat_id)
-                .update({"share_id": shared_chat.id})
-            )
-            db.commit()
-            return shared_chat if (shared_result and result) else None
-
-    def update_shared_chat_by_chat_id(self, chat_id: str) -> Optional[ChatModel]:
-        try:
-            with get_db() as db:
-                chat = db.get(Chat, chat_id)
-                shared_chat = (
-                    db.query(Chat).filter_by(user_id=f"shared-{chat_id}").first()
-                )
-
-                if shared_chat is None:
-                    return self.insert_shared_chat_by_chat_id(chat_id)
-
-                shared_chat.title = chat.title
-                shared_chat.chat = chat.chat
-
-                shared_chat.updated_at = int(time.time())
-                db.commit()
-                db.refresh(shared_chat)
-
-                return ChatModel.model_validate(shared_chat)
-        except Exception:
-            return None
-
-    def delete_shared_chat_by_chat_id(self, chat_id: str) -> bool:
-        try:
-            with get_db() as db:
-                db.query(Chat).filter_by(user_id=f"shared-{chat_id}").delete()
-                db.commit()
-
-                return True
-        except Exception:
-            return False
-
-    def update_chat_share_id_by_id(
-        self, id: str, share_id: Optional[str]
-    ) -> Optional[ChatModel]:
-        try:
-            with get_db() as db:
-                chat = db.get(Chat, id)
-                chat.share_id = share_id
-                db.commit()
-                db.refresh(chat)
-                return ChatModel.model_validate(chat)
-        except Exception:
-            return None
-
     def toggle_chat_pinned_by_id(self, id: str) -> Optional[ChatModel]:
         try:
             with get_db() as db:
@@ -467,20 +390,6 @@ class ChatTable:
             with get_db() as db:
                 chat = db.get(Chat, id)
                 return ChatModel.model_validate(chat)
-        except Exception:
-            return None
-
-    def get_chat_by_share_id(self, id: str) -> Optional[ChatModel]:
-        try:
-            with get_db() as db:
-                # it is possible that the shared link was deleted. hence,
-                # we check if the chat is still shared by checking if a chat with the share_id exists
-                chat = db.query(Chat).filter_by(share_id=id).first()
-
-                if chat:
-                    return self.get_chat_by_id(id)
-                else:
-                    return None
         except Exception:
             return None
 
@@ -857,25 +766,13 @@ class ChatTable:
                 db.query(Chat).filter_by(id=id).delete()
                 db.commit()
 
-                return True and self.delete_shared_chat_by_chat_id(id)
-        except Exception:
-            return False
-
-    def delete_chat_by_id_and_user_id(self, id: str, user_id: str) -> bool:
-        try:
-            with get_db() as db:
-                db.query(Chat).filter_by(id=id, user_id=user_id).delete()
-                db.commit()
-
-                return True and self.delete_shared_chat_by_chat_id(id)
+                return True
         except Exception:
             return False
 
     def delete_chats_by_user_id(self, user_id: str) -> bool:
         try:
             with get_db() as db:
-                self.delete_shared_chats_by_user_id(user_id)
-
                 db.query(Chat).filter_by(user_id=user_id).delete()
                 db.commit()
 
@@ -894,19 +791,5 @@ class ChatTable:
                 return True
         except Exception:
             return False
-
-    def delete_shared_chats_by_user_id(self, user_id: str) -> bool:
-        try:
-            with get_db() as db:
-                chats_by_user = db.query(Chat).filter_by(user_id=user_id).all()
-                shared_chat_ids = [f"shared-{chat.id}" for chat in chats_by_user]
-
-                db.query(Chat).filter(Chat.user_id.in_(shared_chat_ids)).delete()
-                db.commit()
-
-                return True
-        except Exception:
-            return False
-
 
 Chats = ChatTable()
