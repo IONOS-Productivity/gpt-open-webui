@@ -1,17 +1,14 @@
 <script lang="ts">
 	import { fly } from 'svelte/transition';
-	import type { Readable } from 'svelte/store';
-	import type { I18Next } from '$lib/IONOS/i18next.d.ts';
 	import Heart from '$lib/IONOS/components/icons/Heart.svelte';
 	import XMark from '$lib/IONOS/components/icons/XMark.svelte';
 	import EmojiSad from '$lib/IONOS/components/icons/EmojiSad.svelte';
 	import Touch from '$lib/IONOS/components/icons/Touch.svelte';
 	import Link from '$lib/IONOS/components/common/Link.svelte';
 	import { NotificationType, type SubscribableNotification } from '$lib/IONOS/stores/notifications';
-	import { createEventDispatcher, getContext } from 'svelte';
+	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();
-	const i18n = getContext<Readable<I18Next>>('i18n');
 
 	export let notification: SubscribableNotification;
 </script>
