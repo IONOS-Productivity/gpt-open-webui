@@ -72,7 +72,7 @@
 			dismissPWAPrompt();
 		}
 
-		removeNotification(notification);
+		removeNotification("pwa");
 	};
 
 	onDestroy(() => {
