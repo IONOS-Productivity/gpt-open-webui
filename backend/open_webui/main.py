@@ -289,7 +289,6 @@ from open_webui.config import (
     STATIC_DIR,
     FRONTEND_BUILD_DIR,
     CORS_ALLOW_ORIGIN,
-    DEFAULT_LOCALE,
     OAUTH_PROVIDERS,
     WEBUI_URL,
     # Admin
@@ -376,6 +375,8 @@ from open_webui.utils.redis import get_sentinels_from_env
 
 
 from open_webui.middleware import PreventCachingMiddleware, MatchType
+
+from open_webui.services.market import locale_by_market
 
 if SAFE_MODE:
     print("SAFE MODE ENABLED")
@@ -1246,7 +1247,8 @@ async def get_app_config(request: Request):
         "status": True,
         "name": app.state.WEBUI_NAME,
         "version": VERSION,
-        "default_locale": str(DEFAULT_LOCALE),
+        # Hardcoded during development - TODO
+        "default_locale": locale_by_market('GB'),
         "oauth": {
             "providers": {
                 name: config.get("name", name)
