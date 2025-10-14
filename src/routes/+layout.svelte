@@ -356,7 +356,10 @@
 		// so `/error` can show something that's not `undefined`.
 
 		initI18n();
-		$i18n.changeLanguage('de-DE');
+
+		if (backendConfig?.default_locale) {
+			$i18n.changeLanguage(backendConfig?.default_locale);
+		}
 
 		if (backendConfig) {
 			// Save Backend Status to Store
