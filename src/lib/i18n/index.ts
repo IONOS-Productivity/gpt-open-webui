@@ -1,6 +1,5 @@
 import i18next from 'i18next';
 import resourcesToBackend from 'i18next-resources-to-backend';
-import LanguageDetector from 'i18next-browser-languagedetector';
 import type { i18n as i18nType } from 'i18next';
 import { writable } from 'svelte/store';
 
@@ -38,7 +37,6 @@ const createIsLoadingStore = (i18n: i18nType) => {
 };
 
 export const initI18n = () => {
-	let detectionOrder = ['querystring', 'localStorage', 'navigator'];
 	let fallbackDefaultLocale = ['en-US'];
 
 	const loadResource = (language: string, namespace: string) =>
@@ -46,15 +44,8 @@ export const initI18n = () => {
 
 	i18next
 		.use(resourcesToBackend(loadResource))
-		.use(LanguageDetector)
 		.init({
 			debug: false,
-			detection: {
-				order: detectionOrder,
-				caches: ['localStorage'],
-				lookupQuerystring: 'lang',
-				lookupLocalStorage: 'locale'
-			},
 			fallbackLng: {
 				default: fallbackDefaultLocale
 			},
