@@ -3,6 +3,8 @@ import resourcesToBackend from 'i18next-resources-to-backend';
 import type { i18n as i18nType } from 'i18next';
 import { writable } from 'svelte/store';
 
+const DEFAULT_LOCALE = "en-GB";
+
 const createI18nStore = (i18n: i18nType) => {
 	const i18nWritable = writable(i18n);
 
@@ -37,8 +39,6 @@ const createIsLoadingStore = (i18n: i18nType) => {
 };
 
 export const initI18n = () => {
-	let fallbackDefaultLocale = ['en-US'];
-
 	const loadResource = (language: string, namespace: string) =>
 		import(`./locales/${language}/${namespace}.json`);
 
@@ -47,7 +47,9 @@ export const initI18n = () => {
 		.init({
 			debug: false,
 			fallbackLng: {
-				default: fallbackDefaultLocale
+				default: [
+					DEFAULT_LOCALE
+				],
 			},
 			ns: [
 				'translation',
@@ -59,7 +61,7 @@ export const initI18n = () => {
 			}
 		});
 
-	const lang = i18next?.language || 'en-US';
+	const lang = i18next.language || DEFAULT_LOCALE;
 	document.documentElement.setAttribute('lang', lang);
 };
 
