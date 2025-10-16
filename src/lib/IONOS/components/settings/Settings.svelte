@@ -32,7 +32,7 @@
 	dialogId="settings"
 	show={show}
 	on:close={() => { showSettings.set(false); } }
-	class="p-0 md:min-h-[400px] md:min-w-[750px] md:max-w-[750px] overflow-y-scroll {show ? 'max-md:translate-y-0' : 'max-md:translate-y-[100dvh]'}"
+	class="p-0 md:min-h-[400px] md:min-w-[750px] md:max-w-[750px] md:max-h-fit overflow-y-scroll {show ? 'max-md:translate-y-0' : 'max-md:translate-y-[100dvh]'}"
 >
 	<DialogHeader
 		slot="header"
