@@ -17,7 +17,7 @@
 <Dialog
 	dialogId="register-login"
 	mobileCover={false}
-	class="p-[30px] mb-[25px] md:mb-auto {show ? 'max-md:translate-y-0' : 'max-md:translate-y-[100dvh]'}"
+	class="p-[30px] mb-[25px] md:mb-auto md:max-w-[575px] {show ? 'max-md:translate-y-0' : 'max-md:translate-y-[100dvh]'}"
 	{show}
 	on:close={() => dispatch('close')}
 >
