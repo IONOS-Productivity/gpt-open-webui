@@ -9,9 +9,7 @@
 	import type { I18Next } from '$lib/IONOS/i18next';
 	import type { Readable } from 'svelte/motion';
 	import { user } from '$lib/stores';
-	import Sparkles from '$lib/components/icons/Sparkles.svelte';
-	import Button from '$lib/IONOS/components/common/Button.svelte';
-	import type { IAgentAiTeam } from '../ai-team/ai-team.type';
+	import type { IAgentAiTeam } from '$lib/IONOS/components/ai-team/ai-team.type';
 
 	const i18n = getContext<Readable<I18Next>>('i18n');
 
