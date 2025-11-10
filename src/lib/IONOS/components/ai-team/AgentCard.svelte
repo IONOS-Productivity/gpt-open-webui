@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	import CircleInfo from '../icons/CircleInfo.svelte';
-	import Crown from '../icons/Crown.svelte';
+	import Crown from '$lib/IONOS/components/icons/Crown.svelte';
 	import Dialog from '$lib/IONOS/components/common/Dialog.svelte';
 	import AgentCardDetail from './AgentCardDetail.svelte';
 	import type { IAgentAiTeam } from './ai-team.type';
