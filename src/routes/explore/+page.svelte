@@ -15,6 +15,9 @@
 
 	let selectedAgent: string | null = null;
 	let selectedPrompt: number | null = null;
+	let agents: IAgentAiTeam[] = [];
+
+	$: agents = agentCardData($i18n);
 
 	$: showLoginDialog = selectedAgent !== null || selectedPrompt !== null;
 
@@ -30,16 +33,16 @@
         'cedric',
 	];
 
-	const agentCardData = (): IAgentAiTeam[] => {
+	const agentCardData = (i18n: I18Next): IAgentAiTeam[] => {
 		return agentList.map((agentId) => {
 			const agentCapabilities = [1, 2, 3].map((num) =>
-				$i18n.t(`capabilities_${num}_${agentId}`, { ns: 'agents' })
+				i18n.t(`capabilities_${num}_${agentId}`, { ns: 'agents' })
 			);
 			return {
 				id: agentId,
-				name: $i18n.t(`name_${agentId}`, { ns: 'agents' }),
-				speciality: $i18n.t(`speciality_${agentId}`, { ns: 'agents' }),
-				description: $i18n.t(`description_${agentId}`, { ns: 'agents' }),
+				name: i18n.t(`name_${agentId}`, { ns: 'agents' }),
+				speciality: i18n.t(`speciality_${agentId}`, { ns: 'agents' }),
+				description: i18n.t(`description_${agentId}`, { ns: 'agents' }),
 				capabilities: agentCapabilities,
 				...customAgentProps(agentId)
 			};
@@ -48,7 +51,7 @@
 
 	function selectAgentInternal(agentId: string) {
 		// Check if agent has external link (like Rita)
-		const agentData = agentCardData().find(a => a.id === agentId);
+		const agentData = agentCardData($i18n).find(a => a.id === agentId);
 		if (agentData?.externalLink) {
 			window.open(agentData.externalLink, '_blank');
 			return;
@@ -103,7 +106,7 @@
 			<div class="col-span-full flex items-center gap-2 flex-wrap">
 				<span class="font-sans font-normal text-lg">{$i18n.t('ai.team.nav', { ns: 'ionos' })}</span>
 			</div>
-			{#each agentCardData() as agent}
+			{#each agents as agent}
 				<AgentCard {agent} on:select={(e) => selectAgentInternal(e.detail)} />
 			{/each}
 		</div>
