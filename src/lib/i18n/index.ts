@@ -62,7 +62,8 @@ export const initI18n = (defaultLocale?: string | undefined) => {
 			},
 			ns: [
 				'translation',
-				'ionos'
+				'ionos',
+				'agents'
 			],
 			returnEmptyString: false,
 			interpolation: {

@@ -542,7 +542,7 @@
 				</div>
 				{#if $showSidebar}
 					<div class=" self-center font-medium text-sm text-blue-800 dark:text-white font-primary">
-						{$i18n.t('Explore', { ns: 'ionos' })}
+						{$i18n.t('ai.team.nav', { ns: 'ionos' })}
 					</div>
 				{/if}
 			</a>

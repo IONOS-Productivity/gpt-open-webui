@@ -1,28 +1,61 @@
 <script lang="ts">
-	import { getContext, onMount } from 'svelte';
-	import AnimatedBackground from '$lib/IONOS/components/explore/AnimatedBackground.svelte'
-	import AgentSelector from '$lib/IONOS/components/explore/AgentSelector.svelte'
-	import PromptSelector from '$lib/IONOS/components/explore/PromptSelector.svelte'
+	import { getContext } from 'svelte';
 	import LoginRegisterOverlay from '$lib/IONOS/components/explore/LoginRegisterOverlay.svelte';
-	import Robot from '$lib/components/icons/Robot.svelte'
-	import ChevronDown from '$lib/components/icons/ChevronDown.svelte'
-	import Sparkles from '$lib/IONOS/components/icons/Sparkles.svelte';
-	import { user } from '$lib/stores';
-	import { goto } from '$app/navigation';
-	import { init as initAgentsStore } from '$lib/IONOS/stores/agents';
-	import { init as initPromptsStore } from '$lib/IONOS/stores/prompts';
+	import AgentCard from '$lib/IONOS/components/ai-team/AgentCard.svelte';
+
 	import { selectAgent } from '$lib/IONOS/services/agent';
 	import { selectPrompt } from '$lib/IONOS/services/prompt';
 	import { signup } from '$lib/IONOS/services/signup';
+	import type { I18Next } from '$lib/IONOS/i18next';
+	import type { Readable } from 'svelte/motion';
+	import { user } from '$lib/stores';
+	import Sparkles from '$lib/components/icons/Sparkles.svelte';
+	import Button from '$lib/IONOS/components/common/Button.svelte';
+	import type { IAgentAiTeam } from '../ai-team/ai-team.type';
 
-	const i18n = getContext('i18n');
+	const i18n = getContext<Readable<I18Next>>('i18n');
 
-	let selectedAgent: string|null = null;
-	let selectedPrompt: number|null = null;
+	let selectedAgent: string | null = null;
+	let selectedPrompt: number | null = null;
 
 	$: showLoginDialog = selectedAgent !== null || selectedPrompt !== null;
 
+	const agentList: string[] = [
+		'rita',
+		'greta',
+		'derek',
+		'dora',
+		'chris',
+		'simon',
+		'fiona',
+		'sofia',
+        'cedric',
+	];
+
+	const agentCardData = (): IAgentAiTeam[] => {
+		return agentList.map((agentId) => {
+			const agentCapabilities = [1, 2, 3].map((num) =>
+				$i18n.t(`capabilities_${num}_${agentId}`, { ns: 'agents' })
+			);
+			return {
+				id: agentId,
+				name: $i18n.t(`name_${agentId}`, { ns: 'agents' }),
+				specialty: $i18n.t(`specialty_${agentId}`, { ns: 'agents' }),
+				description: $i18n.t(`description_${agentId}`, { ns: 'agents' }),
+				capabilities: agentCapabilities,
+				...customAgentProps(agentId)
+			};
+		});
+	};
+
 	function selectAgentInternal(agentId: string) {
+		// Check if agent has external link (like Rita)
+		const agentData = agentCardData().find(a => a.id === agentId);
+		if (agentData?.externalLink) {
+			window.open(agentData.externalLink, '_blank');
+			return;
+		}
+
 		if (!$user) {
 			selectedAgent = agentId;
 			return;
@@ -31,14 +64,17 @@
 		selectAgent(agentId);
 	}
 
-	function selectPromptInternal(promptId: number) {
-		if (!$user) {
-			selectedPrompt = promptId;
-			return;
+	const customAgentProps = (agentId: string) => {
+		switch (agentId) {
+			case 'rita':
+				return { 
+					bgColor: '#560E8A', 
+					fontColor: '#FAE7FE',
+					externalLink: 'https://www.ionos.de/office-loesungen/ki-telefonassistent',
+					showCrown: true
+				};
 		}
-
-		selectPrompt(promptId);
-	}
+	};
 
 	function login() {
 		if (selectedAgent !== null) {
@@ -49,67 +85,75 @@
 			selectPrompt(selectedPrompt);
 		}
 	}
-
-	onMount(async () => {
-		await initAgentsStore();
-		await initPromptsStore();
-	});
 </script>
 
 <svelte:head>
-	<title>{$i18n.t('Welcome to IONOS GPT,', { ns: 'ionos' })} {$i18n.t('Where AI becomes your ultimate team of experts!', { ns: 'ionos' })}</title>
+	<title
+		>{$i18n.t('Welcome to IONOS GPT,', { ns: 'ionos' })}
+		{$i18n.t('Where AI becomes your ultimate team of experts!', { ns: 'ionos' })}</title
+	>
 </svelte:head>
 
-<AnimatedBackground />
-
 <content class="flex flex-col items-center text-blue-800 w-full md:px-8">
-		<h1 class="my-5 text-5xl leading-[56px] font-overpass text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-700 max-md:mx-12">
-			{$i18n.t('Welcome to IONOS GPT,', { ns: 'ionos' })}
-			<br>
-			{$i18n.t('Where AI becomes your ultimate team of experts!', { ns: 'ionos' })}
-		</h1>
+	<div class="max-w-[1024px] w-full flex flex-col items-center">
+		<div class="grid grid-cols-[repeat(auto-fit,320px)] justify-center gap-6 w-full mb-8 max-w-5xl">
+			<h1
+				class="col-span-full my-5 font-overpass font-normal text-3xl leading-tight text-left gradient-text"
+			>
+				{$i18n.t('ai.team.title.1', { ns: 'ionos' })} <span class="emoji">🚀</span> {$i18n.t('ai.team.title.2', { ns: 'ionos' })}
+			</h1>
 
-	<p class="max-w-3xl mb-4 text-lg leading-[26px] text-center text-blue-800 max-md:mx-12">
-		{$i18n.t('From ideas to execution, our virtual team is here to help — from writing and design to coding, they handle the details so you can focus on what matters. Get to know them and see how they can support your projects.', { ns: 'ionos' })}
-	</p>
+			<!-- <div class="col-span-full flex items-center">
+				<div class="flex items-center gap-8 w-full max-w-5xl px-6 py-4 rounded-2xl bg-gray-100">
+					<input
+						type="text"
+						placeholder="Ask us anything"
+						class="flex-1 bg-transparent border-none outline-none font-sans text-base placeholder:text-gray-500"
+					/>
+					<Button
+						className="!bg-purple-700 !border-purple-700 hover:!bg-purple-700/90 hover:!border-purple-700/90 flex items-center w-9 h-9 justify-center"
+					>
+						<span class="text-purple-300"><Sparkles className="w-4 h-4 fill-purple-300" /></span>
+					</Button>
+				</div>
+			</div> -->
 
-	<div class="flex flex-col items-center text-sm">
-		<span>{$i18n.t('Select a specialist', { ns: 'ionos' })}</span>
-		<span>
-			<ChevronDown />
-		</span>
-	</div>
-
-	<div class="block py-5 my-2">
-		<AgentSelector on:select={({ detail: id }) => selectAgentInternal(id)} />
-	</div>
-
-	<h1 class="my-4 text-center text-[32px] leading-[40px] text-blue-800 max-md:mx-12">
-		{$i18n.t('Bringing your ideas to life is easy with our AI specialists', { ns: 'ionos' })}
-	</h1>
-
-	<p class="max-w-2xl text-center text-lg leading-[26px] text-blue-800 max-md:mx-12">
-		{$i18n.t('Whether you need great content, eye-catching designs, or clean code, your virtual team is here to help every step of the way.', { ns: 'ionos' })}
-	</p>
-
-	<div class="block w-full py-5 my-8">
-		<PromptSelector on:select={({ detail: id }) => selectPromptInternal(id)} />
-	</div>
-
-	<div class="my-20">
-		<Sparkles  filled={false}/>
+			<div class="col-span-full flex items-center gap-2 flex-wrap">
+				<span class="font-sans font-normal text-lg">{$i18n.t('ai.team.nav', { ns: 'ionos' })}</span>
+			</div>
+			{#each agentCardData() as agent}
+				<AgentCard {agent} on:select={(e) => selectAgentInternal(e.detail)} />
+			{/each}
+		</div>
 	</div>
 </content>
 
 <LoginRegisterOverlay
 	on:login={login}
 	on:signup={signup}
-	on:close={() => {selectedAgent = null; selectedPrompt = null;}}
+	on:close={() => {
+		selectedAgent = null;
+		selectedPrompt = null;
+	}}
 	show={showLoginDialog}
 />
 
 <style>
 	:global(body) {
 		background-color: #f9f9f9;
+	}
+
+	.gradient-text {
+		background: linear-gradient(to right, #3b82f6, #7c3aed);
+		-webkit-background-clip: text;
+		background-clip: text;
+		-webkit-text-fill-color: transparent;
+	}
+
+	.gradient-text .emoji {
+		-webkit-text-fill-color: initial;
+		background: none;
+		-webkit-background-clip: initial;
+		background-clip: initial;
 	}
 </style>
