@@ -26,7 +26,7 @@
 </script>
 
 <div
-	class="w-[320px] gap-4 opacity-100 rounded-2xl p-6 shadow-l cursor-pointer {agent.highlight ? 'bg-purple-700' : 'bg-white'}"
+	class="w-[320px] gap-4 opacity-100 rounded-2xl p-6 shadow-l cursor-pointer {agent.highlight ? 'bg-purple-700' : 'bg-white'} hover:shadow-[5px_5px_15px_2px_rgba(0,0,0,0.15)]"
 	on:click={handleCardClick}
 	on:keydown={(e) => e.key === 'Enter' && handleCardClick()}
 	role="button"
