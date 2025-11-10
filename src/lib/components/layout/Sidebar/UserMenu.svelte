@@ -42,26 +42,25 @@
 			align="start"
 			transition={(e) => fade(e, { duration: 100 })}
 		>
-			{#if page.url.pathname !== '/explore'}
-				<button
-					class="flex rounded-md p-2.5 w-full text-blue-800 hover:bg-gray-200 dark:hover:bg-gray-800 transition"
-					on:click={async () => {
-						await showSettings.set(true);
-						show = false;
 
-						if ($mobile) {
-							showSidebar.set(false);
-						}
-					}}
-				>
-					<div class=" self-center mr-3">
-						<Gear />
-					</div>
-					<div class=" self-center truncate">{$i18n.t('Settings')}</div>
-				</button>
-			{/if}
+			<button
+				class="flex rounded-md p-2.5 w-full text-blue-800 hover:bg-gray-200 dark:hover:bg-gray-800 transition"
+				on:click={async () => {
+					await showSettings.set(true);
+					show = false;
 
-			{#if page.url.pathname !== '/explore' && !$mobile}
+					if ($mobile) {
+						showSidebar.set(false);
+					}
+				}}
+			>
+				<div class=" self-center mr-3">
+					<Gear />
+				</div>
+				<div class=" self-center truncate">{$i18n.t('Settings')}</div>
+			</button>
+
+			{#if !$mobile}
 				<button
 					class="flex rounded-md p-2.5 w-full text-blue-800 hover:bg-gray-200 dark:hover:bg-gray-800 transition"
 					on:click={() => {
