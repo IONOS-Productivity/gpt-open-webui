@@ -50,6 +50,8 @@
 	import Spinner from '$lib/components/common/Spinner.svelte';
 	import KnowledgeManager from '$lib/IONOS/components/knowledge/KnowledgeManager.svelte';
 
+	import { UNAUTHENTICATED_USERS_TARGET } from '$lib/constants';
+
 	const i18n = getContext('i18n');
 
 	let loaded = false;
@@ -62,7 +64,7 @@
 		if ($user === undefined || $user === null) {
 			await goto('/auth');
 		} else if (!await hasChats() && !hasStoredState()) {
-			await goto('/explore');
+			window.location = UNAUTHENTICATED_USERS_TARGET;
 			return;
 		} else if (['user', 'admin'].includes($user?.role)) {
 			try {
