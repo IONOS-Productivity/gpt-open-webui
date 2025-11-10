@@ -48,11 +48,11 @@
 			>
 				{agent.name}
 			</h3>
-			{#if agent.specialty}
+			{#if agent.speciality}
 				<p
 					class="text-xs font-normal leading-[150%] font-sans {agent.highlight ? 'text-purple-100' : 'text-blue-800'}"
 				>
-					{agent.specialty}
+					{agent.speciality}
 				</p>
 			{/if}
 		</div>

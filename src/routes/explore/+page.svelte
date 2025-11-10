@@ -38,7 +38,7 @@
 			return {
 				id: agentId,
 				name: $i18n.t(`name_${agentId}`, { ns: 'agents' }),
-				specialty: $i18n.t(`speciality_${agentId}`, { ns: 'agents' }),
+				speciality: $i18n.t(`speciality_${agentId}`, { ns: 'agents' }),
 				description: $i18n.t(`description_${agentId}`, { ns: 'agents' }),
 				capabilities: agentCapabilities,
 				...customAgentProps(agentId)

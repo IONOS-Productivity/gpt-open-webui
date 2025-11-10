@@ -54,9 +54,9 @@
 			>
 				{agent.name}
 			</h2>
-			{#if agent.specialty}
+			{#if agent.speciality}
 				<h3 class="font-sans font-normal text-lg mb-2">
-					{agent.specialty}
+					{agent.speciality}
 				</h3>
 			{/if}
 		</div>

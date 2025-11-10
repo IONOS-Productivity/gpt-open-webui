@@ -1,7 +1,7 @@
 	export interface IAgentAiTeam {
 		id: string;
 		name: string;
-		specialty: string;
+		speciality: string;
 		description: string;
 		capabilities?: string[];
 		externalLink?: string;
