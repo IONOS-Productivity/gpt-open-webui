@@ -1,7 +1,6 @@
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 import { writable } from 'svelte/store';
 import { signout } from '$lib/services/auths';
-import { UNAUTHENTICATED_USERS_TARGET } from '$lib/constants';
 
 const mocks = vi.hoisted(() => {
 	return {
@@ -168,7 +167,7 @@ describe('signout()', () => {
 				await signout();
 
 				const postLogoutUrl = new URL(mocks.originUrl);
-				postLogoutUrl.pathname = UNAUTHENTICATED_USERS_TARGET;
+				postLogoutUrl.pathname = '/explore';
 				const logoutUrl = new URL(endpoint);
 				logoutUrl.searchParams.set('post_logout_redirect_uri', postLogoutUrl);
 				expect(location.href).toBe(logoutUrl.toString());
@@ -220,7 +219,7 @@ describe('signout()', () => {
 				await signout();
 
 				const postLogoutUrl = new URL(mocks.originUrl);
-				postLogoutUrl.pathname = UNAUTHENTICATED_USERS_TARGET;
+				postLogoutUrl.pathname = '/explore';
 				const logoutUrl = new URL(endpoint);
 				logoutUrl.searchParams.set('post_logout_redirect_uri', postLogoutUrl);
 				expect(location.href).toBe(logoutUrl.toString());
@@ -248,9 +247,9 @@ describe('signout()', () => {
 				mocks.userSignOut.mockImplementation(() => ({ status: true, end_session_endpoint: 'https://doesnotmatter.local/' }));
 			});
 
-			it('should set location to ionos_logout_url with redirect_url set to <UNAUTHENTICATED_USERS_TARGET>', async () => {
+			it('should set location to ionos_logout_url with redirect_url set to /explore', async () => {
 				const postLogoutUrl = new URL(mocks.originUrl);
-				postLogoutUrl.pathname = UNAUTHENTICATED_USERS_TARGET;
+				postLogoutUrl.pathname = '/explore';
 				const logoutUrl = new URL(mocks.ionos_logout_url);
 				logoutUrl.searchParams.set('redirect_url', postLogoutUrl);
 				await signout();
