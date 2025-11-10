@@ -16,11 +16,11 @@
 </script>
 
 <NotificationManager />
-<div class="flex flex-row w-full justify-between bg-gray-100/50">
+<div class="flex flex-row w-full justify-between bg-white">
 	{#if $user !== undefined}
 		<Sidebar />
 	{/if}
-	<div class="overflow-scroll {$showSidebar ? 'blur-xl sm:blur-none' : ''}" style="height: calc(100dvh - {$notifications.length * 60}px);">
+	<div class="w-full overflow-scroll {$showSidebar ? 'blur-xl sm:blur-none' : ''}" style="height: calc(100dvh - {$notifications.length * 60}px);">
 		<nav class="fixed z-30 w-full {($user !== undefined) ? ($showSidebar ? 'max-w-[calc(100%-260px)]' : 'md:max-w-[calc(100%-60px)]') : 'max-w-full' } px-1.5 py-4 -mb-8 pt-[30px] flex items-center drag-region transition-width duration-200 ease-in-out">
 			<div
 				class="bg-gradient-to-b via-50% from-white via-white to-transparent dark:from-gray-900 dark:via-gray-900 dark:to-transparent pointer-events-none absolute inset-0 -top-10 -bottom-10 z-[-1] blur-sm"
