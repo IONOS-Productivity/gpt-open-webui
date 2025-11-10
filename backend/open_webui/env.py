@@ -75,7 +75,7 @@ for source in log_sources:
 
 log.setLevel(SRC_LOG_LEVELS["CONFIG"])
 
-WEBUI_NAME = "IONOS GPT"
+WEBUI_NAME = "Momentum Team"
 
 WEBUI_FAVICON_URL = "https://openwebui.com/favicon.png"
 
