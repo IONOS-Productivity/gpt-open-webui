@@ -20,7 +20,7 @@ export const hasStoredState = (): boolean => {
 }
 
 export const startup = async (): Promise<StartupInfo> => {
-	console.log('*** IONOS GPT startup ***');
+	console.log('*** Momentum Team startup ***');
 
 	const agent = getAndForgetAgent();
 	console.log('Stored agent in settings/store:', agent);
