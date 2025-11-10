@@ -1416,7 +1416,7 @@ async def get_manifest_json():
         return {
             "name": app.state.WEBUI_NAME,
             "short_name": app.state.WEBUI_NAME,
-            "description": "Ihr KI-Dream-Team!",
+            "description": "Ihr AI-Dream-Team!",
             "start_url": "/",
             "display": "standalone",
             "background_color": "#343541",
