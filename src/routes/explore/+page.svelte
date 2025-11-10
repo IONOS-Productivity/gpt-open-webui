@@ -1,11 +1,8 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
-	import LoginRegisterOverlay from '$lib/IONOS/components/explore/LoginRegisterOverlay.svelte';
 	import AgentCard from '$lib/IONOS/components/ai-team/AgentCard.svelte';
 
 	import { selectAgent } from '$lib/IONOS/services/agent';
-	import { selectPrompt } from '$lib/IONOS/services/prompt';
-	import { signup } from '$lib/IONOS/services/signup';
 	import type { I18Next } from '$lib/IONOS/i18next';
 	import type { Readable } from 'svelte/motion';
 	import { user } from '$lib/stores';
@@ -13,13 +10,9 @@
 
 	const i18n = getContext<Readable<I18Next>>('i18n');
 
-	let selectedAgent: string | null = null;
-	let selectedPrompt: number | null = null;
 	let agents: IAgentAiTeam[] = [];
 
 	$: agents = agentCardData($i18n);
-
-	$: showLoginDialog = selectedAgent !== null || selectedPrompt !== null;
 
 	const agentList: string[] = [
 		'rita',
@@ -57,34 +50,19 @@
 			return;
 		}
 
-		if (!$user) {
-			selectedAgent = agentId;
-			return;
-		}
-
 		selectAgent(agentId);
 	}
 
 	const customAgentProps = (agentId: string) => {
 		switch (agentId) {
 			case 'rita':
-				return { 
+				return {
 					externalLink: 'https://www.ionos.de/office-loesungen/ki-telefonassistent',
 					showCrown: true,
 					highlight: true
 				};
 		}
 	};
-
-	function login() {
-		if (selectedAgent !== null) {
-			console.log('Continue with selected agent', selectedAgent);
-			selectAgent(selectedAgent);
-		} else if (selectedPrompt !== null) {
-			console.log('Continue with selected prompt', selectedPrompt);
-			selectPrompt(selectedPrompt);
-		}
-	}
 </script>
 
 <svelte:head>
@@ -112,16 +90,6 @@
 		</div>
 	</div>
 </content>
-
-<LoginRegisterOverlay
-	on:login={login}
-	on:signup={signup}
-	on:close={() => {
-		selectedAgent = null;
-		selectedPrompt = null;
-	}}
-	show={showLoginDialog}
-/>
 
 <style>
 	:global(body) {
