@@ -1,7 +1,7 @@
 <script lang="ts">
 	import XMark from '$lib/components/icons/XMark.svelte';
 	import { createEventDispatcher } from 'svelte';
-	import type { IAgentAiTeam } from '../../../../routes/ai-team/ai-team.type';
+	import type { IAgentAiTeam } from './ai-team.type';
 	import Checkmark from '../icons/Checkmark.svelte';
 	import Button from '$lib/IONOS/components/common/Button.svelte';
 	import Sparkles from '$lib/components/icons/Sparkles.svelte';
