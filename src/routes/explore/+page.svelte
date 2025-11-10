@@ -68,10 +68,9 @@
 		switch (agentId) {
 			case 'rita':
 				return { 
-					bgColor: '#560E8A', 
-					fontColor: '#FAE7FE',
 					externalLink: 'https://www.ionos.de/office-loesungen/ki-telefonassistent',
-					showCrown: true
+					showCrown: true,
+					highlight: true
 				};
 		}
 	};
@@ -102,21 +101,6 @@
 			>
 				{$i18n.t('ai.team.title.1', { ns: 'ionos' })} <span class="emoji">🚀</span> {$i18n.t('ai.team.title.2', { ns: 'ionos' })}
 			</h1>
-
-			<!-- <div class="col-span-full flex items-center">
-				<div class="flex items-center gap-8 w-full max-w-5xl px-6 py-4 rounded-2xl bg-gray-100">
-					<input
-						type="text"
-						placeholder="Ask us anything"
-						class="flex-1 bg-transparent border-none outline-none font-sans text-base placeholder:text-gray-500"
-					/>
-					<Button
-						className="!bg-purple-700 !border-purple-700 hover:!bg-purple-700/90 hover:!border-purple-700/90 flex items-center w-9 h-9 justify-center"
-					>
-						<span class="text-purple-300"><Sparkles className="w-4 h-4 fill-purple-300" /></span>
-					</Button>
-				</div>
-			</div> -->
 
 			<div class="col-span-full flex items-center gap-2 flex-wrap">
 				<span class="font-sans font-normal text-lg">{$i18n.t('ai.team.nav', { ns: 'ionos' })}</span>

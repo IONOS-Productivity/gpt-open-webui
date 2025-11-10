@@ -4,7 +4,7 @@
 	import Crown from '../icons/Crown.svelte';
 	import Dialog from '$lib/IONOS/components/common/Dialog.svelte';
 	import AgentCardDetail from './AgentCardDetail.svelte';
-	import type { IAgentAiTeam } from '../../../../routes/ai-team/ai-team.type';
+	import type { IAgentAiTeam } from './ai-team.type';
 
 	export let agent: IAgentAiTeam;
 
@@ -26,9 +26,7 @@
 </script>
 
 <div
-	class="w-[320px] gap-4 opacity-100 rounded-2xl p-6 shadow-l cursor-pointer"
-	class:bg-white={!agent.bgColor}
-	style="{agent.bgColor ? `background-color: ${agent.bgColor};` : ''}"
+	class="w-[320px] gap-4 opacity-100 rounded-2xl p-6 shadow-l cursor-pointer {agent.highlight ? 'bg-purple-700' : 'bg-white'}"
 	on:click={handleCardClick}
 	on:keydown={(e) => e.key === 'Enter' && handleCardClick()}
 	role="button"
@@ -46,16 +44,13 @@
 		{/if}
 		<div>
 			<h3
-				class="text-xs font-semibold leading-tight font-sans"
-				class:text-gray-900={!agent.fontColor}
-				style={agent.fontColor ? `color: ${agent.fontColor};` : ''}
+				class="text-xs font-semibold leading-tight font-sans {agent.highlight ? 'text-purple-100' : 'text-blue-800'}"
 			>
 				{agent.name}
 			</h3>
 			{#if agent.specialty}
 				<p
-					class="text-xs font-normal leading-[150%] font-sans"
-					style={agent.fontColor ? `color: ${agent.fontColor};` : ''}
+					class="text-xs font-normal leading-[150%] font-sans {agent.highlight ? 'text-purple-100' : 'text-blue-800'}"
 				>
 					{agent.specialty}
 				</p>
@@ -64,7 +59,6 @@
 		<button
 			type="button"
 			class="absolute top-0 right-0 cursor-pointer bg-transparent border-none p-0"
-			style={agent.fontColor ? `color: ${agent.fontColor};` : ''}
 			on:click={(e) => {
 				e.stopPropagation();
 				openDetail();
@@ -80,9 +74,7 @@
 	</div>
 
 	<p
-		class="text-xs font-normal leading-[150%] font-sans"
-		class:text-gray-700={!agent.fontColor}
-		style={agent.fontColor ? `color: ${agent.fontColor};` : ''}
+		class="text-xs font-normal leading-[150%] font-sans {agent.highlight ? 'text-purple-100' : 'text-blue-800'}"
 	>
 		{agent.description}
 	</p>
