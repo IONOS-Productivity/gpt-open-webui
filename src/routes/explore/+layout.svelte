@@ -66,7 +66,7 @@
 				</div>
 			</div>
 		</nav>
-		<div class="flex flex-col pt-20 mt-10">
+		<div class="flex flex-col pt-20 mt-10 h-[calc(100%-60px)]">
 			<div class="grow">
 				<slot />
 			</div>
