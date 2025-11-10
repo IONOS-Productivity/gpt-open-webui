@@ -74,7 +74,7 @@
 			{#if agent.showCrown}
 				<Crown className="w-5 h-5" />
 			{:else}
-				<CircleInfo className="w-5 h-5" />
+				<CircleInfo className="w-5 h-5 text-gray-500" />
 			{/if}
 		</button>
 	</div>
