@@ -13,7 +13,6 @@
 
 	import { generateInitialsImage, canvasPixelTest } from '$lib/utils';
 
-	import { handleSignupDone } from '$lib/IONOS/services/signup';
 	import { isShowLoginForm } from '$lib/IONOS/services/auth';
 
 	import Spinner from '$lib/components/common/Spinner.svelte';
@@ -139,9 +138,7 @@
 		if (isHandlingOidcCallback()) {
 			const oauthSuccessfullyCompleted = await checkOauthCallback();
 
-			if (oauthSuccessfullyCompleted) {
-				await handleSignupDone();
-			} else {
+			if (!oauthSuccessfullyCompleted) {
 				goto('/error');
 			}
 
