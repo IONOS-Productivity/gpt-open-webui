@@ -64,7 +64,7 @@
 		if ($user === undefined || $user === null) {
 			await goto('/auth');
 		} else if (!await hasChats() && !hasStoredState()) {
-			window.location = UNAUTHENTICATED_USERS_TARGET;
+			window.location = '/explore';
 			return;
 		} else if (['user', 'admin'].includes($user?.role)) {
 			try {
