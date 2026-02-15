@@ -1,0 +1,122 @@
+name: open-webui-dev
+
+services:
+  frontend:
+    build:
+      context: .
+      target: build
+    command: ["sh", "/app/src/frontend-dev.sh"]
+    env_file: ".env"
+    environment:
+      - NODE_OPTIONS=--max-old-space-size=3300
+    depends_on:
+      - backend
+    ports:
+      - "3000:5173"
+    extra_hosts:
+      - host.docker.internal:127.0.0.1
+    volumes:
+      - ./src:/app/src
+      - ./package.json:/app/package.json
+      - ./package-lock.json:/app/package-lock.json
+      - ./static/assets:/app/static/assets
+      - ./static/avatars:/app/static/avatars
+      - ./static/data:/app/static/data
+      - ./static/favicon:/app/static/favicon
+      - ./static/static:/app/static/static
+      - ./vite.config.ts:/app/vite.config.ts
+      - ./svelte.config.js:/app/svelte.config.js
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./tsconfig.ionos.json:/app/tsconfig.ionos.json
+      - ./tailwind.config.js:/app/tailwind.config.js
+
+  backend:
+    build:
+      context: .
+      target: base
+    command: ["bash", "dev.sh"]
+    env_file: ".env"
+    environment:
+      - ENV=dev
+      # Storage: S3
+      # Note: you've to configure a bucket and add secrets to your .env
+      # (see "storage" config at the bottom)
+      - STORAGE_PROVIDER=s3
+      - S3_BUCKET_NAME=owu
+      - S3_ENDPOINT_URL=http://localhost:19000
+      - S3_REGION_NAME=eu-central-1
+      # Relational DB: postgres
+      - DATABASE_URL=postgresql://postgres:pass@localhost:5432/postgres
+      # Vector DB: postgres
+      - VECTOR_DB=pgvector
+      - PGVECTOR_DB_URL=postgresql://postgres:pass@localhost:5432/openwebui_vector
+      # Content extraction: tika
+      - CONTENT_EXTRACTION_ENGINE=tika
+      - TIKA_SERVER_URL=http://localhost:9998
+    depends_on:
+      - pgvector
+      - storage
+    network_mode: host
+    ports:
+      - "8080:8080"
+    extra_hosts:
+      - localhost:127.0.0.1
+    volumes:
+      - ./backend:/app/backend
+      - data:/app/backend/data
+
+  tika:
+    image: apache/tika:2.5.0.2-full
+    network_mode: host
+    ports:
+      - "9998:9998"
+    environment:
+      - TIKA_LOG_LEVEL=INFO
+
+  pgvector:
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: postgres
+    network_mode: host
+    volumes:
+      - ./initdb.d:/docker-entrypoint-initdb.d
+      - pgdata:/var/lib/postgresql/data
+
+  # Inspect pgvector at http://localhost:8081/?pgsql=127.0.0.1&username=postgres&db=postgres&ns=public
+  adminer:
+    image: adminer
+    network_mode: host
+    command: ["php", "-S", "127.0.0.1:8081", "-t", "/var/www/html"]
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0.7-0
+    command: ["start-dev", "--http-enabled=true", "--http-port=8079", "--log-level=info", "--import-realm"]
+    volumes:
+      - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json
+    environment:
+      # Needed to create a config from scratch. Causing errors when using --import-realm
+      # - KC_BOOTSTRAP_ADMIN_USERNAME=admin
+      # - KC_BOOTSTRAP_ADMIN_PASSWORD=admin
+      - KC_FEATURES=persistent-user-sessions
+    network_mode: host
+    ports:
+      - "8079:8079"
+
+  # To create a bucked run scripts/create-minio-bucket and 
+  # add the generated credentialsto your .env
+  storage:
+    image: quay.io/minio/minio:RELEASE.2025-06-13T11-33-47Z
+    command: ["server", "/data", "--address", ":19000", "--console-address", ":8078"]
+    environment:
+      MINIO_ROOT_USER: "root"
+      MINIO_ROOT_PASSWORD: "toortoor"
+    network_mode: host
+    volumes:
+      - minio:/data
+
+volumes:
+  data: {}
+  pgdata: {}
+  minio: {}
